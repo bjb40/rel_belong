@@ -1,11 +1,14 @@
 #Dev R 3.02
 #Cleaning data to set up Bayesian estimation of transition matricies
 #Bryce Bartlett
+#NOTE v1.0: LIMITED TO ARBITRARY SUBSET OF  INDIVIDUALS WITH NO MISSING FOR DEVELOPMENT
 
 #@@@@@@@@@@@@@@
 #Generals
 #@@@@@@@@@@@@@@
 #load universals configuration file
+
+st = proc.time()[3]
 
 source("H:/projects/rel_belong/code/config.R",
        echo =T, print.eval = T, keep.source=T)
@@ -15,7 +18,8 @@ source("H:/projects/rel_belong/code/config.R",
 #@@@@@@@@@@@@@@
 
 #see readme for source
-rawpanel = read.csv(paste(outdir,'private~/cypanel.csv',sep=''))
+library(foreign)
+rawpanel = read.dta(paste(outdir,'private~/cypanel.dta',sep=''),  convert.factors = FALSE)
 
 #select variables to retain
 
@@ -49,7 +53,6 @@ subpanel = subset(rawpanel,select=c(vars))
 #write tables for checking
 #@@@@@@@@@@@@@@@
 
-
 #gender
 subpanel$female = as.numeric(subpanel$sex) - 1
 
@@ -64,8 +67,11 @@ subpanel$white[subpanel$race == 1] = 1
 subpanel$white[subpanel$race > 1] = 0
 
 subpanel$black = as.numeric(NA)
-subpanel$black[subpanel$race == 2] = 2
+subpanel$black[subpanel$race == 2] = 1
 subpanel$black[subpanel$race %in% c(1,3)] = 0
+
+#hold variables to drop later
+dropvar = c('race','sex','marital')
 
 #check recodes
 sink(paste(outdir,'dat-transform.txt',sep=''))
@@ -73,15 +79,54 @@ sink(paste(outdir,'dat-transform.txt',sep=''))
   cat('\n\n@@@@@@@@@@@@@@@@@@@\ncHECK RECODES ')
   cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')
 
-  table(subpanel$female,subpanel$sex)
+  attach(subpanel)
+  table(female,sex)
+  cat('\n')
+  table(married,marital)
+  cat('\n')
+  table(white,race)
+  cat('\n')
+  table(black,race)
+  detach(subpanel)
+
+cat('\n\n@@@@@@@@@@@@@@@@@@@\nFULL SUBPANEL DESCRIPTIVES')
+cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')
+
+  summary(subpanel)
+
+
+cat('\n\n@@@@@@@@@@@@@@@@@@@\nINFO ON LIMITING TO RANDOM SUBSAMPLE OF 300 INDIVIDUALS')
+cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')
+
+samp=na.omit(subpanel)
+cat('\n                             \t\tPersons\t\tObservations')
+cat('\nTotals                      ',length(unique(subpanel$idnum)),nrow(subpanel),sep='\t\t')
+cat('\nListwise Delete             ',length(unique(samp$idnum)),nrow(samp),sep='\t\t')
+
+#create random subsample of 300 from remaining
+keepid = sample(unique(samp$idnum),size=300,replace=F)
+samp=samp[samp$idnum %in% keepid,]
+cat('\n300 random sample (person)  ',length(unique(samp$idnum)),nrow(samp),sep='\t\t')
+
+#drop extraneous (recoded variables)
+samp = samp[,!names(samp) %in% dropvar]
+
+
+cat('\n\n@@@@@@@@@@@@@@@@@@@\nSAMPLE DESCRIPTIVES')
+cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')
+
+desc = apply(samp,2,FUN=function(x) 
+  c(mn=mean(x),sdev=sd(x),min=min(x),max=max(x),n=length(x)))
+
+print(round(t(desc),digits=2), row.names=F)
+rm(desc)
 
 sink()
 
+subpanel=samp
 
-
-rm(rawpanel)
+rm(rawpanel,samp)
 write.csv(subpanel,file=paste(outdir,'private~/subpanel.csv',sep=''))
 
-#@@@@@@@@@@@@@@
-#Output 
-#@@@@@@@@@@@@@@
+#print minutes elapsed for code
+(proc.time()[3] - st)/60
