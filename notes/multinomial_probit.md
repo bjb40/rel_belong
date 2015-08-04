@@ -50,6 +50,35 @@ $$
 
 ```cite ross```
 
+
+This allows an expression of rthe probability of choosing one choice ($c$) among the option ($k$) as follows:
+
+
+
+$$
+pr(y_{ic} = 1) = pr(y^*_{ic} > y^*_{ik}, \forall k \ne c)
+$$
+
+
+Algebraeically rearranging, gives the following:
+
+$$
+z_i \alpha_c + \xi_{ci} > z_i \alpha_k + \xi_{ki} \\
+z_i (\alpha_c - \alpha_k)  >  \xi_{ki} - \xi_{ci} \\
+$$
+
+Because $\x_{ik}$ and $\xi_{ic}$ are normally distributed with mean 0, the difference $\xi_{ik} - \xi_{ic}$ is also distributed mean 0, subject ot a covariance matrix that is a funciton of the covariance of $\xi_{ik}$. Accoridngly, the above expression can be identified as integrating the probability from a standard normal multivariate distribution, or:
+
+
+
+$$
+\int_{z_i(\alpha_c - \alpha_k)}^\infty ... \int_{z_i(\alpha_c - \alpha_K)}^\infty \phi d \tilde{\Sigma} \\
+\phi \sim MVN(0,\tilde{\Sigma})
+$$
+
+
+The solution suffers fro two drawbacks: (1) it is underidentified, and (2) there is no analytic solution and it is difficult to estimate.
+
 To identify and estimate the model, an arbitrary base category ($l$) is chosen, and subtracted from all others; this results in the following equation for relative, latent utilities ($u$): 
 
 $$
@@ -64,7 +93,9 @@ u_{ik} = z_i \beta_k + \tilde{\epsilon}_{ik} \\
 \mbox{where } k>1
 $$
 
-Because $\epsilon$ was distributed normally, the difference $\tilde{\epsilon}$ is also normally distributed with mean 0 and some covariance matrix $\tilde{\Sigma}$ (which is a funciton of $\Sigma$). (For purposes of simplicity in the non IIA case in stata, $\tilde{\Sigma}$ diagonal matrix of 2s with 1s on the off-diagonals; I will use this specification to test the algorithm against stata results.)
+Because $\epsilon$ was distributed normally, the difference $\tilde{\epsilon}$ is also normally distributed with mean 0 and some covariance matrix $\tilde{\Sigma}$ (which is a funciton of $\Sigma$). (For purposes of simplicity in the non IIA case in stata, $\tilde{\Sigma}$ diagonal matrix of 2s with 1s on the off-diagonals; I will use this specification to test the algorithm against stata results).
+
+Substituting, the probability that $y_{ik} = 1$ is a function of the differences ($u_{ik}$)
 
 
 
