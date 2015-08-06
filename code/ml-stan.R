@@ -8,10 +8,6 @@
 
 #manually reun code bits from mnl.R -- needs updated
 
-require('rstan')
-
-#detect cores to activate parallel procesing
-(mc.cores = parallel::detectCores())
 
 #@@@@@@@@@@@@@
 #prep stan input
@@ -30,6 +26,12 @@ y = as.integer(dat$reltrad)
 #@@@@@@@@@@@@@
 #call stan model
 #@@@@@@@@@@@@@
+
+library('rstan')
+
+#detect cores to activate parallel procesing
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
 
 fit <- stan("mnl1.stan", data=c("K", "C", "N", "y", "xmat"),
             chains=4, iter=200, seed=1234);
