@@ -1,6 +1,11 @@
+#@@@@@@@@@@@@@@@@@@@@@@@@@@
 #dev R 3.2.1 "World-Famous Astronaut"
-#develping mn probit extension as found in Lynch 2005, 2007, 2010
+#develping mn probit extension for
+#increment-decrement tables as found in Lynch 2005, 2007, 2010
+#implimenting Bayesian probit as found in McCulloch & Rossi 1994
+#Gibbs sampler
 #Bryce Bartlett
+#@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 require('MCMCpack')
 
@@ -25,6 +30,8 @@ ydum = matrix(0,nrow(y),ydim)
 for(ob in 1:nrow(ydum)){ydum[ob,y[ob]]=1}
 
 x = as.matrix(dat$female)
+#add intercept
+x = cbind(rep(1,nrow(x)),x)
 
 rm(dat);
 
@@ -34,35 +41,26 @@ rm(dat);
 
 #Set starting values
 
-iter = 200
-
-g_base = matrix(0,iter,1)
-b_base = matrix(0,iter,ncol(x))
-g = matrix(0,iter,ydim-1)
-b = matrix(0,iter,(ncol(x)*ydim-1))
-u = matrix(0,nrow(x),ydim)
-sigma = diag(ydim)+1 #equivalent to stata mprobit per specification
+iterations = 200
+k = ydim-1
+beta = matrix(0,nrow(x),k*ncol(x))
+u = matrix(0,nrow(x),k) #single draw; will write to disk all acceptances
+sigma = diag(ydim)+1 
+i.k = diag(k)
 
 #probability matrix for boundary *cuts* in the TMVN
-for(i in 2:iter){
+for(iter in 2:iterations){
   
-  #simulate z (draw latent data from TMVN)
-  bb=matrix(b,ncol(x),ydim)
-  m=x%*%bb
+  #1 draw beta|sigma,u,y,x (lynch p. 297-280); improper...?
+  vb = solve(solve(i.k)%x%(t(x)%*%x))
+  mn = vb%*%(as.vector(t(x)%*%u%*%t(solve(i.k))))
+  beta=mn+t(rnorm((ncol(x)*k),0,1)%*%chol(vb))
   
-  for(j in ydim:2){
-    #p.285 gibbs sampler--identify conditional univariate distribution
-    mm = m[j-1] + s[(j-1),(j:ydim)]%*%solve(s[j:ydim,j:ydim])%*%t(z[,j:ydim]-m[,j:ydim])
-    ss=s[(j-1),(j:ydim)]%*%solve(s[j:ydim,j:ydim])%*%s[(j:ydim),(j-1)]
-    
-    #draw from conditional univariate distribution
-    z[,j-1]=
-  }
-  #simulate tau (thresholds)
+  #2 draw sigma|beta,u,y,x
+  #sigma is fixed for now until #3 is working
   
-  #simulate b
-  
-  #simulate sigma (cov matrix)
+  #3 for i=1...n and c=1...C draw u_ic|u_ic-1,beta,Sigma,y,x
+  #mcculloch & Rossi, p. 212
   
   
 }
