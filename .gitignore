@@ -23,6 +23,7 @@
 *.RData
 # RStudio files
 .Rproj.user/
+*.rda
 
 # os stuff #
 ###########

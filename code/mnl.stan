@@ -13,13 +13,13 @@ data {
   int<lower=0> N; //observations
   int<lower=1> D; //dimensions of predictors
   int<lower=1,upper=K> y[N]; 
-  vector[D] x[N]; 
+  vector[D] xmat[N]; 
   } 
   
 #assign reference category for identifiability
 transformed data{
-  vector[D] zeros;
-  zeros <- rep_vector(0,D);
+  row_vector[D] zeros;
+  zeros <- rep_row_vector(0,D);
 }
 
 parameters {
@@ -27,14 +27,13 @@ parameters {
   }
 
 transformed parameters {
-  matrix[K, D] beta; 
-  beta <- append_col(beta_raw, zeros); 
+  matrix[K,D] beta; 
+  beta <- append_row(zeros,beta_raw); 
   }
 
 model { 
-  for (k in 1:K) 
-    beta[k] ~ normal(0,5); 
+  to_vector(beta) ~ normal(0,5); 
   for (n in 1:N) 
-    y[n] ~ categorical_logit(beta * x[n]);
+    y[n] ~ categorical_logit(beta * xmat[n]);
     }
     

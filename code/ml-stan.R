@@ -6,35 +6,46 @@
 #Bryce Bartlett
 #@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-#manually reun code bits from mnl.R -- needs updated
+
+#load universals configuration file
+source("H:/projects/rel_belong/code/config.R",
+       echo =T, print.eval = T, keep.source=T)
+
 
 
 #@@@@@@@@@@@@@
 #prep stan input
 #@@@@@@@@@@@@@
 
-C=length(unique(y))
-N=nrow(dat)
-K=2
-
-x = as.matrix(dat$female)
-#add intercept
-xmat = cbind(rep(1,nrow(x)),x)
+#read data previously cleaned using ./prep-data.r
+dat = read.csv(paste(outdir,'private~/subpanel.csv',sep=''))
 
 y = as.integer(dat$reltrad)
+x = as.matrix(dat$female)
+xmat = cbind(rep(1,nrow(x)),x) #add intercept
+
+D=ncol(xmat)
+K=length(unique(y))
+N=nrow(dat)
 
 #@@@@@@@@@@@@@
 #call stan model
 #@@@@@@@@@@@@@
 
+#Record start time
+st = Sys.time()
+
 library('rstan')
 
 #detect cores to activate parallel procesing
-rstan_options(auto_write = TRUE)
-options(mc.cores = parallel::detectCores())
+#rstan_options(auto_write = TRUE)
+#options(mc.cores = parallel::detectCores())
 
-fit <- stan("mnl1.stan", data=c("K", "C", "N", "y", "xmat"),
-            chains=4, iter=200, seed=1234);
+fit <- stan("mnl.stan", data=c("K", "D", "N", "y", "xmat"),
+            chains=4, iter=5000, seed=1234,verbose=T);
+
+#print time taken
+print(Sys.time() - st)
 
 #@@@@@@@@@@@@@
 #posterior analysis

@@ -14,11 +14,15 @@ parameters {
 
 transformed parameters {
   matrix[C,K] beta;
+
   for (k in 1:K)
-    beta[1,k] <- 0;
-  for (c in 2:C)
-    for (k in 1:K)
+    for (c in 2:C)
       beta[c,k] <- beta_free[c-1,k];
+  
+  #enforce restriction that all variables sum to 1/see stan manual
+  for (k in 1:K)
+    beta[1,k] <- -sum(beta[,k]);
+
 }
 
 model {
