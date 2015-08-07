@@ -76,7 +76,7 @@ rm(lastwave)
 
 #create matrix of indicator variables for reltrad_last
 reldum = matrix(0,nrow(subpanel),unique(subpanel$reltrad_last))
-for(ob in 1:nrow(reldum)){reldum[ob,subpanel$reltrad[ob]]=1}
+for(ob in 1:nrow(reldum)){reldum[ob,subpanel$reltrad_last[ob]]=1}
 colnames(reldum) = paste('reltrad_last',1:ncol(reldum),sep='')
 subpanel= cbind(subpanel,reldum)
 rm(reldum)
@@ -106,13 +106,14 @@ sink(paste(outdir,'dat-transform.txt',sep=''))
   print(Sys.Date(),quote="F")
   cat('\n\n@@@@@@@@@@@@@@@@@@@\ncHECK RECODES ')
   cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')
-  
-  lim=1:10
-  attach(subpanel)
+
   cat('\nReligious tradition recodes for first ten observations\n')
-  print(cbind(idnum,reltrad_last,reltrad_last1,reltrad_last2,
-              reltrad_last3,reltrad_last4,reltrad_last5)[lim,])
+  print(head(subpanel[,c('idnum','reltrad_last','reltrad_last1','reltrad_last2',
+              'reltrad_last3','reltrad_last4','reltrad_last5')],n=10))
   cat('\n\nTables overviewing recodes \n')
+  
+    
+  attach(subpanel)
   table(female,sex)
   cat('\n')
   table(married,marital)
