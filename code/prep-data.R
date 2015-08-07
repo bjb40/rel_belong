@@ -48,10 +48,38 @@ vars = c(
 
 subpanel = subset(rawpanel,select=c(vars))
 
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#join subset for t-1 in reltrad
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+lastwave = subset(subpanel,select=c(idnum,panelwave,reltrad),panelwave > 1)
+lastwave$panelwave = lastwave$panelwave - 1
+
+#remove wave 1 from subpanel and reltrad--need t and t-1 only
+subpanel = subset(subpanel, panelwave < 3)
+
+subpanel$reltrad_last = as.numeric(NA)
+
+for(i in unique(subpanel$idnum)){
+  for(w in 1:2){
+    last = lastwave$reltrad[lastwave$idnum == i & lastwave$panelwave == w]    
+    #print(c(i,w,last))
+    subpanel$reltrad_last[subpanel$idnum == i & subpanel$panelwave == w] = last
+  }
+}
+rm(lastwave)
+
 #@@@@@@@@@@@@@@@@
 #recodes
 #write tables for checking
 #@@@@@@@@@@@@@@@
+
+#create matrix of indicator variables for reltrad_last
+reldum = matrix(0,nrow(subpanel),unique(subpanel$reltrad_last))
+for(ob in 1:nrow(reldum)){reldum[ob,subpanel$reltrad[ob]]=1}
+colnames(reldum) = paste('reltrad_last',1:ncol(reldum),sep='')
+subpanel= cbind(subpanel,reldum)
+rm(reldum)
 
 #gender
 subpanel$female = as.numeric(subpanel$sex) - 1
@@ -78,8 +106,13 @@ sink(paste(outdir,'dat-transform.txt',sep=''))
   print(Sys.Date(),quote="F")
   cat('\n\n@@@@@@@@@@@@@@@@@@@\ncHECK RECODES ')
   cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')
-
+  
+  lim=1:10
   attach(subpanel)
+  cat('\nReligious tradition recodes for first ten observations\n')
+  print(cbind(idnum,reltrad_last,reltrad_last1,reltrad_last2,
+              reltrad_last3,reltrad_last4,reltrad_last5)[lim,])
+  cat('\n\nTables overviewing recodes \n')
   table(female,sex)
   cat('\n')
   table(married,marital)

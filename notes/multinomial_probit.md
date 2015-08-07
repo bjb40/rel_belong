@@ -22,9 +22,9 @@ $$
 T = 
 $$
 
-One way of estimating $T$ is utilizing a multinomial model. The basic form of the model is based upon the likelihood of the multinomial distribution, as follows:
+One way of estimating $T$ is utilizing a multinomial model. The basic form of the model is based upon the the probability that some set of outcomes ($y$) is determined by some set of probability ($p$); the discrete function is usually expressed as follows.
 
-```not sure this likelihood is accurate; came from scott's book on the ordinal probit; do I even need to set this up...?```
+```not sure this likelihood is accurate; came from scott's book on the ordinal probit; do I even need to set this up... could use Stan manual, p. 377?```
 
 $$
 L(P|Y) \propto
