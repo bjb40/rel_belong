@@ -1,6 +1,6 @@
 ---
 author: Bryce Bartlett
-date: 8/3/2015
+date: 8/10/2015
 title: Technical Memo for Estimates Using Multinomial Logistic (Softmax) Regression
 csl: ../citations/asa-mod.csl
 bibliography: ../citations/rel_belong.bib
@@ -64,6 +64,8 @@ don't see death even in the panel...will have to impute with a strong prior..., 
 The goal of the Bayesian estimates is to produce posterior predictive distributions (PPD). PPD are a common and powerful application in Bayesian statistics for exploring, comparing, and understanding the data generation process implied by the model relative to the observed data; they are particularly useful in comparing complex and nonnested models, like hierarchical models [@lynch_bayesian_2004]. The PPD is a simulation of hypothetical values of the dependent variable, in this case, the probability (transformed form the log odds) of transitioning from one religious tradition to another. This produces a microsimulation of the data based on the probability density of transition probabilities implied by the model.
 
 To produce the probabilities form the PPD, I generate 1000 posterior predicted estimates for each sample member, I slice the posterior predictive estimates by *sending* dummy variables, and calculate the mean expected value of the log odds. I translate this into the transiction matrix $T$, by ...
+
+Some [discussion](http://stats.stackexchange.com/questions/11336/predicted-probabilities-from-a-multinomial-regression-model-using-zelig-and-r)
 
 ##Sample Life Tables
 

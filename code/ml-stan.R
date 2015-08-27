@@ -21,7 +21,10 @@ source("H:/projects/rel_belong/code/config.R",
 dat = read.csv(paste(outdir,'private~/subpanel.csv',sep=''))
 
 y = as.integer(dat$reltrad)
-x = as.matrix(dat$female)
+x = as.matrix(subset(dat,
+                     select=c(reltrad_last2,reltrad_last3,reltrad_last4,reltrad_last5,
+                              female,married,white,age)
+                     ))
 xmat = cbind(rep(1,nrow(x)),x) #add intercept
 
 D=ncol(xmat)
@@ -38,8 +41,8 @@ st = Sys.time()
 library('rstan')
 
 #detect cores to activate parallel procesing
-#rstan_options(auto_write = TRUE)
-#options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
 
 fit <- stan("mnl.stan", data=c("K", "D", "N", "y", "xmat"),
             chains=4, iter=5000, seed=1234,verbose=T);
@@ -53,3 +56,6 @@ print(Sys.time() - st)
 
 print(summary(fit))
 
+#export sample of covariate profiles
+
+write.csv(extract(fit,pars='beta'),paste(outdir,'post.csv',sep=''))
