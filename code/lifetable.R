@@ -99,8 +99,9 @@ for(m in 1:10){
   } #close age cycle
   
   #calculate ex--this seems wrong/maybe b/c no mortality
+  #need explicit decrements for detail (check Land)
   Tx = apply(lx,2,sum)
-  le = Tx/lx[1,]
+  le = Tx/lx[1,] #divide by sum of lx for pop...
   
   #write estimates to file
   
