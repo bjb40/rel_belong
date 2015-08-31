@@ -45,15 +45,15 @@ xsim[,9] = agestart #beginning age
 #Compute over sample
 #@@@@@@@@@@@@@@@@@@@@@@@@
 
-#for(m in 1:nrow(post)){
-for(m in 1:10){
+for(m in 1:nrow(post)){
+#for(m in 1:10){
   
   #compute over predefined age intervals
   for(a in 0:ageints){
     #update xsim age
     xsim[,9] = agestart + a*n
     
-    print(c(m,agestart + a*n))
+    #print(c(m,agestart + a*n))
     
     #compute predicted odds from parameter estimates
     est = as.matrix(post[m,2:46])
@@ -85,25 +85,31 @@ for(m in 1:10){
   
 #    mmat=-mmat
     
-    #survive based on pmat for lx
-    l[a+2,,] = l[a+1,,] %*% pmat
+    if(a+2 <= ageints){
+      #survive based on pmat for lx
+      l[a+2,,] = l[a+1,,] %*% pmat
     
-    #update Lx for agegroup - currently piecewise exponential hazard
-    #see lynch&brown (New approach), and Keyfitz for calcualtions
-    L[a+1,,] = (l[a+1,,]+l[a+2,,])/2
-    
+      #update Lx for agegroup - currently piecewise exponential hazard
+      #see lynch&brown (New approach), and Keyfitz for calcualtions
+
+      L[a+1,,] = (l[a+1,,]+l[a+2,,])/2
+    }
     #need to close out correctly...
     
   } #close age cycle
   
-  #calculate ex--wrong b/c no mortality
+  #calculate ex--wrong b/c no mortality - 
+  #need to think whether dim is appropriate and add names
   Tx = array(0,c(5,5))
   
   for(d in 1:5){
-    Tx[d,] = apply(l[,d,],2,sum)
+    Tx[d,] = apply(l[,d,],2,sum)*n
   }
-    le = diag(Tx)/diag(l[1,,]) #divide by sum of lx for pop...
+    #each row provides expectancy in each state from starting
+    le = apply(Tx,2,function(x) x/diag(l[1,,]))
   
-  #write estimates to file
-  
+  #write estimates to file (need to manually delete)
+  write.table(le,file=paste(outdir,'le.csv',''),append=T, col.names=FALSE,sep=',')
+  write.table(l,file=paste(outdir,'l.csv',''),append=T, col.names=FALSE,sep=',')
+    
 } #close sample cycle
