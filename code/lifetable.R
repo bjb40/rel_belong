@@ -22,19 +22,17 @@ post = read.csv(paste(outdir,'post.csv',sep=''))
 #Initialize key variables & functions
 #@@@@@@@@@@@@@@@@@@@@@@@@
 
-ageints=30; n=2; agestart = 25
-l=array(0,c(ageints,5,5)); l[1,,]=diag(5)*radix
-bl=matrix(0,ageints,4); tl=matrix(0,ageints,4)
-
 #need to edit to load y (from ml-stan.R)
 propy = table(y)/length(y)
 
+ageints=30; n=2; agestart = 25
 radix= matrix(propy,nrow=1,ncol=length(propy))
-lx = rbind(radix,matrix(0,ageints,ncol(radix)))
-ex = Lx = matrix(0,nrow(lx),ncol(lx))
+L=l=array(0,c(ageints,5,5)); l[1,,]=diag(5)*as.numeric(propy)
 
-mpower=function(mat,power)
-{ma<-diag(3);for(i in 1:power){ma=ma%*%mat};return(ma)}
+
+#from Lynch 2007 book
+#mpower=function(mat,power)
+#{ma<-diag(3);for(i in 1:power){ma=ma%*%mat};return(ma)}
 
 #construct data for simple transition matrix
 #int, reltrad2-reltrad5, female, married, white, age
@@ -88,20 +86,23 @@ for(m in 1:10){
 #    mmat=-mmat
     
     #survive based on pmat for lx
-    lx[a+2,] = lx[a+1,] %*% pmat
+    l[a+2,,] = l[a+1,,] %*% pmat
     
     #update Lx for agegroup - currently piecewise exponential hazard
     #see lynch&brown (New approach), and Keyfitz for calcualtions
-    Lx[a+1,] = (lx[a+1,]+lx[a+2,])/2
+    L[a+1,,] = (l[a+1,,]+l[a+2,,])/2
     
     #need to close out correctly...
     
   } #close age cycle
   
-  #calculate ex--this seems wrong/maybe b/c no mortality
-  #need explicit decrements for detail (check Land)
-  Tx = apply(lx,2,sum)
-  le = Tx/lx[1,] #divide by sum of lx for pop...
+  #calculate ex--wrong b/c no mortality
+  Tx = array(0,c(5,5))
+  
+  for(d in 1:5){
+    Tx[d,] = apply(l[,d,],2,sum)
+  }
+    le = diag(Tx)/diag(l[1,,]) #divide by sum of lx for pop...
   
   #write estimates to file
   
