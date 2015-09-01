@@ -3,7 +3,7 @@ author: Bryce Bartlett
 date: 8/10/2015
 title: Technical Memo for Estimates Using Multinomial Logistic (Softmax) Regression
 csl: ../citations/asa-mod.csl
-bibliography: ../citations/rel_belong.bib
+bibliography: ../citations/rel_belong.bib2
 ---
 
 #Overview
