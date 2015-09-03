@@ -43,6 +43,37 @@ black    1    2    3
 
 
 @@@@@@@@@@@@@@@@@@@
+CHECK DEATH RECODES
+@@@@@@@@@@@@@@@@@@@@@
+
+Wave 1 -> Wave 2
+   
+       1    2   31   32   33
+  1 1152    0    0    0    0
+  2  494    0    0    0    0
+  3  200    0    0    0    0
+  4  678    0    0    0    0
+  5  580    0    0    0    0
+  6    0    0    0    0   72
+
+Wave 2 -> Wave 3
+   
+      1   2  31  32  33
+  1 966   0   0   0   0
+  2 386   0   0   0   0
+  3 176   0   0   0   0
+  4 549   0   0   0   0
+  5 496   0   0   0   0
+  6   0   0   0   0  55
+
+
+ NOTE.
+
+     ROW: (1) evangelical; (2) mainline; (3) other; (4) catholic; (5) none; (6) death
+
+     COL: (1) elligible for panel and inerviewed; (2) elligible not interviewed; (31) left US; (32) instutionalized; (33) died
+
+@@@@@@@@@@@@@@@@@@@
 FULL SUBPANEL DESCRIPTIVES
 @@@@@@@@@@@@@@@@@@@@@
 
@@ -70,14 +101,22 @@ FULL SUBPANEL DESCRIPTIVES
  3rd Qu.:2      3rd Qu.:16     3rd Qu.:1      3rd Qu.:5     
  Max.   :2      Max.   :20     Max.   :3      Max.   :5     
  NA's   :1399   NA's   :1417   NA's   :1399   NA's   :1410  
-     income         nstate        reltrad1        reltrad2    
- Min.   : 1     Min.   :1      Min.   :0.000   Min.   :0.000  
- 1st Qu.:11     1st Qu.:1      1st Qu.:0.000   1st Qu.:0.000  
- Median :12     Median :2      Median :0.000   Median :0.000  
- Mean   :11     Mean   :3      Mean   :0.321   Mean   :0.132  
- 3rd Qu.:12     3rd Qu.:4      3rd Qu.:1.000   3rd Qu.:0.000  
- Max.   :12     Max.   :6      Max.   :1.000   Max.   :1.000  
- NA's   :2570   NA's   :3550                                  
+     income        wtpan12       wtpannr12       wtpan123   
+ Min.   : 1     Min.   :0      Min.   :0      Min.   :0     
+ 1st Qu.:11     1st Qu.:1      1st Qu.:1      1st Qu.:1     
+ Median :12     Median :1      Median :1      Median :1     
+ Mean   :11     Mean   :1      Mean   :1      Mean   :1     
+ 3rd Qu.:12     3rd Qu.:1      3rd Qu.:1      3rd Qu.:1     
+ Max.   :12     Max.   :7      Max.   :7      Max.   :7     
+ NA's   :2570   NA's   :2798   NA's   :2798   NA's   :4384  
+   wtpannr123       nstate        reltrad1        reltrad2    
+ Min.   :0      Min.   :1      Min.   :0.000   Min.   :0.000  
+ 1st Qu.:1      1st Qu.:1      1st Qu.:0.000   1st Qu.:0.000  
+ Median :1      Median :2      Median :0.000   Median :0.000  
+ Mean   :1      Mean   :3      Mean   :0.321   Mean   :0.132  
+ 3rd Qu.:1      3rd Qu.:4      3rd Qu.:1.000   3rd Qu.:0.000  
+ Max.   :6      Max.   :6      Max.   :1.000   Max.   :1.000  
+ NA's   :4384   NA's   :3550                                  
     reltrad3        reltrad4        reltrad5         female    
  Min.   :0.000   Min.   :0.000   Min.   :0.000   Min.   :0     
  1st Qu.:0.000   1st Qu.:0.000   1st Qu.:0.000   1st Qu.:0     
@@ -97,37 +136,13 @@ FULL SUBPANEL DESCRIPTIVES
 
 
 @@@@@@@@@@@@@@@@@@@
-INFO ON LIMITING TO RANDOM SUBSAMPLE OF 300 INDIVIDUALS
+INFO ON ANALYTIC SAMPLE
 @@@@@@@@@@@@@@@@@@@@@
 
 
                              		Persons		Observations
 Totals                      		3121		12134
-Listwise Delete             		1885		5119
-
-@@@@@@@@@@@@@@@@@@@
-CHECK DEATH RECODES
-@@@@@@@@@@@@@@@@@@@@@
-
-Wave 1 -> Wave 2
-   
-       1    2   31   32   33
-  1 1152    0    0    0    0
-  2  494    0    0    0    0
-  3  200    0    0    0    0
-  4  678    0    0    0    0
-  5  580    0    0    0    0
-  6    0    0    0    0   72
-Wave 2 -> Wave 3
-   
-      1   2  31  32  33
-  1 966   0   0   0   0
-  2 386   0   0   0   0
-  3 176   0   0   0   0
-  4 549   0   0   0   0
-  5 496   0   0   0   0
-  6   0   0   0   0  55
-
+Listwise Delete             		2812		8422
 
 @@@@@@@@@@@@@@@@@@@
 TRANSITION CROSSTAB
@@ -135,45 +150,53 @@ TRANSITION CROSSTAB
 
    
        1    2    3    4    5    6
-  1 2634  160   57   50  194   54
-  2  215  998    9   24   57   21
-  3   48   10  437    6   92   10
-  4   67   28   12 1720   97   23
-  5  183   47   66   76 1080   18
+  1 2610  159   57   49  192   54
+  2  214  995    9   24   57   21
+  3   48   10  432    6   92   10
+  4   66   28   12 1702   97   23
+  5  182   46   66   74 1070   17
 
 
    
            1        2        3        4        5        6
-  1 0.310138 0.018839 0.006711 0.005887 0.022842 0.006358
-  2 0.025315 0.117509 0.001060 0.002826 0.006711 0.002473
-  3 0.005652 0.001177 0.051454 0.000706 0.010832 0.001177
-  4 0.007889 0.003297 0.001413 0.202520 0.011421 0.002708
-  5 0.021547 0.005534 0.007771 0.008949 0.127164 0.002119
+  1 0.309903 0.018879 0.006768 0.005818 0.022797 0.006412
+  2 0.025410 0.118143 0.001069 0.002850 0.006768 0.002493
+  3 0.005699 0.001187 0.051294 0.000712 0.010924 0.001187
+  4 0.007837 0.003325 0.001425 0.202090 0.011517 0.002731
+  5 0.021610 0.005462 0.007837 0.008787 0.127048 0.002019
+
+
+ NOTE: (1) evangelical; (2) mainline; (3) other; (4) catholic; (5) none; (6) death
+
 
 
 @@@@@@@@@@@@@@@@@@@
 SAMPLE DESCRIPTIVES
 @@@@@@@@@@@@@@@@@@@@@
 
-               mn   sdev  min  max    n
-idnum     1042.92 579.52    1 2044 5119
-panelwave    1.47   0.50    1    2 5119
-dateintv   509.75 131.46  315  913 5119
-reltrad      2.69   1.58    1    5 5119
-age         48.32  16.51   18   89 5119
-year      2009.94   1.42 2008 2012 5119
-educ        13.75   2.94    0   20 5119
-income      10.96   2.29    1   12 5119
-nstate       2.74   1.62    1    6 5119
-reltrad1     0.37   0.48    0    1 5119
-reltrad2     0.16   0.37    0    1 5119
-reltrad3     0.07   0.25    0    1 5119
-reltrad4     0.22   0.41    0    1 5119
-reltrad5     0.18   0.39    0    1 5119
-female       0.55   0.50    0    1 5119
-married      0.47   0.50    0    1 5119
-white        0.78   0.41    0    1 5119
-black        0.14   0.35    0    1 5119
+                mn    sdev  min  max    n
+idnum      1441.63 1055.49    1 4510 8422
+panelwave     1.45    0.50    1    2 8422
+dateintv        NA      NA   NA   NA 8422
+reltrad       2.68    1.57    1    5 8422
+age          48.69   16.99   18   89 8422
+year       2008.93    1.91 2006 2012 8422
+educ         13.66    3.00    0   20 8422
+income          NA      NA   NA   NA 8422
+wtpan12         NA      NA   NA   NA 8422
+wtpannr12       NA      NA   NA   NA 8422
+wtpan123        NA      NA   NA   NA 8422
+wtpannr123      NA      NA   NA   NA 8422
+nstate        2.73    1.62    1    6 8422
+reltrad1      0.37    0.48    0    1 8422
+reltrad2      0.16    0.36    0    1 8422
+reltrad3      0.07    0.26    0    1 8422
+reltrad4      0.23    0.42    0    1 8422
+reltrad5      0.17    0.38    0    1 8422
+female        0.57    0.50    0    1 8422
+married       0.48    0.50    0    1 8422
+white         0.78    0.42    0    1 8422
+black         0.14    0.35    0    1 8422
 
 
 @@@@@@@@@@@@@@@@@@@
@@ -185,5 +208,5 @@ Written to [1] "H:/projects/rel_belong/output/private~/subpanel.csv"
 From prep-data.R code
 
 Processing time: elapsed 
-   4228 
+  0.162 
  minutes

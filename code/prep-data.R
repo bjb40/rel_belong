@@ -46,7 +46,10 @@ vars = c(
   'educ', #years
   'race', #1)white; 2)black; 3)other
   'marital', #1) married; 2) widowed; 3) divorced; 4) sep; 5) nevermarried
-  'income'
+  'income',
+  
+  # weight variables
+  'wtpan12','wtpannr12','wtpan123','wtpannr123'
   
 )
 
@@ -139,6 +142,22 @@ sink(paste(outdir,'dat-transform.txt',sep=''))
   table(black,race)
   detach(subpanel)
 
+  
+  cat('\n\n@@@@@@@@@@@@@@@@@@@\nCHECK DEATH RECODES')
+  cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')
+  
+  cat('Wave 1 -> Wave 2\n')
+  table(subpanel$nstate[subpanel$panelwave==1],subpanel$panstat_2[subpanel$panelwave==1])
+  
+  cat('\nWave 2 -> Wave 3\n')
+  table(subpanel$nstate[subpanel$panelwave==2],subpanel$panstat_3[subpanel$panelwave==2])
+  
+  cat('\n\n NOTE.\n
+     ROW: (1) evangelical; (2) mainline; (3) other; (4) catholic; (5) none; (6) death\n
+     COL: (1) elligible for panel and inerviewed; (2) elligible not interviewed; (31) left US; (32) instutionalized; (33) died'
+      )
+  
+  
 cat('\n\n@@@@@@@@@@@@@@@@@@@\nFULL SUBPANEL DESCRIPTIVES')
 cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')
 
@@ -148,25 +167,23 @@ cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')
 cat('\n\n@@@@@@@@@@@@@@@@@@@\nINFO ON ANALYTIC SAMPLE')
 cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')
 
-samp=na.omit(subpanel)
+nomiss = apply(is.na(subpanel[,c('reltrad','nstate','age','educ','female','married','white','black')])==F,1,all)
+
+samp=subpanel[nomiss,]
 cat('\n                             \t\tPersons\t\tObservations')
 cat('\nTotals                      ',length(unique(subpanel$idnum)),nrow(subpanel),sep='\t\t')
 cat('\nListwise Delete             ',length(unique(samp$idnum)),nrow(samp),sep='\t\t')
+
+#drop extraneous (recoded variables)
+samp = samp[,!names(samp) %in% dropvar]
+
+#limit to listwise delete
+subpanel=samp
 
 #create random subsample of 300 from remaining
 #keepid = sample(unique(samp$idnum),size=300,replace=F)
 #samp=samp[samp$idnum %in% keepid,]
 #cat('\n300 random sample (person)  ',length(unique(samp$idnum)),nrow(samp),sep='\t\t')
-
-cat('\n\n@@@@@@@@@@@@@@@@@@@\nCHECK DEATH RECODES')
-cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')
-
-cat('Wave 1 -> Wave 2\n')
-table(subpanel$nstate[subpanel$panelwave==1],subpanel$panstat_2[subpanel$panelwave==1])
-
-cat('Wave 2 -> Wave 3\n')
-table(subpanel$nstate[subpanel$panelwave==2],subpanel$panstat_3[subpanel$panelwave==2])
-
 
 cat('\n\n@@@@@@@@@@@@@@@@@@@\nTRANSITION CROSSTAB')
 cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')
@@ -177,9 +194,7 @@ cat('\n\n')
 print(prop.table(cx))
 rm(cx)
 
-#drop extraneous (recoded variables)
-samp = samp[,!names(samp) %in% dropvar]
-
+cat('\n\n NOTE: (1) evangelical; (2) mainline; (3) other; (4) catholic; (5) none; (6) death\n\n')
 
 cat('\n\n@@@@@@@@@@@@@@@@@@@\nSAMPLE DESCRIPTIVES')
 cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')
@@ -189,8 +204,6 @@ desc = apply(samp,2,FUN=function(x)
 
 print(round(t(desc),digits=2), row.names=F)
 rm(desc)
-
-subpanel=samp
 
 rm(rawpanel,samp)
 write.csv(subpanel,file=paste(outdir,'private~/subpanel.csv',sep=''))
@@ -203,7 +216,7 @@ paste(outdir,'private~/subpanel.csv',sep='')
 cat('\nFrom prep-data.R code\n\nProcessing time: ')
 
 #print minutes elapsed for code
-print((proc.time()[3]) - st/60)
+print((proc.time()[3] - st)/60)
 cat(' minutes')
 
 sink()
