@@ -30,6 +30,10 @@ vars = c(
   #wave
   'panelwave','dateintv',
   
+  #attrition variables (DV)
+  #1: insamp, 2: attrit, 31=institutionalized, 32=moved out of us, 33=died
+  'panstat_2','panstat_3',
+  
   #tradition (DV)
   #cyrus stata code : 1) evangelical; 2) mainline; 3)other; (4) catholic; (5) none
   'reltrad',
@@ -49,8 +53,10 @@ vars = c(
 subpanel = subset(rawpanel,select=c(vars))
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-#join subset for t-1 in reltrad
+#join subset for t-1 in reltrad; add death as reltrad option
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+#should switch to future instead of past to make consistent with death???
 
 lastwave = subset(subpanel,select=c(idnum,panelwave,reltrad),panelwave > 1)
 lastwave$panelwave = lastwave$panelwave - 1
@@ -67,6 +73,14 @@ for(i in unique(subpanel$idnum)){
     subpanel$reltrad_last[subpanel$idnum == i & subpanel$panelwave == w] = last
   }
 }
+
+#panstat_2 and panstat_3 summarize elligibility
+#1) sel, elligible, reinterview; 2) sel, elligible, not reinterview; 3) sel, not ell, not int
+#more info about inelligibility 
+#31=inelligible b/c lived outside use
+#32=inelligible b/c instituionalized
+#33=inelligible b/c died
+
 rm(lastwave)
 
 #@@@@@@@@@@@@@@@@
