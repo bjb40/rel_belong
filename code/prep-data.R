@@ -20,11 +20,11 @@ source("H:/projects/rel_belong/code/config.R",
 #see readme for source
 library(foreign)
 rawpanel = read.dta(paste(outdir,'private~/cypanel.dta',sep=''),  convert.factors = FALSE)
+#rpfactor = read.dta(paste(outdir,'private~/cypanel.dta',sep='')) #helps id coding
 
 #select variables to retain
-
 vars = c(
-  #independant id variable
+  #independant id variable - jeremy freeze flip code avail from GSS site?
   'idnum',
   
   #wave
@@ -56,21 +56,19 @@ subpanel = subset(rawpanel,select=c(vars))
 #join subset for t-1 in reltrad; add death as reltrad option
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-#should switch to future instead of past to make consistent with death???
+nextwave = subset(subpanel,select=c(idnum,panelwave,reltrad,panstat_2,panstat_3),panelwave >1)
+nextwave$panelwave = nextwave$panelwave - 1 #take next wave back one
 
-lastwave = subset(subpanel,select=c(idnum,panelwave,reltrad),panelwave > 1)
-lastwave$panelwave = lastwave$panelwave - 1
-
-#remove wave 1 from subpanel and reltrad--need t and t-1 only
+#remove wave 1 from subpanel and reltrad--need t and t+1 only
 subpanel = subset(subpanel, panelwave < 3)
 
-subpanel$reltrad_last = as.numeric(NA)
+subpanel$nstate = as.numeric(NA)
 
 for(i in unique(subpanel$idnum)){
   for(w in 1:2){
-    last = lastwave$reltrad[lastwave$idnum == i & lastwave$panelwave == w]    
+    nextstate = nextwave$reltrad[nextwave$idnum == i & nextwave$panelwave == w]    
     #print(c(i,w,last))
-    subpanel$reltrad_last[subpanel$idnum == i & subpanel$panelwave == w] = last
+    subpanel$nstate[subpanel$idnum == i & subpanel$panelwave == w] = nextstate
   }
 }
 
@@ -81,17 +79,21 @@ for(i in unique(subpanel$idnum)){
 #32=inelligible b/c instituionalized
 #33=inelligible b/c died
 
-rm(lastwave)
+#add death as a final option
+subpanel$nstate[subpanel$panstat_2 == 33 & subpanel$panelwave==1] = 6
+subpanel$nstate[subpanel$panstat_3 == 33 & subpanel$panelwave==2] = 6
+
+rm(nextwave)
 
 #@@@@@@@@@@@@@@@@
 #recodes
 #write tables for checking
 #@@@@@@@@@@@@@@@
 
-#create matrix of indicator variables for reltrad_last
-reldum = matrix(0,nrow(subpanel),unique(subpanel$reltrad_last))
-for(ob in 1:nrow(reldum)){reldum[ob,subpanel$reltrad_last[ob]]=1}
-colnames(reldum) = paste('reltrad_last',1:ncol(reldum),sep='')
+#create matrix of indicator variables for reltrad
+reldum = matrix(0,nrow(subpanel),unique(subpanel$reltrad))
+for(ob in 1:nrow(reldum)){reldum[ob,subpanel$reltrad[ob]]=1}
+colnames(reldum) = paste('reltrad',1:ncol(reldum),sep='')
 subpanel= cbind(subpanel,reldum)
 rm(reldum)
 
@@ -113,7 +115,7 @@ subpanel$black[subpanel$race == 2] = 1
 subpanel$black[subpanel$race %in% c(1,3)] = 0
 
 #hold variables to drop later
-dropvar = c('race','sex','marital')
+dropvar = c('race','sex','marital','panstat_2','panstat_3')
 
 #check recodes
 sink(paste(outdir,'dat-transform.txt',sep=''))
@@ -122,8 +124,8 @@ sink(paste(outdir,'dat-transform.txt',sep=''))
   cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')
 
   cat('\nReligious tradition recodes for first ten observations\n')
-  print(head(subpanel[,c('idnum','reltrad_last','reltrad_last1','reltrad_last2',
-              'reltrad_last3','reltrad_last4','reltrad_last5')],n=10))
+  print(head(subpanel[,c('idnum','reltrad','reltrad1','reltrad2',
+              'reltrad3','reltrad4','reltrad5')],n=10))
   cat('\n\nTables overviewing recodes \n')
   
     
@@ -143,7 +145,7 @@ cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')
   summary(subpanel)
 
 
-cat('\n\n@@@@@@@@@@@@@@@@@@@\nINFO ON LIMITING TO RANDOM SUBSAMPLE OF 300 INDIVIDUALS')
+cat('\n\n@@@@@@@@@@@@@@@@@@@\nINFO ON ANALYTIC SAMPLE')
 cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')
 
 samp=na.omit(subpanel)
@@ -152,9 +154,28 @@ cat('\nTotals                      ',length(unique(subpanel$idnum)),nrow(subpane
 cat('\nListwise Delete             ',length(unique(samp$idnum)),nrow(samp),sep='\t\t')
 
 #create random subsample of 300 from remaining
-keepid = sample(unique(samp$idnum),size=300,replace=F)
-samp=samp[samp$idnum %in% keepid,]
-cat('\n300 random sample (person)  ',length(unique(samp$idnum)),nrow(samp),sep='\t\t')
+#keepid = sample(unique(samp$idnum),size=300,replace=F)
+#samp=samp[samp$idnum %in% keepid,]
+#cat('\n300 random sample (person)  ',length(unique(samp$idnum)),nrow(samp),sep='\t\t')
+
+cat('\n\n@@@@@@@@@@@@@@@@@@@\nCHECK DEATH RECODES')
+cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')
+
+cat('Wave 1 -> Wave 2\n')
+table(subpanel$nstate[subpanel$panelwave==1],subpanel$panstat_2[subpanel$panelwave==1])
+
+cat('Wave 2 -> Wave 3\n')
+table(subpanel$nstate[subpanel$panelwave==2],subpanel$panstat_3[subpanel$panelwave==2])
+
+
+cat('\n\n@@@@@@@@@@@@@@@@@@@\nTRANSITION CROSSTAB')
+cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')
+
+cx=table(subpanel$reltrad,subpanel$nstate)
+print(cx)
+cat('\n\n')
+print(prop.table(cx))
+rm(cx)
 
 #drop extraneous (recoded variables)
 samp = samp[,!names(samp) %in% dropvar]
@@ -169,12 +190,23 @@ desc = apply(samp,2,FUN=function(x)
 print(round(t(desc),digits=2), row.names=F)
 rm(desc)
 
-sink()
-
 subpanel=samp
 
 rm(rawpanel,samp)
 write.csv(subpanel,file=paste(outdir,'private~/subpanel.csv',sep=''))
 
+cat('\n\n@@@@@@@@@@@@@@@@@@@\nNOTES')
+cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')
+
+cat('Written to ')
+paste(outdir,'private~/subpanel.csv',sep='')
+cat('\nFrom prep-data.R code\n\nProcessing time: ')
+
 #print minutes elapsed for code
-(proc.time()[3] - st)/60
+print((proc.time()[3]) - st/60)
+cat(' minutes')
+
+sink()
+
+print((proc.time()[3] - st)/60)
+

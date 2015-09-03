@@ -1,4 +1,4 @@
-[1] 2015-08-07
+[1] 2015-09-03
 
 
 @@@@@@@@@@@@@@@@@@@
@@ -7,17 +7,17 @@ cHECK RECODES
 
 
 Religious tradition recodes for first ten observations
-   idnum reltrad_last reltrad_last1 reltrad_last2 reltrad_last3 reltrad_last4 reltrad_last5
-1      9            5             0             0             0             0             1
-2      9            5             0             0             0             0             1
-4     10            5             0             0             0             0             1
-5     10            5             0             0             0             0             1
-7     11            1             1             0             0             0             0
-8     11            1             1             0             0             0             0
-10    12            5             0             0             0             0             1
-11    12            4             0             0             0             1             0
-13    13            3             0             0             1             0             0
-14    13            3             0             0             1             0             0
+   idnum reltrad reltrad1 reltrad2 reltrad3 reltrad4 reltrad5
+1      9       5        0        0        0        0        1
+2      9       5        0        0        0        0        1
+4     10       5        0        0        0        0        1
+5     10       5        0        0        0        0        1
+7     11       1        1        0        0        0        0
+8     11       1        1        0        0        0        0
+10    12       4        0        0        0        1        0
+11    12       5        0        0        0        0        1
+13    13       3        0        0        1        0        0
+14    13       3        0        0        1        0        0
 
 
 Tables overviewing recodes 
@@ -46,30 +46,54 @@ black    1    2    3
 FULL SUBPANEL DESCRIPTIVES
 @@@@@@@@@@@@@@@@@@@@@
 
-     idnum        panelwave      dateintv       reltrad          age            year           sex            educ           race     
- Min.   :   1   Min.   :1.0   Min.   :307    Min.   :1      Min.   :18     Min.   :2006   Min.   :1      Min.   : 0     Min.   :1     
- 1st Qu.: 620   1st Qu.:1.0   1st Qu.:415    1st Qu.:1      1st Qu.:34     1st Qu.:2008   1st Qu.:1      1st Qu.:12     1st Qu.:1     
- Median :1237   Median :1.5   Median :509    Median :2      Median :48     Median :2008   Median :2      Median :13     Median :1     
- Mean   :1418   Mean   :1.5   Mean   :518    Mean   :3      Mean   :48     Mean   :2009   Mean   :2      Mean   :14     Mean   :1     
- 3rd Qu.:1859   3rd Qu.:2.0   3rd Qu.:614    3rd Qu.:4      3rd Qu.:61     3rd Qu.:2010   3rd Qu.:2      3rd Qu.:16     3rd Qu.:1     
- Max.   :4510   Max.   :2.0   Max.   :915    Max.   :5      Max.   :89     Max.   :2012   Max.   :2      Max.   :20     Max.   :3     
-                              NA's   :1400   NA's   :1529   NA's   :1484   NA's   :1399   NA's   :1399   NA's   :1417   NA's   :1399  
-    marital         income      reltrad_last  reltrad_last1   reltrad_last2   reltrad_last3   reltrad_last4   reltrad_last5  
- Min.   :1      Min.   : 1     Min.   :1      Min.   :0.000   Min.   :0.000   Min.   :0.000   Min.   :0.000   Min.   :0.000  
- 1st Qu.:1      1st Qu.:11     1st Qu.:1      1st Qu.:0.000   1st Qu.:0.000   1st Qu.:0.000   1st Qu.:0.000   1st Qu.:0.000  
- Median :2      Median :12     Median :2      Median :0.000   Median :0.000   Median :0.000   Median :0.000   Median :0.000  
- Mean   :3      Mean   :11     Mean   :3      Mean   :0.263   Mean   :0.104   Mean   :0.049   Mean   :0.155   Mean   :0.126  
- 3rd Qu.:5      3rd Qu.:12     3rd Qu.:4      3rd Qu.:1.000   3rd Qu.:0.000   3rd Qu.:0.000   3rd Qu.:0.000   3rd Qu.:0.000  
- Max.   :5      Max.   :12     Max.   :5      Max.   :1.000   Max.   :1.000   Max.   :1.000   Max.   :1.000   Max.   :1.000  
- NA's   :1410   NA's   :2570   NA's   :3677                                                                                  
-     female        married         white          black     
- Min.   :0      Min.   :0      Min.   :0      Min.   :0     
- 1st Qu.:0      1st Qu.:0      1st Qu.:1      1st Qu.:0     
- Median :1      Median :0      Median :1      Median :0     
- Mean   :1      Mean   :0      Mean   :1      Mean   :0     
- 3rd Qu.:1      3rd Qu.:1      3rd Qu.:1      3rd Qu.:0     
- Max.   :1      Max.   :1      Max.   :1      Max.   :1     
- NA's   :1399   NA's   :1410   NA's   :1399   NA's   :1399  
+     idnum        panelwave      dateintv      panstat_2   
+ Min.   :   1   Min.   :1.0   Min.   :307    Min.   : 1    
+ 1st Qu.: 620   1st Qu.:1.0   1st Qu.:415    1st Qu.: 1    
+ Median :1237   Median :1.5   Median :509    Median : 1    
+ Mean   :1418   Mean   :1.5   Mean   :518    Mean   : 2    
+ 3rd Qu.:1859   3rd Qu.:2.0   3rd Qu.:614    3rd Qu.: 1    
+ Max.   :4510   Max.   :2.0   Max.   :915    Max.   :33    
+                              NA's   :1400   NA's   :4000  
+   panstat_3       reltrad          age            year     
+ Min.   : 1     Min.   :1      Min.   :18     Min.   :2006  
+ 1st Qu.: 1     1st Qu.:1      1st Qu.:34     1st Qu.:2008  
+ Median : 1     Median :2      Median :48     Median :2008  
+ Mean   : 2     Mean   :3      Mean   :48     Mean   :2009  
+ 3rd Qu.: 1     3rd Qu.:4      3rd Qu.:61     3rd Qu.:2010  
+ Max.   :33     Max.   :5      Max.   :89     Max.   :2012  
+ NA's   :5870   NA's   :1529   NA's   :1484   NA's   :1399  
+      sex            educ           race         marital    
+ Min.   :1      Min.   : 0     Min.   :1      Min.   :1     
+ 1st Qu.:1      1st Qu.:12     1st Qu.:1      1st Qu.:1     
+ Median :2      Median :13     Median :1      Median :2     
+ Mean   :2      Mean   :14     Mean   :1      Mean   :3     
+ 3rd Qu.:2      3rd Qu.:16     3rd Qu.:1      3rd Qu.:5     
+ Max.   :2      Max.   :20     Max.   :3      Max.   :5     
+ NA's   :1399   NA's   :1417   NA's   :1399   NA's   :1410  
+     income         nstate        reltrad1        reltrad2    
+ Min.   : 1     Min.   :1      Min.   :0.000   Min.   :0.000  
+ 1st Qu.:11     1st Qu.:1      1st Qu.:0.000   1st Qu.:0.000  
+ Median :12     Median :2      Median :0.000   Median :0.000  
+ Mean   :11     Mean   :3      Mean   :0.321   Mean   :0.132  
+ 3rd Qu.:12     3rd Qu.:4      3rd Qu.:1.000   3rd Qu.:0.000  
+ Max.   :12     Max.   :6      Max.   :1.000   Max.   :1.000  
+ NA's   :2570   NA's   :3550                                  
+    reltrad3        reltrad4        reltrad5         female    
+ Min.   :0.000   Min.   :0.000   Min.   :0.000   Min.   :0     
+ 1st Qu.:0.000   1st Qu.:0.000   1st Qu.:0.000   1st Qu.:0     
+ Median :0.000   Median :0.000   Median :0.000   Median :1     
+ Mean   :0.062   Mean   :0.207   Mean   :0.153   Mean   :1     
+ 3rd Qu.:0.000   3rd Qu.:0.000   3rd Qu.:0.000   3rd Qu.:1     
+ Max.   :1.000   Max.   :1.000   Max.   :1.000   Max.   :1     
+                                                 NA's   :1399  
+    married         white          black     
+ Min.   :0      Min.   :0      Min.   :0     
+ 1st Qu.:0      1st Qu.:1      1st Qu.:0     
+ Median :0      Median :1      Median :0     
+ Mean   :0      Mean   :1      Mean   :0     
+ 3rd Qu.:1      3rd Qu.:1      3rd Qu.:0     
+ Max.   :1      Max.   :1      Max.   :1     
+ NA's   :1410   NA's   :1399   NA's   :1399  
 
 
 @@@@@@@@@@@@@@@@@@@
@@ -79,29 +103,87 @@ INFO ON LIMITING TO RANDOM SUBSAMPLE OF 300 INDIVIDUALS
 
                              		Persons		Observations
 Totals                      		3121		12134
-Listwise Delete             		2722		7509
-300 random sample (person)  		300		862
+Listwise Delete             		1885		5119
+
+@@@@@@@@@@@@@@@@@@@
+CHECK DEATH RECODES
+@@@@@@@@@@@@@@@@@@@@@
+
+Wave 1 -> Wave 2
+   
+       1    2   31   32   33
+  1 1152    0    0    0    0
+  2  494    0    0    0    0
+  3  200    0    0    0    0
+  4  678    0    0    0    0
+  5  580    0    0    0    0
+  6    0    0    0    0   72
+Wave 2 -> Wave 3
+   
+      1   2  31  32  33
+  1 966   0   0   0   0
+  2 386   0   0   0   0
+  3 176   0   0   0   0
+  4 549   0   0   0   0
+  5 496   0   0   0   0
+  6   0   0   0   0  55
+
+
+@@@@@@@@@@@@@@@@@@@
+TRANSITION CROSSTAB
+@@@@@@@@@@@@@@@@@@@@@
+
+   
+       1    2    3    4    5    6
+  1 2634  160   57   50  194   54
+  2  215  998    9   24   57   21
+  3   48   10  437    6   92   10
+  4   67   28   12 1720   97   23
+  5  183   47   66   76 1080   18
+
+
+   
+           1        2        3        4        5        6
+  1 0.310138 0.018839 0.006711 0.005887 0.022842 0.006358
+  2 0.025315 0.117509 0.001060 0.002826 0.006711 0.002473
+  3 0.005652 0.001177 0.051454 0.000706 0.010832 0.001177
+  4 0.007889 0.003297 0.001413 0.202520 0.011421 0.002708
+  5 0.021547 0.005534 0.007771 0.008949 0.127164 0.002119
+
 
 @@@@@@@@@@@@@@@@@@@
 SAMPLE DESCRIPTIVES
 @@@@@@@@@@@@@@@@@@@@@
 
-                   mn    sdev  min  max   n
-idnum         1384.81 1038.59    1 4468 862
-panelwave        1.46    0.50    1    2 862
-dateintv       512.58  133.26  309  913 862
-reltrad          2.71    1.58    1    5 862
-age             47.37   16.92   19   89 862
-year          2008.96    1.91 2006 2012 862
-educ            13.78    2.75    0   20 862
-income          11.13    2.03    1   12 862
-reltrad_last     2.71    1.59    1    5 862
-reltrad_last1    0.37    0.48    0    1 862
-reltrad_last2    0.15    0.35    0    1 862
-reltrad_last3    0.07    0.25    0    1 862
-reltrad_last4    0.22    0.41    0    1 862
-reltrad_last5    0.19    0.39    0    1 862
-female           0.55    0.50    0    1 862
-married          0.51    0.50    0    1 862
-white            0.79    0.40    0    1 862
-black            0.12    0.32    0    1 862
+               mn   sdev  min  max    n
+idnum     1042.92 579.52    1 2044 5119
+panelwave    1.47   0.50    1    2 5119
+dateintv   509.75 131.46  315  913 5119
+reltrad      2.69   1.58    1    5 5119
+age         48.32  16.51   18   89 5119
+year      2009.94   1.42 2008 2012 5119
+educ        13.75   2.94    0   20 5119
+income      10.96   2.29    1   12 5119
+nstate       2.74   1.62    1    6 5119
+reltrad1     0.37   0.48    0    1 5119
+reltrad2     0.16   0.37    0    1 5119
+reltrad3     0.07   0.25    0    1 5119
+reltrad4     0.22   0.41    0    1 5119
+reltrad5     0.18   0.39    0    1 5119
+female       0.55   0.50    0    1 5119
+married      0.47   0.50    0    1 5119
+white        0.78   0.41    0    1 5119
+black        0.14   0.35    0    1 5119
+
+
+@@@@@@@@@@@@@@@@@@@
+NOTES
+@@@@@@@@@@@@@@@@@@@@@
+
+Written to [1] "H:/projects/rel_belong/output/private~/subpanel.csv"
+
+From prep-data.R code
+
+Processing time: elapsed 
+   4228 
+ minutes

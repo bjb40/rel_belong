@@ -14,13 +14,13 @@ source("H:/projects/rel_belong/code/config.R",
 #Load life table samples
 #@@@@@@@@@@@@@@@@@@@@@@@@
 
-l = read.csv(paste(outdir,'l.csv',''), header=F)
+l = read.csv(paste(outdir,'l.csv',sep=''), header=F)
 #lar = array(unlist(read.csv(paste(outdir,'l.csv',''), header=F)[,2:26]),c(30,10000,25))
 #confirm array is put together correctly
 #View(l[1:30,2:26] == lar[,1,])
 #rm(l)
 
-le = read.csv(paste(outdir,'le.csv',''), header=F)
+le = read.csv(paste(outdir,'le.csv',sep=''), header=F)
 
 nm = c('Evangelical','Mainline', 'Other', 'Catholic','None')
 
