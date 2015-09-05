@@ -141,7 +141,8 @@ INFO ON ANALYTIC SAMPLE
 
 
                              		Persons		Observations
-Totals                      		3121		12134
+Totals                      		3121		18201
+Removing 3d wave            		3121		12134
 Listwise Delete             		2812		8422
 
 @@@@@@@@@@@@@@@@@@@
@@ -208,5 +209,5 @@ Written to [1] "H:/projects/rel_belong/output/private~/subpanel.csv"
 From prep-data.R code
 
 Processing time: elapsed 
-  0.162 
+  0.158 
  minutes

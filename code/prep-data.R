@@ -171,7 +171,8 @@ nomiss = apply(is.na(subpanel[,c('reltrad','nstate','age','educ','female','marri
 
 samp=subpanel[nomiss,]
 cat('\n                             \t\tPersons\t\tObservations')
-cat('\nTotals                      ',length(unique(subpanel$idnum)),nrow(subpanel),sep='\t\t')
+cat('\nTotals                      ',length(unique(rawpanel$idnum)),nrow(rawpanel),sep='\t\t')
+cat('\nRemoving 3d wave            ',length(unique(subpanel$idnum)),nrow(subpanel),sep='\t\t')
 cat('\nListwise Delete             ',length(unique(samp$idnum)),nrow(samp),sep='\t\t')
 
 #drop extraneous (recoded variables)
