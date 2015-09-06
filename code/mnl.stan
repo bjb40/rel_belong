@@ -5,9 +5,6 @@
 #Bryce Bartlett
 #@@@@@@@@@@@@@@@@@@@
 
-#need to constrain so that the options sum to 1 and double check priors, etc.
-
-
 data { 
   int<lower=2> K; //categories in y
   int<lower=0> N; //observations
@@ -26,13 +23,19 @@ parameters {
   matrix[K-1,D] beta_raw; 
   }
 
+#not tranforming per se--just constraining 
+#the first column to be 0
+#will throw a warning about a jacobian
+#but since there is no transformaiton, no adjustment
+#is necessary
+
 transformed parameters {
   matrix[K,D] beta; 
   beta <- append_row(zeros,beta_raw); 
   }
 
 model { 
-  to_vector(beta) ~ normal(0,5); 
+  to_vector(beta) ~ normal(0,10); 
   for (n in 1:N) 
     y[n] ~ categorical_logit(beta * xmat[n]);
     }

@@ -13,13 +13,37 @@ source("H:/projects/rel_belong/code/config.R",
        echo =T, print.eval = T, keep.source=T)
 
 
-
 #@@@@@@@@@@@@@
 #prep stan input
 #@@@@@@@@@@@@@
 
 #read data previously cleaned using ./prep-data.r
 dat = read.csv(paste(outdir,'private~/subpanel.csv',sep=''))
+
+#dummy matrix for 30 dim y variable
+trdum = matrix(0,nrow(dat),length(unique(dat$nstate))*length(unique(dat$reltrad)))
+
+iter=1
+ct = matrix(0,30,3)
+
+for(cs in(unique(dat$reltrad))){ #current state iterator
+  for(ns in unique(dat$nstate)){ #next state iterator
+    trdum[dat$reltrad == cs & dat$nstate == ns,((cs-1)*max(dat$nstate))+ns] = 1
+    ct[iter,] = c(cs,ns,(cs-1)*max(dat$nstate)+ns)
+    iter=iter+1
+  }
+} 
+
+#test
+apply(trdum,2,sum) == as.vector(table(dat$reltrad,dat$nstate))
+
+#@@@@@@@@@@@@@@@@
+#Need to move to prep data
+#@@@@@@@@@@@@@@@@
+
+#mnage = mean(dat$age)
+#dat$age = dat$age - mnage
+
 dat$age2 = dat$age*dat$age
 
 y = as.integer(dat$nstate)
@@ -44,11 +68,16 @@ library('rstan')
 
 #detect cores to activate parallel procesing
 rstan_options(auto_write = TRUE)
-options(mc.cores = parallel::detectCores())
+#options(mc.cores = parallel::detectCores())
+options(mc.cores = 3) #leave one core free for work
 
 fit <- stan("mnl.stan", data=c("K", "D", "N", "y", "xmat"),
-            chains=4, warmup=2000, iter=2500, seed=1234,verbose=T,
+            #algorithm='HMC',
+            chains=3,iter=250, seed=1397682,verbose=T,
+            sample_file = paste0(outdir,'diagnostic~/post-samp.txt'),
+            diagnostic_file = paste0(outdir,'diagnostic~/stan-diagnostic.txt'),
             open_progress=T);
+
 
 #print time taken
 print(Sys.time() - st)
@@ -84,4 +113,9 @@ cat('\n\n\nSource:ml-stan.R, model: mnl.stan')
 
 sink()
 
-traceplot(fit,pars=paste0("beta[2",",",c(1:10),"]"),nrow=5,ncol=2)
+for(c in 2:6){
+  png(filename=paste0(outdir,'trace~/trace',c,'.png'))
+  traceplot(fit,pars=paste0("beta[",c,",",c(1:10),"]"),nrow=5,ncol=2)
+  dev.off()
+}
+
