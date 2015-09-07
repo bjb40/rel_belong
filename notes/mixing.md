@@ -129,3 +129,5 @@ Things I tried (with results):
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Try 250 draws with HMC algorithm (not NUTS) -- stopped after 15 minutes; only 10 draws; no good!
+
+- Optimized in Stata, using BIC score; let go of age^2 term, and everything was good!

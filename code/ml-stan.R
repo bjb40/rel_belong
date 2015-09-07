@@ -26,8 +26,7 @@ dat = read.csv(paste(outdir,'private~/subpanel.csv',sep=''))
 
 #mnage = mean(dat$age)
 #dat$age = dat$age - mnage
-
-dat$age2 = dat$age*dat$age
+#dat$age2 = dat$age*dat$age
 
 y = as.integer(dat$nstate)
 x = as.matrix(subset(dat,
@@ -56,7 +55,7 @@ options(mc.cores = 3) #leave one core free for work
 
 fit <- stan("mnl.stan", data=c("K", "D", "N", "y", "xmat"),
             #algorithm='HMC',
-            chains=3,iter=1000, seed=6590,verbose=T,
+            chains=3,iter=1200, seed=6590,verbose=T,
             sample_file = paste0(outdir,'diagnostic~/post-samp.txt'),
             diagnostic_file = paste0(outdir,'diagnostic~/stan-diagnostic.txt'),
             open_progress=T);
@@ -97,7 +96,7 @@ cat('\n\n\nSource:ml-stan.R, model: mnl.stan')
 sink()
 
 for(c in 2:6){
-  png(filename=paste0(outdir,'trace~/trace',c,'.png'))
+  png(filename=paste0(outdir,'diagnostic~/trace',c,'.png'))
   traceplot(fit,pars=paste0("beta[",c,",",c(1:9),"]"),nrow=5,ncol=2)
   dev.off()
 }
