@@ -29,9 +29,9 @@ post = read.csv(paste(outdir,'post.csv',sep=''))
 startstate = c(table(dat$reltrad)/nrow(dat),0)
 rm(dat) #no longer needed
 
-ageints=30; n=2; agestart = 25
+ageints=11; n=5; agestart = 25
 radix= matrix(startstate,nrow=1,ncol=length(startstate))
-L=l=array(0,c(ageints,6,6)); l[1,,]=diag(6)*as.numeric(startstate)
+L=l=matrix(0,ageints,6); l[1,] = radix
 
 #from Lynch 2007 book
 #mpower=function(mat,power)
@@ -39,9 +39,13 @@ L=l=array(0,c(ageints,6,6)); l[1,,]=diag(6)*as.numeric(startstate)
 
 #construct data for simple transition matrix
 #int, reltrad2-reltrad5, female, married, white, age
+xsim = matrix(0,5,9)
 
 #add intercept
 xsim[,1] = 1
+
+#make white
+xsim[,8] = 1
 
 #iterate over each starting state
 for(i in 2:5){xsim[i,i] = 1}
@@ -95,29 +99,31 @@ for(m in 1:10){
     
     if(a+2 <= ageints){
       #survive based on phi for lx
-      l[a+2,,] = diag(apply(l[a+1,,],2,sum)) %*% phi
+      l[a+2,] = l[a+1,] %*% phi
     
       #update Lx for agegroup - currently piecewise exponential hazard (sylvester's formula changes)
       #see lynch&brown (New approach), and Keyfitz for calcualtions
 
-      L[a+1,,] = (l[a+1,,]+l[a+2,,])/2
+      L[a+1,] = (l[a+1,]+l[a+2,])/2
     }
-    #need to close out correctly...
-    
+
   } #close age cycle
+
+  #close out multistate life tabl
+  #1) apply by dividing by inverse (scott 2010, p. 1068)
+  L[11,] = l[11,] %*% solve(phi)
   
-  #calculate ex--wrong b/c no mortality - 
-  #need to think whether dim is appropriate and add names
-  Tx = array(0,c(6,6))
+    
+  #each row provides expectancy in each state from starting
+  le = matrix(0,ageints,5)
   
-  for(d in 1:5){
-    Tx[d,] = apply(l[,d,],2,sum)*n
+  for(a in 1:ageints-1){
+    le[a,] = apply(L[a:ageints,1:5],2,sum)/l[a,1:5]
   }
-    #each row provides expectancy in each state from starting
-    le = apply(Tx,2,function(x) x/diag(l[1,,]))
+    le[ageints,] = L[ageints,1:5]/l[ageints,1:5]
   
   #write estimates to file (need to manually delete)
-  #write.table(le,file=paste(outdir,'le.csv',''),append=T, col.names=FALSE,sep=',')
-  #write.table(l,file=paste(outdir,'l.csv',''),append=T, col.names=FALSE,sep=',')
+  write.table(le,file=paste(outdir,'le.csv',''),append=T, col.names=FALSE,sep=',')
+  write.table(l,file=paste(outdir,'l.csv',''),append=T, col.names=FALSE,sep=',')
     
 } #close sample cycle
