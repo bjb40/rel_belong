@@ -1,6 +1,6 @@
 ---
 author: Bryce Bartlett
-date: 8/10/2015
+date: 9/8/2015
 title: Technical Memo for Estimates Using Multinomial Logistic (Softmax) Regression
 csl: ../citations/asa-mod.csl
 bibliography: ../citations/rel_belong.bib
@@ -68,9 +68,10 @@ Given the foregoing, we can estimate a complete transition matrix ($\Phi$) using
 $$
 \hat{\Phi} =
 \begin{bmatrix}
-  \hat{\phi}_{1t+1}; \,where \, s_k = 1 &\hat{\phi}_{1t+1}; \, where \, s_k  = 2 &\cdots&\hat{\phi}_{1t+1}; \, where \, s_k  = K \\
-  \hat{\phi}_{2t+1}; \, where \, s_k  = 1&\hat{\phi}_{2t+1}; \, where \, s_k  = 2&\cdots&\hat{\phi}_{2t+1}; \, where \, s_k  = K \\
+  \hat{\phi}_{1t+1}; \,where \, s_k = 1 &\hat{\phi}_{2t+1}; \, where \, s_k  = 1 &\cdots&\hat{\phi}_{Kt+1}; \, where \, s_k  = 1 \\
+  \hat{\phi}_{2=1t+1}; \, where \, s_k  = 2&\hat{\phi}_{2t+1}; \, where \, s_k  = 2&\cdots&\hat{\phi}_{2=Kt+1}; \, where \, s_k =2 \\
   \vdots & \vdots & \ddots & \vdots \\
+  0      &   0    & \cdots & 1 
 \end{bmatrix}
 $$
 
@@ -81,6 +82,31 @@ Bayesian estimation takes advantage of Bayes rule in probability, to estimate th
 ```you are here```
 
 To produce the probabilities form the PPD, I generate 1000 posterior predicted estimates for each sample member, I slice the posterior predictive estimates by *sending* dummy variables, and calculate the mean expected value of the log odds. I translate this into the transition matrix $T$, by ...
+
+Bayesian Multinomial Logit Estimates; Reference Category=Evangelical.
+
+|	| To Mainline |  To Other |  To Catholic |  To None |  To Death |
+|:------|------------:|----------:|-------------:|---------:|----------:|
+| Intercept |-4.004 | -4.204 | -4.281 | -1.916 | -7.669 |
+|	|(0.208) |  (0.275) |  (0.25) |  (0.169) |  (0.485) | 
+| From Mainline |4.211 | 0.587 | 1.751 | 1.300 | 1.285 |
+|	|(0.11) |  (0.377) |  (0.256) |  (0.169) |  (0.278) | 
+| From Other |1.181 | 6.059 | 1.819 | 3.225 | 2.319 |
+|	|(0.357) |  (0.202) |  (0.472) |  (0.194) |  (0.395) | 
+| From Catholic |1.886 | 2.089 | 7.24 | 2.946 | 2.786 |
+|	|(0.248) |  (0.36) |  (0.192) |  (0.176) |  (0.296) | 
+| From None |1.444 | 2.861 | 3.092 | 4.269 | 1.676 |
+|	|(0.189) |  (0.197) |  (0.194) |  (0.112) |  (0.312) | 
+| Female |0.122 | 0.118 | 0.04 | -0.366 | -0.821 |
+|	|(0.104) |  (0.133) |  (0.122) |  (0.093) |  (0.202) | 
+| Married |0.085 | 0.276 | 0.088 | -0.223 | -0.747 |
+|	|(0.102) |  (0.14) |  (0.124) |  (0.094) |  (0.216) | 
+| White |0.412 | -0.11 | 0.129 | 0.437 | -0.563 |
+|	|(0.131) |  (0.154) |  (0.151) |  (0.106) |  (0.222) | 
+| Age |0.016 | 0.005 | 0.003 | -0.015 | 0.083 |
+|	|(0.003) |  (0.004) |  (0.004) |  (0.003) |  (0.007) | 
+
+Note: Mean of posterior (1,800 draws) with standard deviations in parenthesis; n=8,422. -2LL Posterior=-5,948 (4.740)
 
 ##Sample Life Tables
 

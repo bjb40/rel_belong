@@ -12,6 +12,9 @@
 source("H:/projects/rel_belong/code/config.R",
        echo =T, print.eval = T, keep.source=T)
 
+#read data previously cleaned using ./prep-data.r
+dat = read.csv(paste(outdir,'private~/subpanel.csv',sep=''))
+
 #@@@@@@@@@@@@@@@@@@@@@@@@
 #Load Posterior sample
 #@@@@@@@@@@@@@@@@@@@@@@@@
@@ -23,12 +26,12 @@ post = read.csv(paste(outdir,'post.csv',sep=''))
 #@@@@@@@@@@@@@@@@@@@@@@@@
 
 #need to edit to load y (from ml-stan.R)
-propy = table(y)/length(y)
+startstate = c(table(dat$reltrad)/nrow(dat),0)
+rm(dat) #no longer needed
 
 ageints=30; n=2; agestart = 25
-radix= matrix(propy,nrow=1,ncol=length(propy))
-L=l=array(0,c(ageints,5,5)); l[1,,]=diag(5)*as.numeric(propy)
-
+radix= matrix(startstate,nrow=1,ncol=length(startstate))
+L=l=array(0,c(ageints,6,6)); l[1,,]=diag(6)*as.numeric(startstate)
 
 #from Lynch 2007 book
 #mpower=function(mat,power)
@@ -36,17 +39,22 @@ L=l=array(0,c(ageints,5,5)); l[1,,]=diag(5)*as.numeric(propy)
 
 #construct data for simple transition matrix
 #int, reltrad2-reltrad5, female, married, white, age
-xsim = matrix(0,5,9)
-for(i in 1:5){xsim[i,i] = 1}
-#age
-xsim[,9] = agestart #beginning age
+
+#add intercept
+xsim[,1] = 1
+
+#iterate over each starting state
+for(i in 2:5){xsim[i,i] = 1}
+
+#insput starting age
+xsim[,9] = agestart 
 
 #@@@@@@@@@@@@@@@@@@@@@@@@
 #Compute over sample
 #@@@@@@@@@@@@@@@@@@@@@@@@
 
-for(m in 1:nrow(post)){
-#for(m in 1:10){
+#for(m in 1:nrow(post)){
+for(m in 1:10){
   
   #compute over predefined age intervals
   for(a in 0:ageints){
@@ -56,10 +64,10 @@ for(m in 1:nrow(post)){
     #print(c(m,agestart + a*n))
     
     #compute predicted odds from parameter estimates
-    est = as.matrix(post[m,2:46])
-    b = matrix(0,9,5)
+    est = as.matrix(post[m,2:ncol(post)])
+    b = matrix(0,9,6)
     for(dim in 1:9){
-      b[dim,] = est[((dim-1)*5+1):(dim*5)]
+      b[dim,] = est[((dim-1)*6+1):(dim*6)]
     }
     
     #construct odds ratio by exponentiating predicted logits
@@ -67,29 +75,29 @@ for(m in 1:nrow(post)){
     Oddsratio = exp(xsim%*%b)
     
     #convert Oddsratio to predicted probabilities by
-    #http://stats.stackexchange.com/questions/11336/predicted-probabilities-from-a-multinomial-regression-model-using-zelig-and-r
+    phi = t(apply(Oddsratio,1,function(x) x/sum(x)))
     
-    pmat <-diag(as.vector(Oddsratio %*%
-      as.matrix(rep(1,ncol(b))))^-1) %*%
-      Oddsratio
+    
+    #add absorbing state probabilities
+    phi = rbind(phi,c(rep(0,5),1))
     
     #convert tp to m via Sylvester's formula
     #need to extend to 5 dimensions - makes piecewise constant hazard by logging
     #ensures a true stationary markov process
 #    mmat=0
-#    lam2=(pmat[2,2]+pmat[1,1]+sqrt((pmat[2,2]+pmat[1,1])^2-4*(pmat[1,1]*pmat[2,2]-pmat[1,2]*pmat[2,1])))/2
-#    lam3=(pmat[2,2]+pmat[1,1]-sqrt((pmat[2,2]+pmat[1,1])^2-4*(pmat[1,1]*pmat[2,2]-pmat[1,2]*pmat[2,1])))/2
+#    lam2=(phi[2,2]+phi[1,1]+sqrt((phi[2,2]+phi[1,1])^2-4*(phi[1,1]*phi[2,2]-phi[1,2]*phi[2,1])))/2
+#    lam3=(phi[2,2]+phi[1,1]-sqrt((phi[2,2]+phi[1,1])^2-4*(phi[1,1]*phi[2,2]-phi[1,2]*phi[2,1])))/2
 #    mmat= (log(lam2)/((lam2-1)*(lam2-lam3)))*
-#      ((pmat-diag(5))%*%(pmat-lam3*diag(5)))+(log(lam3)/((lam3-1)*(lam3-lam2)))*
-#      ((pmat-diag(5))%*%(pmat-lam2*diag(5)))
+#      ((phi-diag(5))%*%(phi-lam3*diag(5)))+(log(lam3)/((lam3-1)*(lam3-lam2)))*
+#      ((phi-diag(5))%*%(phi-lam2*diag(5)))
   
 #    mmat=-mmat
     
     if(a+2 <= ageints){
-      #survive based on pmat for lx
-      l[a+2,,] = l[a+1,,] %*% pmat
+      #survive based on phi for lx
+      l[a+2,,] = diag(apply(l[a+1,,],2,sum)) %*% phi
     
-      #update Lx for agegroup - currently piecewise exponential hazard
+      #update Lx for agegroup - currently piecewise exponential hazard (sylvester's formula changes)
       #see lynch&brown (New approach), and Keyfitz for calcualtions
 
       L[a+1,,] = (l[a+1,,]+l[a+2,,])/2
@@ -100,7 +108,7 @@ for(m in 1:nrow(post)){
   
   #calculate ex--wrong b/c no mortality - 
   #need to think whether dim is appropriate and add names
-  Tx = array(0,c(5,5))
+  Tx = array(0,c(6,6))
   
   for(d in 1:5){
     Tx[d,] = apply(l[,d,],2,sum)*n
@@ -109,7 +117,7 @@ for(m in 1:nrow(post)){
     le = apply(Tx,2,function(x) x/diag(l[1,,]))
   
   #write estimates to file (need to manually delete)
-  write.table(le,file=paste(outdir,'le.csv',''),append=T, col.names=FALSE,sep=',')
-  write.table(l,file=paste(outdir,'l.csv',''),append=T, col.names=FALSE,sep=',')
+  #write.table(le,file=paste(outdir,'le.csv',''),append=T, col.names=FALSE,sep=',')
+  #write.table(l,file=paste(outdir,'l.csv',''),append=T, col.names=FALSE,sep=',')
     
 } #close sample cycle

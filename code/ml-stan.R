@@ -95,9 +95,37 @@ cat('\n\n\nSource:ml-stan.R, model: mnl.stan')
 
 sink()
 
+#save traceplots for diagnostics
 for(c in 2:6){
   png(filename=paste0(outdir,'diagnostic~/trace',c,'.png'))
   traceplot(fit,pars=paste0("beta[",c,",",c(1:9),"]"),nrow=5,ncol=2)
   dev.off()
 }
+
+#@@@@@@@@@@@@@
+#output table of estimates of multinomial estimates
+#@@@@@@@@@@@@@
+
+post_sum = summary(fit)[[1]] #full summary (ind of chain)
+
+outcome = c('Evangelical','Mainline','Other','Catholic', 'None', 'Death')
+coeff = c('Intercept',paste('From',outcome[2:5]),
+          'Female','Married','White','Age')
+
+sink(paste0(outdir,'bayesian_mnl_table.txt'))
+  cat('\nBayesian Multinomial Logit Estimates; Reference Category=Evangelical.\n')
+  cat('\n|\t|',paste('To',outcome[2:6],"| "))
+  cat('\n|:------|------------:|----------:|-------------:|---------:|----------:|\n')
+  for(c in 1:length(coeff)){
+    cat('|',coeff[c], '|')
+    cat(paste(round(post_sum[c(paste0('beta[',2:6,',',c,']')),'mean'],3),'|'))
+    cat('\n|\t|')
+    cat(paste0('(',round(post_sum[c(paste0('beta[',2:6,',',c,']')),'sd'],3),') | '))
+    cat('\n')    
+  }
+
+  cat('\nNote: Mean of posterior with standard deviations in parenthesis.')
+
+sink()
+
 
