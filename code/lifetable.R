@@ -31,7 +31,7 @@ rm(dat) #no longer needed
 
 ageints=11; n=5; agestart = 25
 radix= matrix(startstate,nrow=1,ncol=length(startstate))
-L=l=matrix(0,ageints,6); l[1,] = radix
+L=l=array(0,c(ageints,6,6)); l[1,,] = diag(6)*as.numeric(radix)
 
 #from Lynch 2007 book
 #mpower=function(mat,power)
@@ -44,7 +44,7 @@ xsim = matrix(0,5,9)
 #add intercept
 xsim[,1] = 1
 
-#make white
+#add white effect
 xsim[,8] = 1
 
 #iterate over each starting state
@@ -99,23 +99,24 @@ for(m in 1:10){
     
     if(a+2 <= ageints){
       #survive based on phi for lx
-      l[a+2,] = l[a+1,] %*% phi
+      l[a+2,,] =  diag(apply(l[a+1,,],2,sum)) %*% phi
     
       #update Lx for agegroup - currently piecewise exponential hazard (sylvester's formula changes)
       #see lynch&brown (New approach), and Keyfitz for calcualtions
 
-      L[a+1,] = (l[a+1,]+l[a+2,])/2
+      L[a+1,,] = (l[a+1,,]+l[a+2,,])/2
     }
 
   } #close age cycle
 
   #close out multistate life tabl
   #1) apply by dividing by inverse (scott 2010, p. 1068)
-  L[11,] = l[11,] %*% solve(phi)
+    L[ageints,,] = diag(apply(l[ageints,,],2,sum)) %*% solve(phi)
   
-    
-  #each row provides expectancy in each state from starting
-  le = matrix(0,ageints,5)
+  Tx = array(0,c(6,6)) 
+  for(d in 1:5){
+    Tx[d,] = apply(l[,d,],2,sum)*n
+  }
   
   for(a in 1:ageints-1){
     le[a,] = apply(L[a:ageints,1:5],2,sum)/l[a,1:5]
