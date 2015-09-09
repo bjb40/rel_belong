@@ -25,13 +25,22 @@ post = read.csv(paste(outdir,'post.csv',sep=''))
 #Initialize key variables & functions
 #@@@@@@@@@@@@@@@@@@@@@@@@
 
-#need to edit to load y (from ml-stan.R)
+#radix from observed proportions
 startstate = c(table(dat$reltrad)/nrow(dat),0)
-rm(dat) #no longer needed
 
-ageints=35; n=2; agestart = 25
+ageints=33; n=2; agestart = 18
 radix= matrix(startstate,nrow=1,ncol=length(startstate))*100000
 L=l=array(0,c(ageints,6,6)); l[1,,] = diag(6)*as.numeric(radix)
+
+#estimate rates from observations in final period
+age_last = ageints*2+agestart
+Mx_last = prop.table(
+            table(dat[dat$age>=age_last,'reltrad'],
+                  dat[dat$age>=age_last,'reltrad']
+                  )) #insufficient informatoion at 84 - will assume no tr. and 2006 life table rate for Lx
+
+rm(dat) #no longer needed
+
 
 #from Lynch 2007 book
 #mpower=function(mat,power)
@@ -58,11 +67,15 @@ xsim[,9] = agestart
 #@@@@@@@@@@@@@@@@@@@@@@@@
 
 #initialize tables for saving output
-write.table(t(as.matrix(c('iter','ageint',paste0('phi',1:36)))),file=paste0(outdir,'phi.csv'),
-            append=F, col.names=F,row.names=F,sep=',')
+#write.table(t(as.matrix(c('iter','ageint',paste0('phi',1:36)))),file=paste0(outdir,'phi.csv'),
+#            append=F, col.names=F,row.names=F,sep=',')
 
-for(m in 1:nrow(post)){
-#for(m in 1:10){
+#write.table(t(as.matrix(c('iter','ageint',paste0('le',1:25)))),file=paste0(outdir,'le.csv'),
+#            append=F, col.names=F,row.names=F,sep=',')
+
+
+#for(m in 1:nrow(post)){
+for(m in 1:10){
   
   #compute over predefined age intervals
   for(a in 0:ageints){
@@ -103,7 +116,7 @@ for(m in 1:nrow(post)){
     
     if(a+2 <= ageints){
       #survive based on phi for lx
-      l[a+2,,] =  diag(apply(l[a+1,,],2,sum)) %*% phi
+      l[a+2,,] =  diag(rowSums(l[a+1,,])) %*% phi
     
       #update Lx for agegroup - currently piecewise exponential hazard (sylvester's formula changes)
       #see lynch&brown (New approach), and Keyfitz for calcualtions
@@ -112,27 +125,33 @@ for(m in 1:nrow(post)){
     }
     
     #write phi estimates
-    write.table(t(as.matrix(c(m,a+1,as.vector(phi)))),file=paste0(outdir,'phi.csv'),
-                append=T, col.names=FALSE,row.names=F,sep=',')
+#    write.table(t(as.matrix(c(m,a+1,as.vector(phi)))),file=paste0(outdir,'phi.csv'),
+#                append=T, col.names=FALSE,row.names=F,sep=',')
 
   } #close age cycle
 
   #close out multistate life table
   #apply by dividing by inverse of rate (scott 2010, p. 1068, but he says this is expectancy)
   #see schoen 75 appendix
-  L[ageints,,] = l[ageints,,] %*% solve(phi)
+  
+  #everybody dies
+  #l[ageints,,] = l[ageints-1,,] %*% matrix(c(rep(0,30), rep(1,6)),6,6)
+    
+  #assume no state changes, and rates of death across all categories equal to 2006 life table 
+  #0.132531000 per 100000
+  L[ageints,1:5,1:5] = l[ageints,1:5,1:5] %*% solve(diag(0.132531,5))
   
   #note scott discusses l(x) being diagonal, but l(x+1) as not (same with L(x))
   le = array(0,c(ageints,5,5)) 
   
   #see ken p. 307: premultiply
   for(a in 1:(ageints-1)){
-    le[a,,] = apply(L[a:ageints,1:5,1:5],c(3,2),sum) %*% solve(diag(colSums(l[a,1:5,1:5])))
+    le[a,,] = solve(diag(colSums(l[a,1:5,1:5]))) %*% colSums(L[a:ageints,1:5,1:5])
   }
     le[ageints,,] = L[ageints,1:5,1:5] %*% solve(diag(colSums(l[a,1:5,1:5])))
 
   #write estimates to file (need to manually delete)
   #write.table(le,file=paste(outdir,'le.csv',''),append=T, col.names=FALSE,sep=',')
   #write.table(l,file=paste(outdir,'l.csv',''),append=T, col.names=FALSE,sep=',')
-    
+  print(rowSums(le[1,,]))
 } #close sample cycle

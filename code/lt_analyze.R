@@ -14,7 +14,7 @@ source("H:/projects/rel_belong/code/config.R",
 #Load life table samples
 #@@@@@@@@@@@@@@@@@@@@@@@@
 
-ageints=35; n=2; agestart = 25 #need to change based on lifetable.R
+ageints=33; n=2; agestart = 20 #need to change based on lifetable.R
 nm = c('Evangelical','Mainline', 'Other', 'Catholic','None','Death')
 
 #NOTE: as vector reads out the matrix columnwise; i.e. first 6 obs in each age are TO evangelical
