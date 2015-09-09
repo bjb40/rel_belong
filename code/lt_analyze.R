@@ -14,7 +14,7 @@ source("H:/projects/rel_belong/code/config.R",
 #Load life table samples
 #@@@@@@@@@@@@@@@@@@@@@@@@
 
-ageints=33; n=2; agestart = 20 #need to change based on lifetable.R
+ageints=33; n=2; agestart = 18 #need to change based on lifetable.R
 nm = c('Evangelical','Mainline', 'Other', 'Catholic','None','Death')
 
 #NOTE: as vector reads out the matrix columnwise; i.e. first 6 obs in each age are TO evangelical
@@ -24,15 +24,12 @@ phi.lower = aggregate(phi[,3:38],by=list(phi$ageint), FUN=quantile, probs=0.025)
 phi.upper = aggregate(phi[,3:38],by=list(phi$ageint), FUN=quantile, probs=0.975)
 rm(phi) #save space
 
-#l = read.csv(paste(outdir,'l.csv',sep=''), header=F)
-#lar = array(unlist(read.csv(paste(outdir,'l.csv',''), header=F)[,2:26]),c(30,10000,25))
-#confirm array is put together correctly
-#View(l[1:30,2:26] == lar[,1,])
-#rm(l)
-
-#le = read.csv(paste(outdir,'le.csv',sep=''), header=F)
-
-
+le = read.csv(paste0(outdir,'le.csv'))
+le.mean = aggregate(le[,3:27],by=list(le$ageint), FUN=mean)
+le.lower = aggregate(le[,3:27],by=list(le$ageint), FUN=quantile, probs=0.025)
+le.upper = aggregate(le[,3:27],by=list(le$ageint), FUN=quantile, probs=0.975)
+le.sd = aggregate(le[,3:27],by=list(le$ageint), FUN=sd)
+#rm(le) #save space
 
 #@@@@@@@@@@@@@@@@@@@@@@@@
 #Plot Transition Probabilities
@@ -73,30 +70,9 @@ dev.off()
 #Generate summary table for life expectancy
 #@@@@@@@@@@@@@@@@@@@@@@@@
 
-#estimate
-le.est = aggregate(le,by=list(le$V1),mean)
-#95 percentile
-le.lower = aggregate(le,by=list(le$V1),quantile, prob=0.025)
-le.upper = aggregate(le,by=list(le$V1),quantile, prob=0.975)
+#generate table for 18 years old (ageint=1), 30 years old (ageint=6), 50 years old (ageint=16), and 70 years old (ageint=26)
+ages = c(1,6,16,26)
 
-colnames(le.lower)[3:7] = colnames(le.upper)[3:7] = colnames(le.est)[3:7] = nm 
+#sink()
 
-sink(paste(outdir,'le-table.txt',sep=''))
-  print(Sys.Date(),quote="F")
-  cat('\n\n@@@@@@@@@@@@@@@@@@@\nFull Expectances (le0) ')
-  cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')
-
-  for(r in 1:5){
-    cat(paste('\nExpeted time (with 95% intervals) in traditions for those starting as', nm[r]))
-    cat('\n')
-    print(rbind(round(le.est[r,3:7],3),
-                round(le.lower[r,3:7],3),
-                round(le.upper[r,3:7],3)
-                ),
-          row.names=c('estimate','lower','uppper'))
-    }
-
-sink()
-
-
-
+#sink()
