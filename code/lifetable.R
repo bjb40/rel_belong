@@ -29,8 +29,8 @@ post = read.csv(paste(outdir,'post.csv',sep=''))
 startstate = c(table(dat$reltrad)/nrow(dat),0)
 rm(dat) #no longer needed
 
-ageints=11; n=5; agestart = 25
-radix= matrix(startstate,nrow=1,ncol=length(startstate))
+ageints=35; n=2; agestart = 25
+radix= matrix(startstate,nrow=1,ncol=length(startstate))*100000
 L=l=array(0,c(ageints,6,6)); l[1,,] = diag(6)*as.numeric(radix)
 
 #from Lynch 2007 book
@@ -57,8 +57,12 @@ xsim[,9] = agestart
 #Compute over sample
 #@@@@@@@@@@@@@@@@@@@@@@@@
 
-#for(m in 1:nrow(post)){
-for(m in 1:10){
+#initialize tables for saving output
+write.table(t(as.matrix(c('iter','ageint',paste0('phi',1:36)))),file=paste0(outdir,'phi.csv'),
+            append=F, col.names=F,row.names=F,sep=',')
+
+for(m in 1:nrow(post)){
+#for(m in 1:10){
   
   #compute over predefined age intervals
   for(a in 0:ageints){
@@ -106,18 +110,26 @@ for(m in 1:10){
 
       L[a+1,,] = (l[a+1,,]+l[a+2,,])*n/2
     }
+    
+    #write phi estimates
+    write.table(t(as.matrix(c(m,a+1,as.vector(phi)))),file=paste0(outdir,'phi.csv'),
+                append=T, col.names=FALSE,row.names=F,sep=',')
 
   } #close age cycle
 
   #close out multistate life table
-  #apply by dividing by inverse (scott 2010, p. 1068)
-  L[ageints,,] = diag(apply(l[ageints,,],2,sum)) %*% solve(phi)
+  #apply by dividing by inverse of rate (scott 2010, p. 1068, but he says this is expectancy)
+  #see schoen 75 appendix
+  L[ageints,,] = l[ageints,,] %*% solve(phi)
   
+  #note scott discusses l(x) being diagonal, but l(x+1) as not (same with L(x))
   le = array(0,c(ageints,5,5)) 
   
+  #see ken p. 307: premultiply
   for(a in 1:(ageints-1)){
-    le[a,,] = apply(L[a:ageints,1:5,1:5],c(2,3),sum) %*% solve(l[a,1:5,1:5])
+    le[a,,] = apply(L[a:ageints,1:5,1:5],c(3,2),sum) %*% solve(diag(colSums(l[a,1:5,1:5])))
   }
+    le[ageints,,] = L[ageints,1:5,1:5] %*% solve(diag(colSums(l[a,1:5,1:5])))
 
   #write estimates to file (need to manually delete)
   #write.table(le,file=paste(outdir,'le.csv',''),append=T, col.names=FALSE,sep=',')
