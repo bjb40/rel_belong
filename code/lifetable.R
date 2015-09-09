@@ -104,27 +104,23 @@ for(m in 1:10){
       #update Lx for agegroup - currently piecewise exponential hazard (sylvester's formula changes)
       #see lynch&brown (New approach), and Keyfitz for calcualtions
 
-      L[a+1,,] = (l[a+1,,]+l[a+2,,])/2
+      L[a+1,,] = (l[a+1,,]+l[a+2,,])*n/2
     }
 
   } #close age cycle
 
-  #close out multistate life tabl
-  #1) apply by dividing by inverse (scott 2010, p. 1068)
-    L[ageints,,] = diag(apply(l[ageints,,],2,sum)) %*% solve(phi)
+  #close out multistate life table
+  #apply by dividing by inverse (scott 2010, p. 1068)
+  L[ageints,,] = diag(apply(l[ageints,,],2,sum)) %*% solve(phi)
   
-  Tx = array(0,c(6,6)) 
-  for(d in 1:5){
-    Tx[d,] = apply(l[,d,],2,sum)*n
+  le = array(0,c(ageints,5,5)) 
+  
+  for(a in 1:(ageints-1)){
+    le[a,,] = apply(L[a:ageints,1:5,1:5],c(2,3),sum) %*% solve(l[a,1:5,1:5])
   }
-  
-  for(a in 1:ageints-1){
-    le[a,] = apply(L[a:ageints,1:5],2,sum)/l[a,1:5]
-  }
-    le[ageints,] = L[ageints,1:5]/l[ageints,1:5]
-  
+
   #write estimates to file (need to manually delete)
-  write.table(le,file=paste(outdir,'le.csv',''),append=T, col.names=FALSE,sep=',')
-  write.table(l,file=paste(outdir,'l.csv',''),append=T, col.names=FALSE,sep=',')
+  #write.table(le,file=paste(outdir,'le.csv',''),append=T, col.names=FALSE,sep=',')
+  #write.table(l,file=paste(outdir,'l.csv',''),append=T, col.names=FALSE,sep=',')
     
 } #close sample cycle
