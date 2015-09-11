@@ -20,16 +20,17 @@ nm = c('Evangelical','Mainline', 'Other', 'Catholic','None','Death')
 #NOTE: as vector reads out the matrix columnwise; i.e. first 6 obs in each age are TO evangelical
 phi = read.csv(paste0(outdir,'phi.csv'))
 phi.mean = aggregate(phi[,3:38],by=list(phi$ageint), FUN=mean)
-phi.lower = aggregate(phi[,3:38],by=list(phi$ageint), FUN=quantile, probs=0.025)
-phi.upper = aggregate(phi[,3:38],by=list(phi$ageint), FUN=quantile, probs=0.975)
+phi.lower = aggregate(phi[,3:38],by=list(phi$ageint), FUN=quantile, probs=0.08)
+phi.upper = aggregate(phi[,3:38],by=list(phi$ageint), FUN=quantile, probs=0.92)
 rm(phi) #save space
 
 le = read.csv(paste0(outdir,'le.csv'))
 le.mean = aggregate(le[,3:27],by=list(le$ageint), FUN=mean)
-le.lower = aggregate(le[,3:27],by=list(le$ageint), FUN=quantile, probs=0.025)
-le.upper = aggregate(le[,3:27],by=list(le$ageint), FUN=quantile, probs=0.975)
+#84% for biviariate comparisons in table
+le.lower = aggregate(le[,3:27],by=list(le$ageint), FUN=quantile, probs=0.08)
+le.upper = aggregate(le[,3:27],by=list(le$ageint), FUN=quantile, probs=0.92)
 le.sd = aggregate(le[,3:27],by=list(le$ageint), FUN=sd)
-#rm(le) #save space
+rm(le) #save space
 
 #@@@@@@@@@@@@@@@@@@@@@@@@
 #Plot Transition Probabilities
@@ -66,13 +67,108 @@ for(p in 1:36){
 }
 dev.off()
 
+png(paste0(draftimg,'mort-stay-probs.png'))
+par(mfrow=c(2,1), oma=c(1,1,1,1), mar=c(2,1,1.5,1))
+#mortality
+diers = c(31:35)
+plot(yx,phi.mean$phi6, ylim=c(0,.3), type="n", xlab='', xaxt='n',ylab='',main="Probability of Mortality")
+for(k in 1:length(diers)){
+  polygon(c(yx, rev(yx)), c(phi.upper[,paste0('phi',diers[k])],rev(phi.lower[,paste0('phi',diers[k])])), 
+          col="gray90", border=NA)
+}
+for(k in 1:length(diers)){
+  lines(yx,phi.mean[,paste0('phi',diers[k])], lty=k)
+}
+
+legend('topleft',legend=nm[1:5],
+       bty='n',
+       lty=1:5,
+       cex=.75)
+
+
+#diagonal of phi - stayers
+stayers = c(1,8,15,22,29)
+
+plot(yx,phi.mean$phi1, ylim=c(0.25,.9), type="n", xlab='Age', ylab='',main="Probability of Staying in Tradition")
+for(k in 1:length(stayers)){
+  polygon(c(yx, rev(yx)), c(phi.upper[,paste0('phi',stayers[k])],rev(phi.lower[,paste0('phi',stayers[k])])), 
+          col="gray90", border=NA)
+}
+for(k in 1:length(stayers)){
+  lines(yx,phi.mean[,paste0('phi',stayers[k])], lty=k)
+}
+dev.off()
+
+
+#transitions
+toev = 2:5
+tonone = 25:28
+
+png(paste0(draftimg,'big-takers.png'))
+par(mfrow=c(2,1), oma=c(1,1,1,1), mar=c(2,1,1.5,1))
+#to evangelical
+plot(yx,phi.mean$phi2, ylim=c(0,.4), type="n", xlab='Age', xaxt='n',ylab='',main="Probability of Transitioning to Evangelical")
+for(k in 1:length(toev)){
+  polygon(c(yx, rev(yx)), c(phi.upper[,paste0('phi',toev[k])],rev(phi.lower[,paste0('phi',toev[k])])), 
+          col="gray90", border=NA)
+}
+for(k in 1:length(toev)){
+  lines(yx,phi.mean[,paste0('phi',toev[k])], lty=k+1)
+}
+
+legend('topright',legend=paste('From',nm[2:5]),
+       bty='n',
+       lty=2:5,
+       cex=.75)
+
+#to none
+plot(yx,phi.mean$phi2, ylim=c(0,.45), type="n", xlab='Age',ylab='',main="Probability of Transitioning to None")
+for(k in 1:length(tonone)){
+  polygon(c(yx, rev(yx)), c(phi.upper[,paste0('phi',tonone[k])],rev(phi.lower[,paste0('phi',tonone[k])])), 
+          col="gray90", border=NA)
+}
+for(k in 1:length(tonone)){
+  lines(yx,phi.mean[,paste0('phi',tonone[k])], lty=k)
+}
+
+legend('topright',legend=paste('From',nm[1:4]),
+       bty='n',
+       lty=1:4,
+       cex=.75)
+
+dev.off()
+
 #@@@@@@@@@@@@@@@@@@@@@@@@
 #Generate summary table for life expectancy
 #@@@@@@@@@@@@@@@@@@@@@@@@
 
 #generate table for 18 years old (ageint=1), 30 years old (ageint=6), 50 years old (ageint=16), and 70 years old (ageint=26)
-ages = c(1,6,16,26)
+ages = c(1,7,17,27)
 
-#sink()
+sink(paste0(outdir,'le-table.txt'))
 
-#sink()
+cat('\n')
+cat('\n|Religious Tradition at Age x|',paste(nm[1:5],'|'),'\n')
+cat('|:---------------------------|------------:|---------:|------:|---------:|-----:|\n')
+
+for(age in ages){
+    
+  mn = round(t(matrix(as.numeric(le.mean[age,2:26]),5,5)),1)
+  l = round(t(matrix(as.numeric(le.lower[age,2:26]),5,5)),1)
+  u = round(t(matrix(as.numeric(le.upper[age,2:26]),5,5)),1)
+
+  cat(paste0('|$e_{',age*n+agestart-n,'}$: Expected years in Tradition (from age ',age*n+agestart-n),')| | | | | |\n')
+  
+  for(r in 1:5){
+    cat('|',nm[r],'| ',paste(mn[r,],'| '),'\n') 
+    cat('|\t|',paste0('[',l[r,],', ',u[r,],'] |'),'\n')
+  }  
+  cat('|Total |',paste(colSums(mn),' |'), '\n')
+  cat('|\t|',paste0('[',colSums(l),', ',colSums(u),'] |'),'\n')
+  
+  #cat('| | | | | | |')
+}
+
+cat('\n\nNOTE: Mean posterior estimates with 84% intervals in brackets.')
+
+sink()
