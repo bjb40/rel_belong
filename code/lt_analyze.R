@@ -32,6 +32,14 @@ le.upper = aggregate(le[,3:27],by=list(le$ageint), FUN=quantile, probs=0.92)
 le.sd = aggregate(le[,3:27],by=list(le$ageint), FUN=sd)
 rm(le) #save space
 
+l = read.csv(paste0(outdir,'l.csv'))
+l.mean = aggregate(l[,3:38],by=list(l$ageint), FUN=mean)
+#84% for biviariate comparisons in table
+l.lower = aggregate(l[,3:38],by=list(l$ageint), FUN=quantile, probs=0.08)
+l.upper = aggregate(l[,3:38],by=list(l$ageint), FUN=quantile, probs=0.92)
+l.sd = aggregate(l[,3:38],by=list(l$ageint), FUN=sd)
+rm(l) #save space
+
 #@@@@@@@@@@@@@@@@@@@@@@@@
 #Plot Transition Probabilities
 #@@@@@@@@@@@@@@@@@@@@@@@@
@@ -172,3 +180,24 @@ for(age in ages){
 cat('\n\nNOTE: Mean posterior estimates with 84% intervals in brackets.')
 
 sink()
+
+
+#@@@@@@@@@@@@@@@@@@@@@@@@
+#Generate table for projections based on stable population
+#@@@@@@@@@@@@@@@@@@@@@@@@
+
+#create multidimensional array for l
+l = array(as.matrix(l.mean[,2:37]),c(33,6,6))
+dat = read.csv(paste(outdir,'private~/subpanel.csv',sep=''))
+
+ages = c(18,30,50,70)
+
+#ptable = matrix(NA,length(ages)*2,length(nm)-1 + 2)
+#colnames(ptable) = c('dat','age',nm[1:length(nm)-1])
+#ptable[,2] = c(ages,ages); ptable[,1] = c(rep(1,length(ages)),rep(2,length(ages)))
+
+for(a in 1:length(ages)){
+
+    table(dat[dat$age>=ages[a],'reltrad'])/sum(dat$age>=ages[a])
+}
+

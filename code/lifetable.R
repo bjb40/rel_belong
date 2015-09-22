@@ -73,6 +73,8 @@ write.table(t(as.matrix(c('iter','ageint',paste0('phi',1:36)))),file=paste0(outd
 write.table(t(as.matrix(c('iter','ageint',paste0('le',1:25)))),file=paste0(outdir,'le.csv'),
             append=F, col.names=F,row.names=F,sep=',')
 
+write.table(t(as.matrix(c('iter','ageint',paste0('l',1:36)))),file=paste0(outdir,'l.csv'),
+            append=F, col.names=F,row.names=F,sep=',')
 
 for(m in 1:nrow(post)){
 #for(m in 1:10){
@@ -153,6 +155,9 @@ for(m in 1:nrow(post)){
   #write life expectancy estimates to file
   write.table(cbind(m,1:ageints,data.frame(le)),file=paste0(outdir,'le.csv',''),
               append=T, col.names=FALSE,sep=',',row.names=FALSE)
-  #write.table(l,file=paste(outdir,'l.csv',''),append=T, col.names=FALSE,sep=',')
-  #print(rowSums(le[1,,]))
+  
+  #write (for proportions to assign)
+  write.table(cbind(m,1:ageints,data.frame(l)),file=paste0(outdir,'l.csv',''),
+           append=T, col.names=FALSE,sep=',',row.names=FALSE)
+  
 } #close sample cycle
