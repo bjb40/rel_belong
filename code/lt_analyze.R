@@ -35,8 +35,8 @@ rm(le) #save space
 l = read.csv(paste0(outdir,'l.csv'))
 l.mean = aggregate(l[,3:38],by=list(l$ageint), FUN=mean)
 #84% for biviariate comparisons in table
-l.lower = aggregate(l[,3:38],by=list(l$ageint), FUN=quantile, probs=0.08)
-l.upper = aggregate(l[,3:38],by=list(l$ageint), FUN=quantile, probs=0.92)
+l.lower = aggregate(l[,3:38],by=list(l$ageint), FUN=quantile, probs=0.025)
+l.upper = aggregate(l[,3:38],by=list(l$ageint), FUN=quantile, probs=0.975)
 l.sd = aggregate(l[,3:38],by=list(l$ageint), FUN=sd)
 rm(l) #save space
 
@@ -187,17 +187,46 @@ sink()
 #@@@@@@@@@@@@@@@@@@@@@@@@
 
 #create multidimensional array for l
-l = array(as.matrix(l.mean[,2:37]),c(33,6,6))
-dat = read.csv(paste(outdir,'private~/subpanel.csv',sep=''))
+lmat.m = array(as.matrix(l.mean[,2:37]),c(33,6,6))
+lmat.l = array(as.matrix(l.lower[,2:37]),c(33,6,6))
+lmat.u = array(as.matrix(l.upper[,2:37]),c(33,6,6))
 
-ages = c(18,30,50,70)
+lmat.mean = matrix(NA,33,6)
+lmat.lower = matrix(NA,33,6)
+lmat.upper = matrix(NA,33,6)
 
-#ptable = matrix(NA,length(ages)*2,length(nm)-1 + 2)
-#colnames(ptable) = c('dat','age',nm[1:length(nm)-1])
-#ptable[,2] = c(ages,ages); ptable[,1] = c(rep(1,length(ages)),rep(2,length(ages)))
-
-for(a in 1:length(ages)){
-
-    table(dat[dat$age>=ages[a],'reltrad'])/sum(dat$age>=ages[a])
+for(a in 1:33){
+  lmat.mean[a,2:6] = colSums(lmat.m[a,1:5,1:5])
+  lmat.lower[a,2:6] = colSums(lmat.l[a,1:5,1:5])
+  lmat.upper[a,2:6] = colSums(lmat.u[a,1:5,1:5])
+  
+  lmat.lower[a,1] = lmat.upper[a,1] = lmat.mean[a,1] = (agestart + (a-1)*n)
 }
 
+rm(lmat.m,lmat.l,lmat.u)
+
+dat = read.csv(paste(outdir,'private~/subpanel.csv',sep=''))
+
+ages = c(20,30,50,70)
+
+sink(paste0(outdir,'proj-table.txt'))
+
+cat('\n')
+cat('\n|Proportion Age x and Greater|',paste(nm[1:5],'|'),'\n')
+cat('|:---------------------------|------------:|---------:|------:|---------:|-----:|\n')
+
+
+for(a in 1:length(ages)){
+    cat('| ', ages[a], '|')
+    cat(paste0('**',round(table(dat[dat$age>=ages[a],'reltrad'])/sum(dat$age>=ages[a]),3),'** |'),'\n')
+    cat('|      |')
+    cat(paste(round(colSums(lmat.mean[lmat.mean[,1]>=ages[a],2:6])/sum(lmat.mean[lmat.mean[,1]>=ages[a],2:6]),3),' | '),'\n')
+    
+    up = round(colSums(lmat.upper[lmat.upper[,1]>=ages[a],2:6])/sum(lmat.upper[lmat.upper[,1]>=ages[a],2:6]),3)
+    low = round(colSums(lmat.lower[lmat.lower[,1]>=ages[a],2:6])/sum(lmat.lower[lmat.lower[,1]>=ages[a],2:6]),3)  
+ 
+    cat('|      |')
+    cat(paste0('[',up,', ',low,'] |'),'\n')
+}
+
+sink()
