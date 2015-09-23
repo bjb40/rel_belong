@@ -211,8 +211,9 @@ ages = c(20,30,50,70)
 
 sink(paste0(outdir,'proj-table.txt'))
 
+cat('Proportion of population in each religious tradition at specific ages and older.')
 cat('\n')
-cat('\n|Proportion Age x and Greater|',paste(nm[1:5],'|'),'\n')
+cat('\n|Age (and older)|',paste(nm[1:5],'|'),'\n')
 cat('|:---------------------------|------------:|---------:|------:|---------:|-----:|\n')
 
 
@@ -226,7 +227,9 @@ for(a in 1:length(ages)){
     low = round(colSums(lmat.lower[lmat.lower[,1]>=ages[a],2:6])/sum(lmat.lower[lmat.lower[,1]>=ages[a],2:6]),3)  
  
     cat('|      |')
-    cat(paste0('[',up,', ',low,'] |'),'\n')
+    cat(paste0('[',low,', ',up,'] |'),'\n')
 }
+
+  cat('\n\n Note: Numbers in bold indicate actual data. Mean estimates reported with 95% c.i. in brackets.')
 
 sink()
