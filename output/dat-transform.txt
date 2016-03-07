@@ -1,4 +1,4 @@
-[1] 2015-09-03
+[1] 2016-03-07
 
 
 @@@@@@@@@@@@@@@@@@@
@@ -21,25 +21,9 @@ Religious tradition recodes for first ten observations
 
 
 Tables overviewing recodes 
-      sex
-female    1    2
-     0 4701    0
-     1    0 6034
 
-       marital
-married    1    2    3    4    5
-      0    0  921 1712  338 2702
-      1 5051    0    0    0    0
 
-     race
-white    1    2    3
-    0    0 1545  982
-    1 8208    0    0
 
-     race
-black    1    2    3
-    0 8208    0  982
-    1    0 1545    0
 
 
 @@@@@@@@@@@@@@@@@@@
@@ -47,24 +31,8 @@ CHECK DEATH RECODES
 @@@@@@@@@@@@@@@@@@@@@
 
 Wave 1 -> Wave 2
-   
-       1    2   31   32   33
-  1 1152    0    0    0    0
-  2  494    0    0    0    0
-  3  200    0    0    0    0
-  4  678    0    0    0    0
-  5  580    0    0    0    0
-  6    0    0    0    0   72
 
 Wave 2 -> Wave 3
-   
-      1   2  31  32  33
-  1 966   0   0   0   0
-  2 386   0   0   0   0
-  3 176   0   0   0   0
-  4 549   0   0   0   0
-  5 496   0   0   0   0
-  6   0   0   0   0  55
 
 
  NOTE.
@@ -77,62 +45,6 @@ Wave 2 -> Wave 3
 FULL SUBPANEL DESCRIPTIVES
 @@@@@@@@@@@@@@@@@@@@@
 
-     idnum        panelwave      dateintv      panstat_2   
- Min.   :   1   Min.   :1.0   Min.   :307    Min.   : 1    
- 1st Qu.: 620   1st Qu.:1.0   1st Qu.:415    1st Qu.: 1    
- Median :1237   Median :1.5   Median :509    Median : 1    
- Mean   :1418   Mean   :1.5   Mean   :518    Mean   : 2    
- 3rd Qu.:1859   3rd Qu.:2.0   3rd Qu.:614    3rd Qu.: 1    
- Max.   :4510   Max.   :2.0   Max.   :915    Max.   :33    
-                              NA's   :1400   NA's   :4000  
-   panstat_3       reltrad          age            year     
- Min.   : 1     Min.   :1      Min.   :18     Min.   :2006  
- 1st Qu.: 1     1st Qu.:1      1st Qu.:34     1st Qu.:2008  
- Median : 1     Median :2      Median :48     Median :2008  
- Mean   : 2     Mean   :3      Mean   :48     Mean   :2009  
- 3rd Qu.: 1     3rd Qu.:4      3rd Qu.:61     3rd Qu.:2010  
- Max.   :33     Max.   :5      Max.   :89     Max.   :2012  
- NA's   :5870   NA's   :1529   NA's   :1484   NA's   :1399  
-      sex            educ           race         marital    
- Min.   :1      Min.   : 0     Min.   :1      Min.   :1     
- 1st Qu.:1      1st Qu.:12     1st Qu.:1      1st Qu.:1     
- Median :2      Median :13     Median :1      Median :2     
- Mean   :2      Mean   :14     Mean   :1      Mean   :3     
- 3rd Qu.:2      3rd Qu.:16     3rd Qu.:1      3rd Qu.:5     
- Max.   :2      Max.   :20     Max.   :3      Max.   :5     
- NA's   :1399   NA's   :1417   NA's   :1399   NA's   :1410  
-     income        wtpan12       wtpannr12       wtpan123   
- Min.   : 1     Min.   :0      Min.   :0      Min.   :0     
- 1st Qu.:11     1st Qu.:1      1st Qu.:1      1st Qu.:1     
- Median :12     Median :1      Median :1      Median :1     
- Mean   :11     Mean   :1      Mean   :1      Mean   :1     
- 3rd Qu.:12     3rd Qu.:1      3rd Qu.:1      3rd Qu.:1     
- Max.   :12     Max.   :7      Max.   :7      Max.   :7     
- NA's   :2570   NA's   :2798   NA's   :2798   NA's   :4384  
-   wtpannr123       nstate        reltrad1        reltrad2    
- Min.   :0      Min.   :1      Min.   :0.000   Min.   :0.000  
- 1st Qu.:1      1st Qu.:1      1st Qu.:0.000   1st Qu.:0.000  
- Median :1      Median :2      Median :0.000   Median :0.000  
- Mean   :1      Mean   :3      Mean   :0.321   Mean   :0.132  
- 3rd Qu.:1      3rd Qu.:4      3rd Qu.:1.000   3rd Qu.:0.000  
- Max.   :6      Max.   :6      Max.   :1.000   Max.   :1.000  
- NA's   :4384   NA's   :3550                                  
-    reltrad3        reltrad4        reltrad5         female    
- Min.   :0.000   Min.   :0.000   Min.   :0.000   Min.   :0     
- 1st Qu.:0.000   1st Qu.:0.000   1st Qu.:0.000   1st Qu.:0     
- Median :0.000   Median :0.000   Median :0.000   Median :1     
- Mean   :0.062   Mean   :0.207   Mean   :0.153   Mean   :1     
- 3rd Qu.:0.000   3rd Qu.:0.000   3rd Qu.:0.000   3rd Qu.:1     
- Max.   :1.000   Max.   :1.000   Max.   :1.000   Max.   :1     
-                                                 NA's   :1399  
-    married         white          black     
- Min.   :0      Min.   :0      Min.   :0     
- 1st Qu.:0      1st Qu.:1      1st Qu.:0     
- Median :0      Median :1      Median :0     
- Mean   :0      Mean   :1      Mean   :0     
- 3rd Qu.:1      3rd Qu.:1      3rd Qu.:0     
- Max.   :1      Max.   :1      Max.   :1     
- NA's   :1410   NA's   :1399   NA's   :1399  
 
 
 @@@@@@@@@@@@@@@@@@@
@@ -184,6 +96,9 @@ age          48.69   16.99   18   89 8422
 year       2008.93    1.91 2006 2012 8422
 educ         13.66    3.00    0   20 8422
 income          NA      NA   NA   NA 8422
+agekdbrn        NA      NA   NA   NA 8422
+childs          NA      NA   NA   NA 8422
+babies          NA      NA   NA   NA 8422
 wtpan12         NA      NA   NA   NA 8422
 wtpannr12       NA      NA   NA   NA 8422
 wtpan123        NA      NA   NA   NA 8422
@@ -204,10 +119,9 @@ black         0.14    0.35    0    1 8422
 NOTES
 @@@@@@@@@@@@@@@@@@@@@
 
-Written to [1] "H:/projects/rel_belong/output/private~/subpanel.csv"
-
+Written to 
 From prep-data.R code
 
 Processing time: elapsed 
-  0.158 
+  0.152 
  minutes

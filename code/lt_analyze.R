@@ -206,6 +206,7 @@ for(a in 1:33){
 rm(lmat.m,lmat.l,lmat.u)
 
 dat = read.csv(paste(outdir,'private~/subpanel.csv',sep=''))
+dat = dat[dat$panelwave==1,]
 
 ages = c(20,30,50,70)
 

@@ -48,12 +48,17 @@ vars = c(
   'marital', #1) married; 2) widowed; 3) divorced; 4) sep; 5) nevermarried
   'income',
   
+  # fertility variables
+  'agekdbrn', #age at first birth
+  'childs', #children born to you at any time
+  'babies', #number of babies in the home ... (includes adoption)
+  
   # weight variables
   'wtpan12','wtpannr12','wtpan123','wtpannr123'
   
 )
 
-subpanel = subset(rawpanel,select=c(vars))
+subpanel = subset(rawpanel,select=vars)
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #join subset for t-1 in reltrad; add death as reltrad option

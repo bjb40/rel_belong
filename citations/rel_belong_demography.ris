@@ -1,0 +1,212 @@
+TY  - JOUR
+TI  - Obtaining multistate life table distributions for highly refined subpopulations from cross-sectional data: A Bayesian extension of Sullivan’s method
+AU  - Lynch, Scott M.
+AU  - Brown, J. Scott
+T2  - Demography
+DA  - 2010///
+PY  - 2010
+DP  - Google Scholar
+VL  - 47
+IS  - 4
+SP  - 1053
+EP  - 1077
+ST  - Obtaining multistate life table distributions for highly refined subpopulations from cross-sectional data
+UR  - http://link.springer.com/article/10.1007/BF03213739
+Y2  - 2014/03/03/21:18:40
+ER  - 
+
+TY  - JOUR
+TI  - New Methods for Tables of School Life, with Applications to U. S. Data from Recent School Years
+AU  - Land, Kenneth C.
+AU  - Hough, George C., Jr.
+T2  - Journal of the American Statistical Association
+AB  - Using current and retrospective school-enrollment data from October Current Population Surveys (CPS's) together with demographic accounts for the U.S. civilian noninstitutional population, this study specifies new methods for the estimation of school-life tables. The new methods combine multistate (increment-decrement) methods for those ages for which CPS data on enrollment flows are available together with prevalence-rate methods for other ages for which CPS data are available on enrollment stocks alone. Applying an algorithm to construct tables of school life for the 1969-1970, 1974-1975, 1979-1980, and 1984-1985 school years, it is found that, between the ages of 14 and 34, most sex-, race-, and school-year-specific groups have an average of 1.5 to 2.0 exits per person, from enrolled to not enrolled in school. These exits are interspersed by an average of .5 to 1.0 exits per person, from not enrolled to enrolled in school. Since prevalence-rate life-table methods arbitrarily constrain individuals to only one exit from school enrollment to not enrolled over the life course, this finding verifies the need for increment-decrement methods for the teenage and young-adult years. Several other findings regarding differentials in schooling life by sex and race and trends over time are discussed.
+DA  - 1989/03/01/
+PY  - 1989
+DO  - 10.2307/2289847
+DP  - JSTOR
+VL  - 84
+IS  - 405
+SP  - 63
+EP  - 75
+J2  - Journal of the American Statistical Association
+SN  - 0162-1459
+UR  - http://www.jstor.org/stable/2289847
+Y2  - 2015/09/08/19:14:37
+L1  - http://www.jstor.org/stable/pdfplus/10.2307/2289847.pdf?acceptTC=true
+ER  - 
+
+TY  - CHAP
+TI  - Mathematical Demography
+AU  - Land, Kenneth C.
+AU  - Yang, Yang
+AU  - Zeng, Yi
+T2  - Handbook of Population
+CY  - New York
+DA  - 2005///
+PY  - 2005
+SP  - 659
+EP  - 717
+PB  - Springer
+ER  - 
+
+TY  - BOOK
+TI  - Introduction to Applied Bayesian Statistics and Estimation for Social Scientists
+AU  - Lynch, Scott M.
+AB  - This book outlines Bayesian statistical analysis in great detail, from the development of a model through the process of making statistical inference. The key feature of this book is that it covers models that are most commonly used in social science research - including the linear regression model, generalized linear models, hierarchical models, and multivariate regression models - and it thoroughly develops each real-data example in painstaking detail.
+CY  - New York
+DA  - 2007/08/15/
+PY  - 2007
+DP  - Amazon.com
+SP  - 359
+LA  - English
+PB  - Springer
+SN  - 978-0-387-71264-2
+L2  - http://www.amazon.com/Introduction-Statistics-Estimation-Scientists-Behavioral/dp/038771264X
+ER  - 
+
+TY  - JOUR
+TI  - Estimating Increment-Decrement Life Tables with Multiple Covariates from Panel Data: The Case of Active Life Expectancy*
+AU  - Land, Kenneth C.
+AU  - Guralnik, Jack M.
+AU  - Blazer, Dan G.
+T2  - Demography
+DA  - 1994/05//
+PY  - 1994
+DO  - 10.2307/2061887
+DP  - link.springer.com
+VL  - 31
+IS  - 2
+SP  - 297
+EP  - 319
+J2  - Demography
+LA  - en
+SN  - 0070-3370, 1533-7790
+ST  - Estimating Increment-Decrement Life Tables with Multiple Covariates from Panel Data
+UR  - http://link.springer.com/article/10.2307/2061887
+Y2  - 2015/09/07/14:38:35
+L1  - http://link.springer.com/content/pdf/10.2307%2F2061887.pdf
+L2  - http://link.springer.com/article/10.2307/2061887
+KW  - Demography
+KW  - Geography (general)
+KW  - Medicine/Public Health, general
+KW  - Population Economics
+KW  - Sociology
+ER  - 
+
+TY  - BOOK
+TI  - Doing Bayesian Data Analysis: A Tutorial with R, JAGS, and Stan
+AU  - Kruschke, John
+AB  - There is an explosion of interest in Bayesian statistics, primarily because recently created computational methods have finally made Bayesian analysis obtainable to a wide audience. Doing Bayesian Data Analysis: A Tutorial with R, JAGS, and Stan provides an accessible approach to Bayesian data analysis, as material is explained clearly with concrete examples. The book begins with the basics, including essential concepts of probability and random sampling, and gradually progresses to advanced hierarchical modeling methods for realistic data. Included are step-by-step instructions on how to conduct Bayesian data analyses in the popular and free software R and WinBugs. This book is intended for first-year graduate students or advanced undergraduates. It provides a bridge between undergraduate training and modern Bayesian methods for data analysis, which is becoming the accepted research standard. Knowledge of algebra and basic calculus is a prerequisite. New to this Edition (partial list): There are all new programs in JAGS and Stan. The new programs are designed to be much easier to use than the scripts in the first edition. In particular, there are now compact high-level scripts that make it easy to run the programs on your own data sets. This new programming was a major undertaking by itself.The introductory Chapter 2, regarding the basic ideas of how Bayesian inference re-allocates credibility across possibilities, is completely rewritten and greatly expanded.There are completely new chapters on the programming languages R (Ch. 3), JAGS (Ch. 8), and Stan (Ch. 14). The lengthy new chapter on R includes explanations of data files and structures such as lists and data frames, along with several utility functions. (It also has a new poem that I am particularly pleased with.) The new chapter on JAGS includes explanation of the RunJAGS package which executes JAGS on parallel computer cores. The new chapter on Stan provides a novel explanation of the concepts of Hamiltonian Monte Carlo. The chapter on Stan also explains conceptual differences in program flow between it and JAGS.Chapter 5 on Bayes’ rule is greatly revised, with a new emphasis on how Bayes’ rule re-allocates credibility across parameter values from prior to posterior. The material on model comparison has been removed from all the early chapters and integrated into a compact presentation in Chapter 10.What were two separate chapters on the Metropolis algorithm and Gibbs sampling have been consolidated into a single chapter on MCMC methods (as Chapter 7). There is extensive new material on MCMC convergence diagnostics in Chapters 7 and 8. There are explanations of autocorrelation and effective sample size. There is also exploration of the stability of the estimates of the HDI limits. New computer programs display the diagnostics, as well.Chapter 9 on hierarchical models includes extensive new and unique material on the crucial concept of shrinkage, along with new examples.All the material on model comparison, which was spread across various chapters in the first edition, in now consolidated into a single focused chapter (Ch. 10) that emphasizes its conceptualization as a case of hierarchical modeling.Chapter 11 on null hypothesis significance testing is extensively revised. It has new material for introducing the concept of sampling distribution. It has new illustrations of sampling distributions for various stopping rules, and for multiple tests.Chapter 12, regarding Bayesian approaches to null value assessment, has new material about the region of practical equivalence (ROPE), new examples of accepting the null value by Bayes factors, and new explanation of the Bayes factor in terms of the Savage-Dickey method.
+DA  - 2014/11/11/
+PY  - 2014
+DP  - Google Books
+SP  - 772
+LA  - en
+PB  - Academic Press
+SN  - 978-0-12-405916-0
+ST  - Doing Bayesian Data Analysis
+L2  - https://play.google.com/books?id=FzvLAwAAQBAJ
+KW  - Mathematics / Applied
+KW  - Mathematics / General
+ER  - 
+
+TY  - JOUR
+TI  - Bayesian Posterior Predictive Checks for Complex Models
+AU  - Lynch, Scott M.
+AU  - Western, Bruce
+T2  - Sociological Methods & Research
+AB  - In sociological research, it is often difficult to compare nonnested models and to evaluate the fit of models in which outcome variables are not normally distributed. In this article, the authors demonstrate the utility of Bayesian posterior predictive distributions specifically, as well as a Bayesian approach to modeling more generally, in tackling these issues. First, they review the Bayesian approach to statistics and computation. Second, they discuss the evaluation of model fit in a bivariate probit model. Third, they discuss comparing fixed- and random-effects hierarchical linear models. Both examples highlight the use of Bayesian posterior predictive distributions beyond these particular cases.
+DA  - 2004/02/01/
+PY  - 2004
+DO  - 10.1177/0049124103257303
+DP  - smr.sagepub.com.proxy.lib.duke.edu
+VL  - 32
+IS  - 3
+SP  - 301
+EP  - 335
+J2  - Sociological Methods & Research
+LA  - en
+SN  - 0049-1241, 1552-8294
+UR  - http://smr.sagepub.com.proxy.lib.duke.edu/content/32/3/301
+Y2  - 2015/03/12/23:13:50
+L1  - http://smr.sagepub.com.proxy.lib.duke.edu/content/32/3/301.full.pdf
+L2  - http://smr.sagepub.com.proxy.lib.duke.edu/content/32/3/301
+KW  - Bayesian approach
+KW  - Bayesian posterior predictive distributions
+KW  - model fit
+KW  - statistics
+ER  - 
+
+TY  - JOUR
+TI  - Bayesian analysis of multivariate nominal measures using multivariate multinomial probit models
+AU  - Zhang, Xiao
+AU  - Boscardin, W. John
+AU  - Belin, Thomas R.
+T2  - Computational Statistics & Data Analysis
+AB  - The multinomial probit model has emerged as a useful framework for modeling nominal categorical data, but extending such models to multivariate measures presents computational challenges. Following a Bayesian paradigm, we use a Markov chain Monte Carlo (MCMC) method to analyze multivariate nominal measures through multivariate multinomial probit models. As with a univariate version of the model, identification of model parameters requires restrictions on the covariance matrix of the latent variables that are introduced to define the probit specification. To sample the covariance matrix with restrictions within the MCMC procedure, we use a parameter-extended Metropolis–Hastings algorithm that incorporates artificial variance parameters to transform the problem into a set of simpler tasks including sampling an unrestricted covariance matrix. The parameter-extended algorithm also allows for flexible prior distributions on covariance matrices. The prior specification in the method described here generalizes earlier approaches to analyzing univariate nominal data, and the multivariate correlation structure in the method described here generalizes the autoregressive structure proposed in previous multiperiod multinomial probit models. Our methodology is illustrated through a simulated example and an application to a cancer-control study aiming to achieve early detection of breast cancer.
+DA  - 2008/03/15/
+PY  - 2008
+DO  - 10.1016/j.csda.2007.12.012
+DP  - ScienceDirect
+VL  - 52
+IS  - 7
+SP  - 3697
+EP  - 3708
+J2  - Computational Statistics & Data Analysis
+SN  - 0167-9473
+UR  - http://www.sciencedirect.com/science/article/pii/S0167947307004690
+Y2  - 2015/08/03/17:31:31
+L1  - http://www.sciencedirect.com/science/article/pii/S0167947307004690/pdfft?md5=bd73271ffeda69d8fc801f8de2045bc5&pid=1-s2.0-S0167947307004690-main.pdf
+L2  - http://www.sciencedirect.com/science/article/pii/S0167947307004690
+ER  - 
+
+TY  - JOUR
+TI  - Bayesian Analysis of Binary and Polychotomous Response Data
+AU  - Albert, James H.
+AU  - Chib, Siddhartha
+T2  - Journal of the American Statistical Association
+AB  - A vast literature in statistics, biometrics, and econometrics is concerned with the analysis of binary and polychotomous response data. The classical approach fits a categorical response regression model using maximum likelihood, and inferences about the model are based on the associated asymptotic theory. The accuracy of classical confidence statements is questionable for small sample sizes. In this article, exact Bayesian methods for modeling categorical response data are developed using the idea of data augmentation. The general approach can be summarized as follows. The probit regression model for binary outcomes is seen to have an underlying normal regression structure on latent continuous data. Values of the latent data can be simulated from suitable truncated normal distributions. If the latent data are known, then the posterior distribution of the parameters can be computed using standard results for normal linear models. Draws from this posterior are used to sample new latent data, and the process is iterated with Gibbs sampling. This data augmentation approach provides a general framework for analyzing binary regression models. It leads to the same simplification achieved earlier for censored regression models. Under the proposed framework, the class of probit regression models can be enlarged by using mixtures of normal distributions to model the latent data. In this normal mixture class, one can investigate the sensitivity of the parameter estimates to the choice of “link function,” which relates the linear regression estimate to the fitted probabilities. In addition, this approach allows one to easily fit Bayesian hierarchical models. One specific model considered here reflects the belief that the vector of regression coefficients lies on a smaller dimension linear subspace. The methods can also be generalized to multinomial response models with J > 2 categories. In the ordered multinomial model, the J categories are ordered and a model is written linking the cumulative response probabilities with the linear regression structure. In the unordered multinomial model, the latent variables have a multivariate normal distribution with unknown variance-covariance matrix. For both multinomial models, the data augmentation method combined with Gibbs sampling is outlined. This approach is especially attractive for the multivariate probit model, where calculating the likelihood can be difficult.
+DA  - 1993/06/01/
+PY  - 1993
+DO  - 10.1080/01621459.1993.10476321
+DP  - Taylor and Francis+NEJM
+VL  - 88
+IS  - 422
+SP  - 669
+EP  - 679
+SN  - 0162-1459
+UR  - http://www.tandfonline.com/doi/abs/10.1080/01621459.1993.10476321
+Y2  - 2015/08/03/17:54:24
+L2  - http://www.tandfonline.com/doi/abs/10.1080/01621459.1993.10476321
+ER  - 
+
+TY  - BOOK
+TI  - Applied mathematical demography
+AU  - Keyfitz, Nathan
+CY  - New York, NY
+DA  - 2010///
+PY  - 2010
+DP  - Open WorldCat
+LA  - English
+PB  - Springer
+SN  - 1-4419-1977-5 978-1-4419-1977-9
+L2  - http://www.amazon.com/Applied-Mathematical-Demography-Statistics-Biology/dp/1441919775/ref=pd_sim_sbs_b_2#reader_1441919775
+ER  - 
+
+TY  - JOUR
+TI  - A new approach to estimating life tables with covariates and constructing interval estimates of life table quantities
+AU  - Lynch, Scott M.
+AU  - Brown, J. Scott
+T2  - Sociological Methodology
+DA  - 2005///
+PY  - 2005
+DP  - Google Scholar
+VL  - 35
+IS  - 1
+SP  - 177
+EP  - 225
+UR  - http://onlinelibrary.wiley.com/doi/10.1111/j.0081-1750.2006.00168.x/abstract
+Y2  - 2014/03/03/21:18:37
+ER  - 
+
