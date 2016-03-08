@@ -1,7 +1,6 @@
 #Dev R 3.02
 #Cleaning data to set up Bayesian estimation of transition matricies
 #Bryce Bartlett
-#NOTE v1.0: LIMITED TO ARBITRARY SUBSET OF  INDIVIDUALS WITH NO MISSING FOR DEVELOPMENT
 
 #@@@@@@@@@@@@@@
 #Generals
@@ -22,13 +21,18 @@ library(foreign)
 rawpanel = read.dta(paste(outdir,'private~/cypanel.dta',sep=''),  convert.factors = FALSE)
 #rpfactor = read.dta(paste(outdir,'private~/cypanel.dta',sep='')) #helps id coding
 
+#ids are repeated for each sample with idnum, samptype is the year, but for some reason 2008 is NA
+#idnump is the unique identifier across panels
+View(rawpanel[,c('year','samptype','idnum','idnump')])
+print(table(rawpanel[,c('year','samptype')],useNA='always'))
+
 #select variables to retain
 vars = c(
   #independant id variable - jeremy freeze flip code avail from GSS site?
-  'idnum',
+  'idnump',
   
   #wave
-  'panelwave','dateintv',
+  'panelwave','dateintv','samptype',
   
   #attrition variables (DV)
   #1: insamp, 2: attrit, 31=institutionalized, 32=moved out of us, 33=died
@@ -59,26 +63,53 @@ vars = c(
 )
 
 subpanel = subset(rawpanel,select=vars)
+subpanel$samptype
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #join subset for t-1 in reltrad; add death as reltrad option
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-nextwave = subset(subpanel,select=c(idnum,panelwave,reltrad,panstat_2,panstat_3),panelwave >1)
+nextwave = subset(subpanel,select=c(idnump,panelwave,reltrad,babies,childs,panstat_2,panstat_3),panelwave >1)
 nextwave$panelwave = nextwave$panelwave - 1 #take next wave back one
 
 #remove wave 1 from subpanel and reltrad--need t and t+1 only
 subpanel = subset(subpanel, panelwave < 3)
 
+#initialies hodlervariables
 subpanel$nstate = as.numeric(NA)
+subpanel$nbabies = as.numeric(NA)
+subpanel$nchilds = as.numeric(NA)
 
-for(i in unique(subpanel$idnum)){
+for(i in unique(subpanel$idnump)){
   for(w in 1:2){
-    nextstate = nextwave$reltrad[nextwave$idnum == i & nextwave$panelwave == w]    
+    lim=subpanel$idnump==i & subpanel$panelwave==w
+    nextstate = nextwave$reltrad[nextwave$idnump == i & nextwave$panelwave == w]
+    nextbabies = nextwave$babies[nextwave$idnump ==i & nextwave$panelwave ==w]
+    nextchilds = nextwave$childs[nextwave$idnump==i & nextwave$panelwave == w]
     #print(c(i,w,last))
-    subpanel$nstate[subpanel$idnum == i & subpanel$panelwave == w] = nextstate
+    subpanel$nstate[lim] = nextstate
+    subpanel$nbabies[lim] = nextbabies - subpanel$babies[lim]
+    subpanel$nchilds[lim] = nextchilds - subpanel$childs[lim]
   }
 }
+
+
+#print averages of children, babies and age at first birth
+agfert = aggregate(rawpanel[rawpanel$sex==2,c('babies','childs','agekdbrn')],
+                   by=list(rawpanel$idnump[rawpanel$sex==2]),mean, na.rm=T)
+
+demean = subset(rawpanel,select=c('idnump','babies','childs','agekdbrn'))
+demean2 = demean
+
+ids = unique(rawpanel$idnump)
+
+for(i in ids){
+  v = c('babies','childs','agekdbrn')
+  demean[demean$idnump==i,v] = apply(demean[demean$idnump==i,v],1,FUN= function(x) x - agfert[agfert$idnump==i,v])
+}
+
+colnames(demean[,2:ncol(demean)]) = c('babiesdif','childsdif','agekdbrndif')
+demean = cbind(demean[,2:ncol(demean)],demean2); rm(demean2)
 
 #panstat_2 and panstat_3 summarize elligibility
 #1) sel, elligible, reinterview; 2) sel, elligible, not reinterview; 3) sel, not ell, not int
@@ -132,7 +163,7 @@ sink(paste(outdir,'dat-transform.txt',sep=''))
   cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')
 
   cat('\nReligious tradition recodes for first ten observations\n')
-  print(head(subpanel[,c('idnum','reltrad','reltrad1','reltrad2',
+  print(head(subpanel[,c('idnump','reltrad','reltrad1','reltrad2',
               'reltrad3','reltrad4','reltrad5')],n=10))
   cat('\n\nTables overviewing recodes \n')
   
@@ -176,9 +207,9 @@ nomiss = apply(is.na(subpanel[,c('reltrad','nstate','age','educ','female','marri
 
 samp=subpanel[nomiss,]
 cat('\n                             \t\tPersons\t\tObservations')
-cat('\nTotals                      ',length(unique(rawpanel$idnum)),nrow(rawpanel),sep='\t\t')
-cat('\nRemoving 3d wave            ',length(unique(subpanel$idnum)),nrow(subpanel),sep='\t\t')
-cat('\nListwise Delete             ',length(unique(samp$idnum)),nrow(samp),sep='\t\t')
+cat('\nTotals                      ',length(unique(rawpanel$idnump)),nrow(rawpanel),sep='\t\t')
+cat('\nRemoving 3d wave            ',length(unique(subpanel$idnump)),nrow(subpanel),sep='\t\t')
+cat('\nListwise Delete             ',length(unique(samp$idnump)),nrow(samp),sep='\t\t')
 
 #drop extraneous (recoded variables)
 samp = samp[,!names(samp) %in% dropvar]
@@ -187,9 +218,9 @@ samp = samp[,!names(samp) %in% dropvar]
 subpanel=samp
 
 #create random subsample of 300 from remaining
-#keepid = sample(unique(samp$idnum),size=300,replace=F)
-#samp=samp[samp$idnum %in% keepid,]
-#cat('\n300 random sample (person)  ',length(unique(samp$idnum)),nrow(samp),sep='\t\t')
+#keepid = sample(unique(samp$idnump),size=300,replace=F)
+#samp=samp[samp$idnump %in% keepid,]
+#cat('\n300 random sample (person)  ',length(unique(samp$idnump)),nrow(samp),sep='\t\t')
 
 cat('\n\n@@@@@@@@@@@@@@@@@@@\nTRANSITION CROSSTAB')
 cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')

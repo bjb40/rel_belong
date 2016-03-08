@@ -7,17 +7,17 @@ cHECK RECODES
 
 
 Religious tradition recodes for first ten observations
-   idnum reltrad reltrad1 reltrad2 reltrad3 reltrad4 reltrad5
-1      9       5        0        0        0        0        1
-2      9       5        0        0        0        0        1
-4     10       5        0        0        0        0        1
-5     10       5        0        0        0        0        1
-7     11       1        1        0        0        0        0
-8     11       1        1        0        0        0        0
-10    12       4        0        0        0        1        0
-11    12       5        0        0        0        0        1
-13    13       3        0        0        1        0        0
-14    13       3        0        0        1        0        0
+   idnump reltrad reltrad1 reltrad2 reltrad3 reltrad4 reltrad5
+1     906       5        0        0        0        0        1
+2     906       5        0        0        0        0        1
+4    1006       5        0        0        0        0        1
+5    1006       5        0        0        0        0        1
+7    1106       1        1        0        0        0        0
+8    1106       1        1        0        0        0        0
+10   1206       4        0        0        0        1        0
+11   1206       5        0        0        0        0        1
+13   1306       3        0        0        1        0        0
+14   1306       3        0        0        1        0        0
 
 
 Tables overviewing recodes 
@@ -53,9 +53,9 @@ INFO ON ANALYTIC SAMPLE
 
 
                              		Persons		Observations
-Totals                      		3121		18201
-Removing 3d wave            		3121		12134
-Listwise Delete             		2812		8422
+Totals                      		6067		18201
+Removing 3d wave            		6067		12134
+Listwise Delete             		4663		8422
 
 @@@@@@@@@@@@@@@@@@@
 TRANSITION CROSSTAB
@@ -87,32 +87,35 @@ TRANSITION CROSSTAB
 SAMPLE DESCRIPTIVES
 @@@@@@@@@@@@@@@@@@@@@
 
-                mn    sdev  min  max    n
-idnum      1441.63 1055.49    1 4510 8422
-panelwave     1.45    0.50    1    2 8422
-dateintv        NA      NA   NA   NA 8422
-reltrad       2.68    1.57    1    5 8422
-age          48.69   16.99   18   89 8422
-year       2008.93    1.91 2006 2012 8422
-educ         13.66    3.00    0   20 8422
-income          NA      NA   NA   NA 8422
-agekdbrn        NA      NA   NA   NA 8422
-childs          NA      NA   NA   NA 8422
-babies          NA      NA   NA   NA 8422
-wtpan12         NA      NA   NA   NA 8422
-wtpannr12       NA      NA   NA   NA 8422
-wtpan123        NA      NA   NA   NA 8422
-wtpannr123      NA      NA   NA   NA 8422
-nstate        2.73    1.62    1    6 8422
-reltrad1      0.37    0.48    0    1 8422
-reltrad2      0.16    0.36    0    1 8422
-reltrad3      0.07    0.26    0    1 8422
-reltrad4      0.23    0.42    0    1 8422
-reltrad5      0.17    0.38    0    1 8422
-female        0.57    0.50    0    1 8422
-married       0.48    0.50    0    1 8422
-white         0.78    0.42    0    1 8422
-black         0.14    0.35    0    1 8422
+                  mn      sdev  min    max    n
+idnump     144171.29 105547.92  108 451006 8422
+panelwave       1.45      0.50    1      2 8422
+dateintv          NA        NA   NA     NA 8422
+samptype          NA        NA   NA     NA 8422
+reltrad         2.68      1.57    1      5 8422
+age            48.69     16.99   18     89 8422
+year         2008.93      1.91 2006   2012 8422
+educ           13.66      3.00    0     20 8422
+income            NA        NA   NA     NA 8422
+agekdbrn          NA        NA   NA     NA 8422
+childs            NA        NA   NA     NA 8422
+babies            NA        NA   NA     NA 8422
+wtpan12           NA        NA   NA     NA 8422
+wtpannr12         NA        NA   NA     NA 8422
+wtpan123          NA        NA   NA     NA 8422
+wtpannr123        NA        NA   NA     NA 8422
+nstate          2.73      1.62    1      6 8422
+nbabies           NA        NA   NA     NA 8422
+nchilds           NA        NA   NA     NA 8422
+reltrad1        0.37      0.48    0      1 8422
+reltrad2        0.16      0.36    0      1 8422
+reltrad3        0.07      0.26    0      1 8422
+reltrad4        0.23      0.42    0      1 8422
+reltrad5        0.17      0.38    0      1 8422
+female          0.57      0.50    0      1 8422
+married         0.48      0.50    0      1 8422
+white           0.78      0.42    0      1 8422
+black           0.14      0.35    0      1 8422
 
 
 @@@@@@@@@@@@@@@@@@@
@@ -123,5 +126,5 @@ Written to
 From prep-data.R code
 
 Processing time: elapsed 
-  0.152 
+  0.473 
  minutes
