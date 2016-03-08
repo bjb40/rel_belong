@@ -1,4 +1,4 @@
-[1] 2016-03-07
+[1] 2016-03-08
 
 
 @@@@@@@@@@@@@@@@@@@
@@ -126,5 +126,55 @@ Written to
 From prep-data.R code
 
 Processing time: elapsed 
-  0.473 
+  0.419 
  minutes
+
+@@@@@@@@@@@@@@@@@@
+FERTILITY DATASET
+@@@@@@@@@@@@@@@@@@@@@
+
+
+Limit to women 45 and underIndividuals: 1243  Obs:  2150 
+
+Exclude women with negative change
+Individuals: 1232  Obs:  2102 
+
+
+code for births
+       birth
+nchilds    0    1 <NA>
+   0    1767    0    0
+   1       0  283    0
+   2       0   37    0
+   3       0    5    0
+   4       0    1    0
+   7       0    1    0
+   <NA>    0    0    8
+       birth
+reltrad   0   1 <NA>
+   1    725 119    0
+   2    204  27    0
+   3    116  24    0
+   4    388  83    0
+   5    334  74    0
+   <NA>   0   0    8
+
+
+code dummy for religious switching
+      rswitch
+birth     0    1 <NA>
+  0    1429  338    0
+  1     267   60    0
+  <NA>    0    0    8
+       rswitch
+reltrad   0   1 <NA>
+   1    713 131    0
+   2    160  71    0
+   3    106  34    0
+   4    419  52    0
+   5    298 110    0
+   <NA>   0   0    8
+Written to 
+From prep-data.R code
+
+Processing time: 

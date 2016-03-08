@@ -32,6 +32,7 @@ The panel GSS should have sufficient information to create age-specific fertilit
 The simplest strategy is to use the "childs" variable to get age-specific fertility. Limit the panel to women, and take the difference between childs at wave $t$ and $t+1$. The number should always be positive and increasing, and should count fertility rate across two years. This seems to work OK, *but* there are seriously confusing tabulations. Absent multiple births, 2 should be the maximum and 0 should be the minimum, but the tabulation for the 2006, 2008, and 2010 female panels for this difference is as follows:
 
 |$childs_t$ - $childs_{t-1}$ | freq |
+|:----|---:|
 | -8 | 1 |
 | -7 | 1 |
 | -6 | 0 |
@@ -58,6 +59,7 @@ The negatives are completely erroneous (*i.e.* impossible answers), and amount t
 Limiting solely to women at risk of childbirth (45 or younger), the negative increase is 1.14% of the sample; 0 is 42.8% of the sample, new births amounts to 7.91% of the sample, and the NA amounts to 48.1% of the sample. Here is the distribution:
 
 |$childs_t$ - $childs_{t-1}$ | freq |
+|:----|---:|
 | -8 | 0 |
 | -7 | 1 |
 | -6 | 0 |
@@ -77,11 +79,31 @@ Limiting solely to women at risk of childbirth (45 or younger), the negative inc
 | 8 | 0 |
 |NA | 2028 |
 
-Given the foregoing, I will recode negative values to missing, and calculate age-specific fertility rates using a Bayesian hierarchical survival model, under listwise deletion. This is consistent with the multinomial strategy, and is different from prior projections which use pooled cross-sectional data. We can highlight the errors in a footnote, and suggest the need for further research. To the extent necessary, we can build this into a missing data model. 
+Given the foregoing, I will recode negative values to missing, and calculate age-specific fertility rates using a Bayesian hierarchical survival model, under listwise deletion. This is consistent with the multinomial strategy, and is different from prior projections which use pooled cross-sectional data. We can highlight the errors in a footnote, and suggest the need for further research. To the extent necessary, we can build this into a missing data model.
+
+##Model excerpt
+
+Following standard projection procedure, we model female fertility from the GSS. Following the multinomial logistic, we use a univariate logit to produce smoothed age-conditional estimates for female fertility taking advantage of the panel design of the GSS. We limit the sample to women at risk of childbirth (between the ages of 18 and 45; although there are fertility events before and after these events, we treat them as negligible). At each wave of the GSS, the a woman is asked how many children she's given birth to. The change over two years of the panel wave indicates a birth event (1), and no change indicates no birth (0). We exclude women with negative changes (as they likely result from misreports/misunderstanding), and do not adjust for multiple birth events. There are a few women who have 2 or in excess of two births over the period, but the numbers are relatively small and should be randomlly distributed. This means that our estimated fertility probabilities should produce slight underestimates. We adjust using age and age-squared (unlike mortality, fertility rates are not increasing functions of age), education, marital status, religious tradition at *next* wave, and a dummy to indicate whether there was a change in religious traditions. As before, we estimate the models in Stan and draw 1,800 samples (600 from 3 chains) from the posterior distribution after discarding an equivalent sized warm-up sample.
+
+##Balancing Equation
+
+We combine the religious switching and fertility draws into a demographic balancing equation (ignoring migration) for our projections, as follows:
+
+$$
+\tilde{P}_{yj} = P_{0j} + \tilde{B}_{yj} + \tilde{C}_{yj} - \tilde{A}_{yj} - \tilde{D}_{yj} 
+$$
+
+Where \tilde{$P$} are the simulated values for the propulatin proportion for the religious tradition $j$ in year $y$. $B$ are births (which are simulated) from the fertility model, and converts ($C$), apostates ($A$), and deaths ($D$) are simulated from the multinomial transition model. The initial population distribution ($P_{0j}$) is the weighted age-distribution calculated from the 2010 GSS. ```Note: the equation above comes from Hout 2001```.
 
 **Citations**
+
 Hackett, Conrad, Marcin Stonawski, Michaela Potančoková, Brian J. Grim, and Vegard Skirbekk. 2015. “The Future Size of Religiously Affiliated and Unaffiliated Populations.” Demographic Research 32:829–42.
+
 Hout, Michael, Andrew Greeley, and Melissa J. Wilde. 2001. “The Demographic Imperative in Religious Change in the United States.” American Journal of Sociology 107(2):468–500.
+
 McQuillan, Kevin. 2004. “When Does Religion Influence Fertility?” Population and Development Review 30(1):25–56.
+
+
 Skirbekk, Vegard, Eric Kaufmann, and Anne Goujon. 2010. “Secularism, Fundamentalism, or Catholicism? The Religious Composition of the United States to 2043.” Journal for the Scientific Study of Religion 49(2):293–310.
-Street, 1615 L., NW, Suite 800 Washington, and DC 20036 202 419 4300 |. Main 202 419 4349 |. Fax 202 419 4372 |. Media Inquiries. 2015. “The Future of World Religions: Population Growth Projections, 2010-2050.” Pew Research Center’s Religion & Public Life Project. Retrieved March 7, 2016 (http://www.pewforum.org/2015/04/02/religious-projections-2010-2050/).
+
+Pew Research. 2015.  “The Future of World Religions: Population Growth Projections, 2010-2050.” Pew Research Center’s Religion & Public Life Project. Retrieved March 7, 2016 (http://www.pewforum.org/2015/04/02/religious-projections-2010-2050/).

@@ -102,24 +102,6 @@ for(i in unique(subpanel$idnump)){
   
 }
 
-
-#print averages of children, babies and age at first birth
-agfert = aggregate(rawpanel[rawpanel$sex==2,c('babies','childs','agekdbrn')],
-                   by=list(rawpanel$idnump[rawpanel$sex==2]),mean, na.rm=T)
-
-demean = subset(rawpanel,select=c('idnump','babies','childs','agekdbrn'))
-demean2 = demean
-
-ids = unique(rawpanel$idnump)
-
-for(i in ids){
-  v = c('babies','childs','agekdbrn')
-  demean[demean$idnump==i,v] = apply(demean[demean$idnump==i,v],1,FUN= function(x) x - agfert[agfert$idnump==i,v])
-}
-
-colnames(demean[,2:ncol(demean)]) = c('babiesdif','childsdif','agekdbrndif')
-demean = cbind(demean[,2:ncol(demean)],demean2); rm(demean2)
-
 #panstat_2 and panstat_3 summarize elligibility
 #1) sel, elligible, reinterview; 2) sel, elligible, not reinterview; 3) sel, not ell, not int
 #more info about inelligibility 
@@ -264,6 +246,43 @@ cat('\nFrom prep-data.R code\n\nProcessing time: ')
 #print minutes elapsed for code
 print((proc.time()[3] - st)/60)
 cat(' minutes')
+
+cat('\n\n@@@@@@@@@@@@@@@@@@\nFERTILITY DATASET')
+cat('\n@@@@@@@@@@@@@@@@@@@@@\n\n')
+
+cat('\nLimit to women 45 and under')
+fertpanel = subpanel[subpanel$female == 1 & subpanel$age<46,]
+cat('Individuals:',length(unique(fertpanel$idnump)),' Obs: ',nrow(fertpanel),'\n')
+
+cat('\nExclude women with negative change\n')
+fertpanel = fertpanel[fertpanel$nchilds >= 0,]
+cat('Individuals:',length(unique(fertpanel$idnump)),' Obs: ',nrow(fertpanel),'\n')
+
+cat('\n\ncode for births\n')
+fertpanel$birth = NA
+fertpanel$birth[fertpanel$nchilds==0] = 0
+fertpanel$birth[fertpanel$nchilds>0] = 1
+
+print(table(fertpanel[,c('nchilds','birth')],useNA='always'))
+print(table(fertpanel[,c('reltrad','birth')],useNA='always'))
+
+
+cat('\n\ncode dummy for religious switching\n')
+fertpanel$rswitch = NA
+fertpanel$rswitch[fertpanel$reltrad == fertpanel$nstate] = 0
+fertpanel$rswitch[fertpanel$reltrad != fertpanel$nstate] = 1
+
+print(table(fertpanel[,c('birth','rswitch')],useNA='always'))
+print(table(fertpanel[,c('reltrad','rswitch')],useNA='always'))
+
+fertpanel=fertpanel[,c('idnump','birth','educ','married',paste0('reltrad',1:5),'rswitch','age')]
+
+write.csv(fertpanel,paste0(outdir,'private~/fertpanel.csv'))
+
+cat('Written to ')
+paste(outdir,'private~/fertpanel.csv',sep='')
+cat('\nFrom prep-data.R code\n\nProcessing time: ')
+
 
 sink()
 
