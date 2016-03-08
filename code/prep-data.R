@@ -63,7 +63,6 @@ vars = c(
 )
 
 subpanel = subset(rawpanel,select=vars)
-subpanel$samptype
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #join subset for t-1 in reltrad; add death as reltrad option
@@ -79,6 +78,7 @@ subpanel = subset(subpanel, panelwave < 3)
 subpanel$nstate = as.numeric(NA)
 subpanel$nbabies = as.numeric(NA)
 subpanel$nchilds = as.numeric(NA)
+count=0
 
 for(i in unique(subpanel$idnump)){
   for(w in 1:2){
@@ -91,6 +91,15 @@ for(i in unique(subpanel$idnump)){
     subpanel$nbabies[lim] = nextbabies - subpanel$babies[lim]
     subpanel$nchilds[lim] = nextchilds - subpanel$childs[lim]
   }
+  count=count+1
+  
+  if(count%%1000 == 0){
+    cat('\n\nsubpanel\n')
+    print(subpanel[subpanel$idnump==i,c('idnump','reltrad','nstate','babies','nbabies','childs','nchilds','panelwave')])
+    cat('\nnextwave\n')
+    print(nextwave[nextwave$idnum==i,c('idnump','reltrad','babies','childs','panelwave')])
+  }
+  
 }
 
 
