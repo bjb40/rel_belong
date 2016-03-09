@@ -34,3 +34,8 @@ if(file.exists(paste(projdir,'draft_img~',sep=''))==F)
 
 finalimg = 'C:/Users/bjb40/Dropbox/Projecting Religious Belonging/7.Diagrams/'
 draftimg = paste(projdir,'draft_img~/',sep='')
+
+#functions
+
+source("H:/projects/rel_belong/code/funs.R",
+       echo =T, print.eval = T, keep.source=T)

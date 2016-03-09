@@ -8,6 +8,8 @@
 #Preliminaries and load data
 #@@@@@
 
+source("H:/projects/rel_belong/code/config.R",
+       echo =T, print.eval = T, keep.source=T)
 
 #@@@@
 #assign variables
@@ -27,7 +29,8 @@ fertpanel$c_age2 = fertpanel$c_age^2
 #cyrus stata code : 1) evangelical (ref); 2) mainline; 3)other; (4) catholic; (5) none
 y=fertpanel$birth
 fertpanel$intercept = 1
-x=fertpanel[,c('intercept','c_age','c_age2','married','educ',paste0('reltrad',2:5),'rswitch')]
+#age^2 has no effect
+x=fertpanel[,c('intercept','c_age','married','educ',paste0('reltrad',2:5),'rswitch')]
 N=nrow(fertpanel)
 D=ncol(x)
 
@@ -60,7 +63,68 @@ print(Sys.time() - st)
 #print table and graph of preicted probabilities
 #@@@@
 
+makeprob = function(logodds){
+  o = exp(logodds)
+  return(o/(1+o))
+}
 
+#genrate simulation data for plotting
+
+ages=18:45
+c_ages = ages - mean(fertpanel$age)
+
+simdat = matrix(NA,5*length(ages),ncol(x))
+colnames(simdat) = colnames(x)
+simdat=data.frame(simdat)
+
+simdat$intercept=rep(1,nrow(simdat)); simdat$c_age=rep(c_ages,5); 
+simdat$married=rep(1,nrow(simdat)); simdat$educ=12; simdat$rswitch=0
+simdat$reltrad2=c(rep(0,length(ages)),rep(1,length(ages)),rep(0,length(ages)*3))
+simdat$reltrad3=c(rep(0,length(ages)*2),rep(1,length(ages)),rep(0,length(ages)*2))
+simdat$reltrad4=c(rep(0,length(ages)*3),rep(1,length(ages)),rep(0,length(ages)))
+simdat$reltrad5=c(rep(0,length(ages)*4),rep(1,length(ages)))
+
+fertpost=extract(fert,pars='beta',permuted=TRUE,inc_warmup=FALSE)
+
+#holder for predicted probs
+simprob=matrix(NA,nrow(simdat),nrow(fertpost$beta))
+
+#calculate predicted probs
+for(s in 1:nrow(fertpost$beta)){
+  simprob[,s] = makeprob(as.matrix(simdat)%*%fertpost$beta[s,])
+}
+
+#cyrus stata code : 1) evangelical (ref); 2) mainline; 3)other; (4) catholic; (5) none
+plotdat = list()
+plotdat$evangelical = simprob[simdat$reltrad2==0 & simdat$reltrad3==0 & simdat$reltrad4==0 & simdat$reltrad5==0,]
+plotdat$mainline = simprob[simdat$reltrad2==1,]
+plotdat$other = simprob[simdat$reltrad3==1,]
+plotdat$catholic = simprob[simdat$reltrad4==1,]
+plotdat$none = simprob[simdat$reltrad5==1,]
+
+#generate mean and 95% ci (should actually get median...)
+plotdat = lapply(plotdat,FUN=function(x) apply(x,1,eff,c=.84))
+
+yl=range(plotdat)
+xl=range(ages)
+#create plot of fertility rates with 84% ci
+#this is wierd that it calculates the probabilty over the next two years -- can i divide by 2? 
+plot(ages,rep(1,length(ages)),ylim=yl,xlim=xl,type='n')
+  #ci-polygon
+  lapply(1:5,function(x)
+              polygon(c(ages,rev(ages)),c(plotdat[[x]][2,],rev(plotdat[[x]][3,])),
+                                         border=NA,col=gray(0.75,alpha=0.25))
+  )
+  #mean probability-line
+  lapply(1:5,function(x) 
+    lines(ages,plotdat[[x]][1,],lty=x)
+  )
+  
+  #add legend
+  legend('topright',legend=c('Evangelical','Mainline','Other','Catholic','None'),
+         bty='n',
+         lty=1:5,
+         cex=.75)
 
 #@@@@@@
 #save posterior
