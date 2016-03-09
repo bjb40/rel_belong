@@ -30,7 +30,7 @@ fertpanel$c_age2 = fertpanel$c_age^2
 y=fertpanel$birth
 fertpanel$intercept = 1
 #age^2 has no effect
-x=fertpanel[,c('intercept','c_age','married','educ',paste0('reltrad',2:5),'rswitch')]
+x=fertpanel[,c('intercept','c_age','c_age2','married','educ',paste0('reltrad',2:5),'rswitch')]
 N=nrow(fertpanel)
 D=ncol(x)
 
@@ -77,7 +77,7 @@ simdat = matrix(NA,5*length(ages),ncol(x))
 colnames(simdat) = colnames(x)
 simdat=data.frame(simdat)
 
-simdat$intercept=rep(1,nrow(simdat)); simdat$c_age=rep(c_ages,5); 
+simdat$intercept=rep(1,nrow(simdat)); simdat$c_age=rep(c_ages,5); simdat$c_age2=rep(c_ages^2,5)
 simdat$married=rep(1,nrow(simdat)); simdat$educ=12; simdat$rswitch=0
 simdat$reltrad2=c(rep(0,length(ages)),rep(1,length(ages)),rep(0,length(ages)*3))
 simdat$reltrad3=c(rep(0,length(ages)*2),rep(1,length(ages)),rep(0,length(ages)*2))
