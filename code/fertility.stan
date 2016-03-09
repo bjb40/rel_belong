@@ -19,3 +19,4 @@ model {
     beta ~ normal(0,10);
     y ~ bernoulli_logit(x*beta);
 }
+

@@ -23,10 +23,11 @@ fertpanel$c_age = fertpanel$age - mean(fertpanel$age)
 fertpanel$age2 = fertpanel$age^2
 fertpanel$c_age2 = fertpanel$c_age^2
 
-  
+
+#cyrus stata code : 1) evangelical (ref); 2) mainline; 3)other; (4) catholic; (5) none
 y=fertpanel$birth
 fertpanel$intercept = 1
-x=fertpanel[,c('intercept','c_age','c_age2','married','educ',paste0('reltrad',1:5))]
+x=fertpanel[,c('intercept','c_age','c_age2','married','educ',paste0('reltrad',2:5),'rswitch')]
 N=nrow(fertpanel)
 D=ncol(x)
 
@@ -55,11 +56,11 @@ fert <- stan("fertility.stan", data=c("D", "N", "y", "x"),
 #print time taken
 print(Sys.time() - st)
 
-
-
 #@@@@
 #print table and graph of preicted probabilities
 #@@@@
+
+
 
 #@@@@@@
 #save posterior
