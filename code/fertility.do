@@ -1,5 +1,10 @@
+
+
+clear
+
 *load data
-import delimited /home/utopia3/bjb40/lanhome/projects/rel_belong/output/private~/fertpanel.csv
+import delimited using "H:/projects/rel_belong/output/private~/fertpanel.csv", ///
+numericcols(_all) 
 
 *prepare log
 *capture log close

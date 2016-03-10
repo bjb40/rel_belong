@@ -25,12 +25,18 @@ fertpanel$c_age = fertpanel$age - mean(fertpanel$age)
 fertpanel$age2 = fertpanel$age^2
 fertpanel$c_age2 = fertpanel$c_age^2
 
+for(var in 2:5){
+  fertpanel[,paste0('c_agexreltrad',var)] = fertpanel$c_age * fertpanel[,paste0('reltrad',var)]
+  fertpanel[,paste0('c_age2xreltrad',var)] = fertpanel$c_age2 * fertpanel[,paste0('reltrad',var)]
+  
+}
 
 #cyrus stata code : 1) evangelical (ref); 2) mainline; 3)other; (4) catholic; (5) none
 y=fertpanel$birth
 fertpanel$intercept = 1
 #age^2 has no effect
-x=fertpanel[,c('intercept','c_age','c_age2','married','educ',paste0('reltrad',2:5),'rswitch')]
+x=fertpanel[,c('intercept','c_age','c_age2','married','educ',
+               paste0('reltrad',2:5),paste0('c_agexreltrad',2:5),paste0('c_age2xreltrad',2:5),'rswitch')]
 N=nrow(fertpanel)
 D=ncol(x)
 
@@ -84,6 +90,13 @@ simdat$reltrad3=c(rep(0,length(ages)*2),rep(1,length(ages)),rep(0,length(ages)*2
 simdat$reltrad4=c(rep(0,length(ages)*3),rep(1,length(ages)),rep(0,length(ages)))
 simdat$reltrad5=c(rep(0,length(ages)*4),rep(1,length(ages)))
 
+for(var in 2:5){
+  simdat[,paste0('c_agexreltrad',var)] = simdat$c_age * simdat[,paste0('reltrad',var)]
+  simdat[,paste0('c_age2xreltrad',var)] = simdat$c_age2 * simdat[,paste0('reltrad',var)]
+  
+}
+
+
 fertpost=extract(fert,pars='beta',permuted=TRUE,inc_warmup=FALSE)
 
 #holder for predicted probs
@@ -109,21 +122,28 @@ yl=range(plotdat)
 xl=range(ages)
 #create plot of fertility rates with 84% ci
 #this is wierd that it calculates the probabilty over the next two years -- can i divide by 2? 
+
+#colsf = rainbow(s=1,v=.75,5,alpha=.1)
+#cols = rainbow(s=1,v=1,5)
+colsf=terrain.colors(5,alpha=.25)
+cols=terrain.colors(5)
+
 plot(ages,rep(1,length(ages)),ylim=yl,xlim=xl,type='n')
   #ci-polygon
   lapply(1:5,function(x)
               polygon(c(ages,rev(ages)),c(plotdat[[x]][2,],rev(plotdat[[x]][3,])),
-                                         border=NA,col=gray(0.75,alpha=0.25))
+                                         border=NA,col=colsf[x])
   )
   #mean probability-line
   lapply(1:5,function(x) 
-    lines(ages,plotdat[[x]][1,],lty=x)
+    lines(ages,plotdat[[x]][1,],lty=1,col=cols[x])
   )
   
   #add legend
   legend('topright',legend=c('Evangelical','Mainline','Other','Catholic','None'),
          bty='n',
-         lty=1:5,
+         lty=rep(1,5),
+         col=cols,
          cex=.75)
 
 #@@@@@@
