@@ -128,24 +128,28 @@ xl=range(ages)
 colsf=terrain.colors(5,alpha=.25)
 cols=terrain.colors(5)
 
-plot(ages,rep(1,length(ages)),ylim=yl,xlim=xl,type='n')
+png(paste0(draftimg,'age-fertility.png'),height=9,width=18,units='in',res=300)
+plot(ages,rep(1,length(ages)),ylim=yl,xlim=xl,type='n',main='Age-Specific Fertility Probabilities')
   #ci-polygon
   lapply(1:5,function(x)
               polygon(c(ages,rev(ages)),c(plotdat[[x]][2,],rev(plotdat[[x]][3,])),
-                                         border=NA,col=colsf[x])
+                                         border=NA,col=paste0(colors1[x],'45'))
   )
   #mean probability-line
   lapply(1:5,function(x) 
-    lines(ages,plotdat[[x]][1,],lty=1,col=cols[x])
+    lines(ages,plotdat[[x]][1,],col=colors1[x],lty=x)
   )
   
   #add legend
   legend('topright',legend=c('Evangelical','Mainline','Other','Catholic','None'),
          bty='n',
-         lty=rep(1,5),
-         col=cols,
-         cex=.75)
+         lty=1:5,
+         col=colors1)
+
+dev.off()
 
 #@@@@@@
 #save posterior
 #@@@@@@
+
+

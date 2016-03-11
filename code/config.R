@@ -12,6 +12,11 @@
 options(scipen=999, digits=3)
 
 #@@
+#color scheme (5 colors) in hex, from kuler.adobe.com
+colors1=c('#81A6AE','#B188BD','#A69180','#ADBD88','#81AEB3')
+colors2=c('#8D7369','#0F1B3C','#9F72A4','#A49A72','#739A6B')
+
+#@@
 #Directories
 
 #datasource

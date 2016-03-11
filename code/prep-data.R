@@ -56,6 +56,8 @@ vars = c(
   'agekdbrn', #age at first birth
   'childs', #children born to you at any time
   'babies', #number of babies in the home ... (includes adoption)
+  'preteen',
+  'teens',
   
   # weight variables
   'wtpan12','wtpannr12','wtpan123','wtpannr123'

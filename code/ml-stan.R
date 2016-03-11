@@ -57,8 +57,8 @@ fit <- stan("mnl.stan", data=c("K", "D", "N", "y", "xmat"),
             #algorithm='HMC',
             chains=3,iter=1200, seed=6590,verbose=T,
             sample_file = paste0(outdir,'diagnostic~/post-samp.txt'),
-            diagnostic_file = paste0(outdir,'diagnostic~/stan-diagnostic.txt'),
-            open_progress=T);
+            diagnostic_file = paste0(outdir,'diagnostic~/stan-diagnostic.txt'))
+            #open_progress=T);
 
 
 #print time taken

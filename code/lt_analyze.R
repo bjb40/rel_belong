@@ -75,35 +75,36 @@ for(p in 1:36){
 }
 dev.off()
 
-png(paste0(draftimg,'mort-stay-probs.png'))
-par(mfrow=c(2,1), oma=c(1,1,1,1), mar=c(2,1,1.5,1))
+png(paste0(draftimg,'mort-probs.png'),height=9,width=18,units='in',res=300)
+#par(mfrow=c(2,1), oma=c(1,1,1,1), mar=c(2,1,1.5,1))
 #mortality
 diers = c(31:35)
-plot(yx,phi.mean$phi6, ylim=c(0,.3), type="n", xlab='', xaxt='n',ylab='',main="Probability of Mortality")
+plot(yx,phi.mean$phi6, ylim=c(0,.3), type="n", xlab='',ylab='',main="Probability of Mortality")
 for(k in 1:length(diers)){
   polygon(c(yx, rev(yx)), c(phi.upper[,paste0('phi',diers[k])],rev(phi.lower[,paste0('phi',diers[k])])), 
-          col="gray90", border=NA)
+          col=paste0(colors1[k],'45'), border=NA)
 }
 for(k in 1:length(diers)){
-  lines(yx,phi.mean[,paste0('phi',diers[k])], lty=k)
+  lines(yx,phi.mean[,paste0('phi',diers[k])], lty=k,col=colors1[k])
 }
 
 legend('topleft',legend=nm[1:5],
        bty='n',
        lty=1:5,
-       cex=.75)
+       col=colors1,
+       cex=1.2)
+dev.off()
 
-
+png(paste0(draftimg,'stayers.png'),height=9,width=18,units='in',res=300)
 #diagonal of phi - stayers
 stayers = c(1,8,15,22,29)
-
 plot(yx,phi.mean$phi1, ylim=c(0.25,.9), type="n", xlab='Age', ylab='',main="Probability of Staying in Tradition")
 for(k in 1:length(stayers)){
   polygon(c(yx, rev(yx)), c(phi.upper[,paste0('phi',stayers[k])],rev(phi.lower[,paste0('phi',stayers[k])])), 
-          col="gray90", border=NA)
+          col=paste0(colors1[k],'45'), border=NA)
 }
 for(k in 1:length(stayers)){
-  lines(yx,phi.mean[,paste0('phi',stayers[k])], lty=k)
+  lines(yx,phi.mean[,paste0('phi',stayers[k])], lty=k,col=colors1[k])
 }
 dev.off()
 
@@ -118,30 +119,32 @@ par(mfrow=c(2,1), oma=c(1,1,1,1), mar=c(2,1,1.5,1))
 plot(yx,phi.mean$phi2, ylim=c(0,.4), type="n", xlab='Age', xaxt='n',ylab='',main="Probability of Transitioning to Evangelical")
 for(k in 1:length(toev)){
   polygon(c(yx, rev(yx)), c(phi.upper[,paste0('phi',toev[k])],rev(phi.lower[,paste0('phi',toev[k])])), 
-          col="gray90", border=NA)
+          col=paste0(colors1[k],'45'), border=NA)
 }
 for(k in 1:length(toev)){
-  lines(yx,phi.mean[,paste0('phi',toev[k])], lty=k+1)
+  lines(yx,phi.mean[,paste0('phi',toev[k])], lty=k+1,col=colors1[k])
 }
 
 legend('topright',legend=paste('From',nm[2:5]),
        bty='n',
        lty=2:5,
+       col = colors1[2:5],
        cex=.75)
 
 #to none
 plot(yx,phi.mean$phi2, ylim=c(0,.45), type="n", xlab='Age',ylab='',main="Probability of Transitioning to None")
 for(k in 1:length(tonone)){
   polygon(c(yx, rev(yx)), c(phi.upper[,paste0('phi',tonone[k])],rev(phi.lower[,paste0('phi',tonone[k])])), 
-          col="gray90", border=NA)
+          col=paste0(colors1[k],'45'), border=NA)
 }
 for(k in 1:length(tonone)){
-  lines(yx,phi.mean[,paste0('phi',tonone[k])], lty=k)
+  lines(yx,phi.mean[,paste0('phi',tonone[k])], lty=k,colors1[k])
 }
 
 legend('topright',legend=paste('From',nm[1:4]),
        bty='n',
        lty=1:4,
+       col=colors1[1:4],
        cex=.75)
 
 dev.off()
