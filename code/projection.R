@@ -79,6 +79,7 @@ barplot(apply(p0,3,FUN=function(x) sum(x)/sum(p0)),col=colors1)
 #calculate 6 year probabilities (dividing lx / lx+6)
 #see prob set 3 in demography i exercizes for examples
 l = read.csv(paste0(outdir,'l.csv'))
+phi = read.csv(paste0(outdir,'phi.csv'))
 
 #calculate survival probabilities for children 
 #using the 2010 published life table in same manner
@@ -86,9 +87,13 @@ ageints=max(l$ageint)
 iters=max(l$iter)
 #tst = array(unlist(l[,3:ncol(l)]),c(iters,ageints,6,6))
 lx=array(0,c(iters,ageints,6,6))
+phix=array(0,c(iters,ageints,6,6))
 for(i in 1:iters){
   lx[i,,,] = array(unlist(l[l$iter==i,3:ncol(l)]),c(ageints,6,6))
+  phix[i,,,] = array(unlist(phi[phi$iter==i,3:ncol(phi)]),c(ageints,6,6))
 }
+
+rm(l,phi)
 
 #create 6-year intervals of probabilities for converts, apostates, death
 #sum of probabilities 2-year (??) (survive or convert...)
