@@ -67,9 +67,6 @@ p0[1:3,,] = minors;p0[4:15,,] = adults
 #translate to a radix of 100000
 p0 = round(prop.table(p0)*100000)
 
-#proportion
-barplot(apply(p0,3,FUN=function(x) sum(x)/sum(p0)),col=colors1)
-
 #@@@@@@@@@@@@@
 #Load fertility and transition estimates for
 #@@@@@@@@@@@@@
@@ -179,32 +176,61 @@ for(i in 1:1800){
 #@@@@@@@@@@@@@@@@@@
 
 #Prepare Holder variables
-  
-p1=array(0,c(dim(p0)))
-dimnames(p1)=dimnames(p0)  
-  
-#check cohort component method -- may need to mean over interval ((x1+x2)/2)
-#sumulate minor survival (assuming no changes)
-p1[2,,] = mapply(p0[1,,],FUN=function(x) survive(x,sum(px.minors[1:3])))
-p1[3,,] = mapply(p0[2,,],FUN=function(x) survive(x,sum(px.minors[4:6])))
-p1[4,,] = mapply(p0[3,,],FUN=function(x) survive(x,sum(px.minors[7:9])))
 
-#simulate transitions for adult men and women
-for(a in 5:14){
-  p1[a,1,] = trns(p0[a-1,1,],prob=phi[1,a-4,,])
-  p1[a,2,] = trns(p0[a-1,1,],prob=phi[1,a-4,,])
+future = 5 #how many iterations
+p=list()
+  
+p1=array(0,c(iters,dim(p0)))
+nm=list(1:iters);names(nm)='iter'; nm=c(nm,dimnames(p0))
+dimnames(p1)=nm  
+
+#@@
+#draw posterior predictives for 
+#@@
+
+cat('Beginning Simulation...\n')
+
+for(i in 1:iters){
+  if(i%%100==0){cat(i,'of',iters,'\n')}
+  
+  #check cohort component method -- may need to mean over interval ((x1+x2)/2)
+  #sumulate minor survival (assuming no changes)
+  p1[i,2,,] = mapply(p0[1,,],FUN=function(x) survive(x,sum(px.minors[1:3])))
+  p1[i,3,,] = mapply(p0[2,,],FUN=function(x) survive(x,sum(px.minors[4:6])))
+  p1[i,4,,] = mapply(p0[3,,],FUN=function(x) survive(x,sum(px.minors[7:9])))
+
+  #simulate transitions for adult men and women
+  for(a in 5:14){
+   p1[i,a,1,] = trns(p0[a-1,1,],prob=phi[i,a-4,,])
+   p1[i,a,2,] = trns(p0[a-1,1,],prob=phi[i,a-4,,])
+  }
+
+  #calculate final transition
+  p1[i,15,1,]=trns(p0[14,1,],prob=phi[i,11,,])+trns(p0[15,1,],prob=phi[i,12,,])
+  p1[i,15,2,]=trns(p0[14,1,],prob=phi[i,11,,])+trns(p0[15,1,],prob=phi[i,12,,])
+
+  #simulate births
+  atrisk=p0[4:8,2,]
+  #pull values from iteration
+  fr=f[i,,]
+
+  births=matrix(sapply(atrisk,FUN = function(x) sum(rbinom(x,size=1,prob=fr[(which(atrisk==x,arr.ind=TRUE))])),simplify='array'),5,5)
+  p1[i,1,1,] = apply(births,2,FUN=function(x) sum(rbinom(sum(x),size=1,prob=sexprop)))
+  p1[i,1,2,] = colSums(births)-p1[i,1,1,]
 }
 
-#calculate final transition
-p1[15,1,]=trns(p0[14,1,],prob=phi[1,11,,])+trns(p0[15,1,],prob=phi[1,12,,])
-p1[15,2,]=trns(p0[14,1,],prob=phi[1,11,,])+trns(p0[15,1,],prob=phi[1,12,,])
+#@@@@@
+#output and figures
+#@@@@@
 
-#simulate births
-atrisk=p0[4:8,2,]
-#pull values from iteration
-fr=f[1,,]
+props=array(0,c(1800,5))
 
-#  apply(p0[4:8,2,],2,FUN=function(x) print(f[1,which(x==x),]))
-births=matrix(sapply(atrisk,FUN = function(x) sum(rbinom(x,size=1,prob=fr[(which(atrisk==x,arr.ind=TRUE))])),simplify='array'),5,5)
-p1[1,1,] = apply(births,2,FUN=function(x) sum(rbinom(sum(x),size=1,prob=sexprop)))
-p1[1,2,] = colSums(births)-p1[1,1,]
+#proportion
+for(i in 1:iters){
+  props[i,] = apply(p1[i,,,],3,FUN=function(x) sum(x)/sum(p1[i,,,]))
+}
+
+par(mfrow=c(2,1))
+barplot(apply(p0,3,FUN=function(x) sum(x)/sum(p0)),col=colors1)
+barplot(apply(props,2,eff)[1,],col=colors1)
+
