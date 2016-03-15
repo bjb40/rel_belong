@@ -178,12 +178,11 @@ for(i in 1:1800){
 #function to simulate population change
 sim=function(p0){
   #helper function for simulating population proportions
-  #p0 is an array of integers 15 age groups, 2 gener, and
+  #p0 is an array of iters (1800), integers 15 age groups, 2 gender, and
   #5 religious belonging
   #returns 1800 simulated population distributions 6 years later
-    p1=array(0,c(iters,dim(p0)))
-    nm=list(1:iters);names(nm)='iter'; nm=c(nm,dimnames(p0))
-    dimnames(p1)=nm  
+    p1=array(0,c(dim(p0)))
+    dimnames(p1)=dimnames(p0) 
     
     #@@
     #draw posterior predictives for 
@@ -197,22 +196,22 @@ sim=function(p0){
       
       #check cohort component method -- may need to mean over interval ((x1+x2)/2)
       #sumulate minor survival (assuming no changes)
-      p1[i,2,,] = mapply(p0[1,,],FUN=function(x) survive(x,sum(px.minors[1:3])))
-      p1[i,3,,] = mapply(p0[2,,],FUN=function(x) survive(x,sum(px.minors[4:6])))
-      p1[i,4,,] = mapply(p0[3,,],FUN=function(x) survive(x,sum(px.minors[7:9])))
+      p1[i,2,,] = mapply(p0[i,1,,],FUN=function(x) survive(x,sum(px.minors[1:3])))
+      p1[i,3,,] = mapply(p0[i,2,,],FUN=function(x) survive(x,sum(px.minors[4:6])))
+      p1[i,4,,] = mapply(p0[i,3,,],FUN=function(x) survive(x,sum(px.minors[7:9])))
     
       #simulate transitions for adult men and women
       for(a in 5:14){
-       p1[i,a,1,] = trns(p0[a-1,1,],prob=phi[i,a-4,,])
-       p1[i,a,2,] = trns(p0[a-1,1,],prob=phi[i,a-4,,])
+       p1[i,a,1,] = trns(p0[i,a-1,1,],prob=phi[i,a-4,,])
+       p1[i,a,2,] = trns(p0[i,a-1,1,],prob=phi[i,a-4,,])
       }
     
       #calculate final transition
-      p1[i,15,1,]=trns(p0[14,1,],prob=phi[i,11,,])+trns(p0[15,1,],prob=phi[i,12,,])
-      p1[i,15,2,]=trns(p0[14,1,],prob=phi[i,11,,])+trns(p0[15,1,],prob=phi[i,12,,])
+      p1[i,15,1,]=trns(p0[i,14,1,],prob=phi[i,11,,])+trns(p0[i,15,1,],prob=phi[i,12,,])
+      p1[i,15,2,]=trns(p0[i,14,1,],prob=phi[i,11,,])+trns(p0[i,15,1,],prob=phi[i,12,,])
     
       #simulate births
-      atrisk=p0[4:8,2,]
+      atrisk=p0[i,4:8,2,]
       #pull values from iteration
       fr=f[i,,]
     
@@ -228,11 +227,15 @@ sim=function(p0){
 
 future = 5 #how many iterations
 p=list()
-p[[1]] = sim(p0=p0)
+pfirst = array(0,c(iters,dim(p0)))
+nm=list(1:iters);names(nm)='iter'; nm=c(nm,dimnames(p0))
+dimnames(pfirst)=nm  
+
+for(i in 1:iters){pfirst[i,,,]=p0}
+p[[1]] = sim(p0=pfirst)
 
 for(y in 2:future){
-  p0mean=apply(p[[y-1]],c(2,3,4),FUN=function(x) round(eff(x,c=.66)))[1,,,]
-  p[[y]]=sim(p0=p0mean)
+  p[[y]]=sim(p0=p[[(y-1)]])
 }
 
 #cat('One simulation took',Sys.time()-st)-- 
