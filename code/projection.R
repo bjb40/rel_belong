@@ -65,7 +65,7 @@ dimnames(p0)=nm
 p0[1:3,,] = minors;p0[4:15,,] = adults
 
 #translate to a radix of 100000
-round(prop.table(p0)*100000)
+p0 = round(prop.table(p0)*100000)
 
 #proportion
 barplot(apply(p0,3,FUN=function(x) sum(x)/sum(p0)),col=colors1)
@@ -78,30 +78,133 @@ barplot(apply(p0,3,FUN=function(x) sum(x)/sum(p0)),col=colors1)
 
 #calculate 6 year probabilities (dividing lx / lx+6)
 #see prob set 3 in demography i exercizes for examples
-l = read.csv(paste0(outdir,'l.csv'))
 phi = read.csv(paste0(outdir,'phi.csv'))
 
-#calculate survival probabilities for children 
-#using the 2010 published life table in same manner
-ageints=max(l$ageint)
-iters=max(l$iter)
+ageints=max(phi$ageint)
+iters=max(phi$iter)
 #tst = array(unlist(l[,3:ncol(l)]),c(iters,ageints,6,6))
-lx=array(0,c(iters,ageints,6,6))
 phix=array(0,c(iters,ageints,6,6))
 for(i in 1:iters){
-  lx[i,,,] = array(unlist(l[l$iter==i,3:ncol(l)]),c(ageints,6,6))
   phix[i,,,] = array(unlist(phi[phi$iter==i,3:ncol(phi)]),c(ageints,6,6))
 }
 
-rm(l,phi)
+rm(phi)
 
-#create 6-year intervals of probabilities for converts, apostates, death
-#sum of probabilities 2-year (??) (survive or convert...)
+#input survival probabilities for children 
+#using the 2010 published life table in same manner
+#link: http://www.cdc.gov/nchs/products/life_tables.htm (2010,p.9)
+#
+px.minors = c(0.006123,0.000428,0.000275,0.000211,0.000158,
+              0.000145,0.000128,0.000114,0.000100,0.000087,
+              0.000079,0.000086,0.000116,0.000175,0.000252,
+              0.000333,0.000412,0.000492)
 
+#Survive
+
+p1=array(0,c(dim(p0)))
+dimnames(p1)=dimnames(p0)
+
+survive = function(n,prob){
+  #helper function for surviving life tables (minors only)
+  #n is life table individuals alive
+  #returns number surviving over interval
+  #prob is the probability of dying 
+  return(n-sum(rbinom(n,1,sum(prob))))
+}
+
+#check cohort component method -- may need to mean over interval ((x1+x2)/2)
+
+#survive minors
+p1[2,,] = mapply(p0[1,,],FUN=function(x) survive(x,sum(px.minors[1:3])))
+p1[3,,] = mapply(p0[2,,],FUN=function(x) survive(x,sum(px.minors[4:6])))
+p1[4,,] = mapply(p0[3,,],FUN=function(x) survive(x,sum(px.minors[7:9])))
+
+#calculate conversions, apostasies and deaths
+
+msurv = function(n,prob){
+  #helper function for surviving life tables (adults only)
+  #n is life table individuals alive
+  #returns number surviving or apostatizing over interval
+  #prob is a vecotr of probability of dying or transition
+  draw = rmultinom(n,size=1,prob=prob)
+  return(rowSums(draw))
+}
+
+trns = function(row,prob){
+  #helper function for transition life tables (adults only)
+  #row is row vector of individuals alive in time +1
+  #prob is transition matrix
+  #returns row vector of multinomial counts
+  
+  mat = mapply(1:5,FUN=function(x) msurv(row[x],prob=prob[x,]))
+  return(rowSums(mat[1:5,]))
+  
+}
+
+#calculate average probability over six year intervals
+
+phi = array(0,c(1800,12,6,6))
+for(i in 1:1800){
+  for(a in 1:11){ #ignoring first and last age groups
+    r = ((a*3)-2):(a*3)
+    phi[i,a,,]=(phix[i,r[1],,] + phix[i,r[2],,] + phix[i,r[3],,])/3
+  }
+  #last period same
+  phi[i,12,,] = phix[i,34,,]
+}
+
+for(a in 5:14){
+  #calculate transitions for men and women
+  p1[a,1,] = trns(p0[a-1,1,],prob=phi[1,a-4,,])
+  p1[a,2,] = trns(p0[a-1,1,],prob=phi[1,a-4,,])
+}
+
+#calculate final transition
+p1[15,1,]=trns(p0[14,1,],prob=phi[1,11,,])+trns(p0[15,1,],prob=phi[1,12,,])
+p1[15,2,]=trns(p0[14,1,],prob=phi[1,11,,])+trns(p0[15,1,],prob=phi[1,12,,])
 
 #@@@@@@@@@@@@@
-#Calculate Births 
+#Input Births over 6 year interval 
 #@@@@@@@@@@@@@
 
 #calculate predicted mean fertility rates by 6 year age intervals
 #p. 114
+#18-48; 4:8
+
+births = function(n,probs){
+  #helper fucntion
+  #n is a vector of ns for religious grup
+  #probs is a vector of probabilities 
+  #returns number of births
+  rbinom(n,size=1,probs)
+}
+
+fx = read.csv(paste0(outdir,'fertprobs.csv'))
+fx=fx[,2:ncol(fx)]
+fx$age=fx$age-17 
+
+f = array(0,c(1800,5,5)) #five age groups 18-48, 5 trads
+
+for(i in 1:1800){
+  for(a in 1:5){
+    r = ((a*6)-5):(a*6)
+    #print(r)
+    c = paste0('iter',i) #column name for fx
+    #mean fertility rate
+    mfr = aggregate(fx[fx$age %in% r,paste0('iter',i)],by=list(fx$reltrad[fx$age %in% r]),mean)
+    f[i,a,]=mfr[,2]
+  }
+}
+
+atrisk=p0[4:8,2,]
+#pull values from iteration
+fr=f[1,,]
+
+#  apply(p0[4:8,2,],2,FUN=function(x) print(f[1,which(x==x),]))
+  births=matrix(sapply(atrisk,FUN = function(x) sum(rbinom(x,size=1,prob=fr[(which(atrisk==x,arr.ind=TRUE))])),simplify='array'),5,5)
+  p1[1,1,] = apply(births,2,FUN=function(x) sum(rbinom(sum(x),size=1,prob=sexprop)))
+  p1[1,2,] = colSums(births)-p1[1,1,]
+  
+
+  
+  

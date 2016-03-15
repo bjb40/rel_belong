@@ -77,7 +77,8 @@ makeprob = function(logodds){
 #genrate simulation data for plotting
 
 ages=18:45
-c_ages = ages - mean(fertpanel$age)
+meanages = mean(fertpanel$age,na.rm=T)
+c_ages = ages - meanages
 
 simdat = matrix(NA,5*length(ages),ncol(x))
 colnames(simdat) = colnames(x)
@@ -93,7 +94,6 @@ simdat$reltrad5=c(rep(0,length(ages)*4),rep(1,length(ages)))
 for(var in 2:5){
   simdat[,paste0('c_agexreltrad',var)] = simdat$c_age * simdat[,paste0('reltrad',var)]
   simdat[,paste0('c_age2xreltrad',var)] = simdat$c_age2 * simdat[,paste0('reltrad',var)]
-  
 }
 
 
@@ -107,6 +107,20 @@ for(s in 1:nrow(fertpost$beta)){
   simprob[,s] = makeprob(as.matrix(simdat)%*%fertpost$beta[s,])
 }
 
+#write simprob to csv with ages for projection
+reltrads = rep(0,nrow(simprob))
+  reltrads[simdat$reltrad2==1] =2
+  reltrads[simdat$reltrad3==1] =3 
+  reltrads[simdat$reltrad4==1] =4 
+  reltrads[simdat$reltrad5==1] =5 
+  reltrads[reltrads==0] = 1
+
+fertprobs = cbind(simdat$c_age+meanages,reltrads,simprob)
+colnames(fertprobs) = c('age','reltrad',paste0('iter',1:1800))
+
+write.csv(fertprobs,paste0(outdir,'fertprobs.csv'))
+
+#code for plotting
 #cyrus stata code : 1) evangelical (ref); 2) mainline; 3)other; (4) catholic; (5) none
 plotdat = list()
 plotdat$evangelical = simprob[simdat$reltrad2==0 & simdat$reltrad3==0 & simdat$reltrad4==0 & simdat$reltrad5==0,]
