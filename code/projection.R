@@ -268,13 +268,13 @@ names(plotdat)=nm
 #line plot
 par(mfrow=c(1,1))
 plot(1,ylim=range(props),xlim=c(1,(future+1)),type='n',xaxt='n')
-  for(l in 1:6){
+  for(l in 1:5){
     polygon(c(1:6,rev(1:6)),c(plotdat[[l]][2,],rev(plotdat[[l]][3,])),
             border=NA,col=paste0(colors1[l],'45'))
     
   }
 
-  for(l in 1:6){
+  for(l in 1:5){
      lines(1:6,plotdat[[l]][1,],col=colors1[l],lty=l)
   }
 
