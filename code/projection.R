@@ -71,7 +71,7 @@ p0 = round(prop.table(p0)*100000)
 barplot(apply(p0,3,FUN=function(x) sum(x)/sum(p0)),col=colors1)
 
 #@@@@@@@@@@@@@
-#Calculate Conversions, Apostasies, and Deaths
+#Load fertility and transition estimates for
 #@@@@@@@@@@@@@
 #similar to lifetable.R, but projecting forward
 #read in life table values
@@ -99,11 +99,6 @@ px.minors = c(0.006123,0.000428,0.000275,0.000211,0.000158,
               0.000079,0.000086,0.000116,0.000175,0.000252,
               0.000333,0.000412,0.000492)
 
-#Survive
-
-p1=array(0,c(dim(p0)))
-dimnames(p1)=dimnames(p0)
-
 survive = function(n,prob){
   #helper function for surviving life tables (minors only)
   #n is life table individuals alive
@@ -112,14 +107,7 @@ survive = function(n,prob){
   return(n-sum(rbinom(n,1,sum(prob))))
 }
 
-#check cohort component method -- may need to mean over interval ((x1+x2)/2)
-
-#survive minors
-p1[2,,] = mapply(p0[1,,],FUN=function(x) survive(x,sum(px.minors[1:3])))
-p1[3,,] = mapply(p0[2,,],FUN=function(x) survive(x,sum(px.minors[4:6])))
-p1[4,,] = mapply(p0[3,,],FUN=function(x) survive(x,sum(px.minors[7:9])))
-
-#calculate conversions, apostasies and deaths
+#function for conversions, apostasies and deaths
 
 msurv = function(n,prob){
   #helper function for surviving life tables (adults only)
@@ -152,16 +140,6 @@ for(i in 1:1800){
   #last period same
   phi[i,12,,] = phix[i,34,,]
 }
-
-for(a in 5:14){
-  #calculate transitions for men and women
-  p1[a,1,] = trns(p0[a-1,1,],prob=phi[1,a-4,,])
-  p1[a,2,] = trns(p0[a-1,1,],prob=phi[1,a-4,,])
-}
-
-#calculate final transition
-p1[15,1,]=trns(p0[14,1,],prob=phi[1,11,,])+trns(p0[15,1,],prob=phi[1,12,,])
-p1[15,2,]=trns(p0[14,1,],prob=phi[1,11,,])+trns(p0[15,1,],prob=phi[1,12,,])
 
 #@@@@@@@@@@@@@
 #Input Births over 6 year interval 
@@ -196,15 +174,37 @@ for(i in 1:1800){
   }
 }
 
+#@@@@@@@@@@@@@@@@@
+#Simulate future proportions
+#@@@@@@@@@@@@@@@@@@
+
+#Prepare Holder variables
+  
+p1=array(0,c(dim(p0)))
+dimnames(p1)=dimnames(p0)  
+  
+#check cohort component method -- may need to mean over interval ((x1+x2)/2)
+#sumulate minor survival (assuming no changes)
+p1[2,,] = mapply(p0[1,,],FUN=function(x) survive(x,sum(px.minors[1:3])))
+p1[3,,] = mapply(p0[2,,],FUN=function(x) survive(x,sum(px.minors[4:6])))
+p1[4,,] = mapply(p0[3,,],FUN=function(x) survive(x,sum(px.minors[7:9])))
+
+#simulate transitions for adult men and women
+for(a in 5:14){
+  p1[a,1,] = trns(p0[a-1,1,],prob=phi[1,a-4,,])
+  p1[a,2,] = trns(p0[a-1,1,],prob=phi[1,a-4,,])
+}
+
+#calculate final transition
+p1[15,1,]=trns(p0[14,1,],prob=phi[1,11,,])+trns(p0[15,1,],prob=phi[1,12,,])
+p1[15,2,]=trns(p0[14,1,],prob=phi[1,11,,])+trns(p0[15,1,],prob=phi[1,12,,])
+
+#simulate births
 atrisk=p0[4:8,2,]
 #pull values from iteration
 fr=f[1,,]
 
 #  apply(p0[4:8,2,],2,FUN=function(x) print(f[1,which(x==x),]))
-  births=matrix(sapply(atrisk,FUN = function(x) sum(rbinom(x,size=1,prob=fr[(which(atrisk==x,arr.ind=TRUE))])),simplify='array'),5,5)
-  p1[1,1,] = apply(births,2,FUN=function(x) sum(rbinom(sum(x),size=1,prob=sexprop)))
-  p1[1,2,] = colSums(births)-p1[1,1,]
-  
-
-  
-  
+births=matrix(sapply(atrisk,FUN = function(x) sum(rbinom(x,size=1,prob=fr[(which(atrisk==x,arr.ind=TRUE))])),simplify='array'),5,5)
+p1[1,1,] = apply(births,2,FUN=function(x) sum(rbinom(sum(x),size=1,prob=sexprop)))
+p1[1,2,] = colSums(births)-p1[1,1,]
