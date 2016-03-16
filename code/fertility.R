@@ -69,6 +69,24 @@ print(Sys.time() - st)
 #print table and graph of preicted probabilities
 #@@@@
 
+effnames = colnames(x)
+
+sink(paste0(outdir,'bayesian_logistic_table.txt'))
+  cat('Bayesian logistic estimates for log odds of having a child in the next two years (women 18-45).\n\n')
+  cat('|  |  |\n')
+  cat('|:----|----:|\n')
+  for(e in 1:length(effnames)){
+    cat('|',effnames[e],'|');printeff(fertpost$beta[,e]); cat('|\n')
+  }
+  
+  cat('\nNote: Mean estimates with 95% C.I. Bold indicates different from 0.')
+sink()
+
+rm(effnames)
+
+fertpost=extract(fert,pars='beta',permuted=TRUE,inc_warmup=FALSE)
+write.csv(fertpost,paste0(outdir,'fertposterior.csv'))
+
 makeprob = function(logodds){
   o = exp(logodds)
   return(o/(1+o))
@@ -96,8 +114,6 @@ for(var in 2:5){
   simdat[,paste0('c_age2xreltrad',var)] = simdat$c_age2 * simdat[,paste0('reltrad',var)]
 }
 
-
-fertpost=extract(fert,pars='beta',permuted=TRUE,inc_warmup=FALSE)
 
 #holder for predicted probs
 simprob=matrix(NA,nrow(simdat),nrow(fertpost$beta))
@@ -161,9 +177,5 @@ plot(ages,rep(1,length(ages)),ylim=yl,xlim=xl,type='n',main='Age-Specific Fertil
          col=colors1)
 
 dev.off()
-
-#@@@@@@
-#save posterior
-#@@@@@@
 
 

@@ -1,0 +1,24 @@
+Bayesian logistic estimates for log odds of having a child in the next two years (women 18-45).
+
+|  |  |
+|:----|----:|
+| intercept |-1.393<br>[-2.078,-0.738]|
+| c_age |-0.081<br>[-0.114,-0.050]|
+| c_age2 |-0.001<br>[-0.005,0.003]|
+| married |0.709<br>[0.447,0.965]|
+| educ |-0.059<br>[-0.101,-0.015]|
+| reltrad2 |0.297<br>[-0.390,0.894]|
+| reltrad3 |0.622<br>[-0.050,1.259]|
+| reltrad4 |0.594<br>[0.197,1.017]|
+| reltrad5 |0.399<br>[-0.058,0.861]|
+| c_agexreltrad2 |-0.002<br>[-0.073,0.068]|
+| c_agexreltrad3 |-0.093<br>[-0.234,0.017]|
+| c_agexreltrad4 |0.017<br>[-0.038,0.069]|
+| c_agexreltrad5 |-0.003<br>[-0.070,0.058]|
+| c_age2xreltrad2 |-0.007<br>[-0.016,0.003]|
+| c_age2xreltrad3 |-0.016<br>[-0.033,-0.003]|
+| c_age2xreltrad4 |-0.007<br>[-0.014,-0.001]|
+| c_age2xreltrad5 |-0.004<br>[-0.011,0.003]|
+| rswitch |-0.114<br>[-0.432,0.197]|
+
+Note: Mean estimates with 95% C.I. Bold indicates different from 0.

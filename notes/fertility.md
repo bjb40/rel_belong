@@ -1,8 +1,10 @@
 ---
 author: Bryce Bartlett
 date: 3/8/2016
-title: Fertility measures in gss
+title: Fertility Measures from GSS Panel
 tags: fertility, gss, child measures
+bibliography: citations/rel_belong.bib
+csl: citations/asa-mod.csl
 ---
 
 #Overview
@@ -13,7 +15,7 @@ Trying to calculate religion specific fertility rates from GSS.
 
 ##Literature
 
-Earlier studies use GSS self-reports of numbers of children to get mean fertility rates (and assume that the mother transfers religious belonging to child). Examples are cited below (especially Hout et al. 2001). 
+Earlier studies use GSS self-reports of numbers of children to get mean fertility rates (and assume that the mother transfers religious belonging to child). Examples are cited below; especially Hout, Greeley, and Wilde [-@hout_demographic_2001]. 
 
 ##Available Variables
 
@@ -83,27 +85,42 @@ Given the foregoing, I will recode negative values to missing, and calculate age
 
 ##Model excerpt
 
-Following standard projection procedure, we model female fertility from the GSS. Following the multinomial logistic, we use a univariate logit to produce smoothed age-conditional estimates for female fertility taking advantage of the panel design of the GSS. We limit the sample to women at risk of childbirth (between the ages of 18 and 45; although there are fertility events before and after these events, we treat them as negligible). At each wave of the GSS, the a woman is asked how many children she's given birth to. The change over two years of the panel wave indicates a birth event (1), and no change indicates no birth (0). We exclude women with negative changes (as they likely result from misreports/misunderstanding), and do not adjust for multiple birth events. There are a few women who have 2 or in excess of two births over the period, but the numbers are relatively small and should be randomlly distributed. This means that our estimated fertility probabilities should produce slight underestimates. We adjust using age and age-squared (unlike mortality, fertility rates are not increasing functions of age), education, marital status, religious tradition at *next* wave, and a dummy to indicate whether there was a change in religious traditions. As before, we estimate the models in Stan and draw 1,800 samples (600 from 3 chains) from the posterior distribution after discarding an equivalent sized warm-up sample.
+Following standard projection procedure, we model female fertility from the GSS. Following the multinomial logistic, we use a univariate logit to produce smoothed age-conditional estimates for female fertility taking advantage of the panel design of the GSS. We limit the sample to women at risk of childbirth (between the ages of 18 and 45; although there are fertility events before and after these events, we treat them as negligible). At each wave of the GSS, the a woman is asked how many children she's given birth to. The change over two years of the panel wave indicates a birth event (1), and no change indicates no birth (0). We exclude women who report having birthed fewer children in subsequent waves (as they likely result from misreports/misunderstanding), and do not adjust for multiple birth events. There are a few women who report two or more births over the period, but the numbers are relatively small. This means that our estimated fertility probabilities are likely to generate slight underestimates. We adjust using *age* and *age-squared* (unlike mortality, fertility rates are not increasing functions of age) and mean center age to aid convergence, *education*, *marital status* (married=1), *religious tradition* in current wave, and a dummy to indicate whether respondent *switched religious affiliation* (switching=1). As before, we estimate the models in Stan and draw 1,800 samples (600 from 3 chains) from the posterior distribution after discarding an equivalent sized warm-up sample.
 
-##Balancing Equation
+##Results and Findings 
 
-We combine the religious switching and fertility draws into a demographic balancing equation (ignoring migration) for our projections, as follows:
+Bayesian logistic estimates for log odds of having a child in the next two years (women 18-45).
 
-$$
-\tilde{P}_{yj} = P_{0j} + \tilde{B}_{yj} + \tilde{C}_{yj} - \tilde{A}_{yj} - \tilde{D}_{yj} 
-$$
+|  |  |
+|:----|----:|
+| Intercept |**-1.393**<br>[-2.078,-0.738]|
+| Age |**-0.081**<br>[-0.114,-0.050]|
+| Age^2^ |-0.001<br>[-0.005,0.003]|
+| Married |**0.709**<br>[0.447,0.965]|
+| Education |**-0.059**<br>[-0.101,-0.015]|
+| *Religion* (ref=Evangelical) | |
+| Mainline |0.297<br>[-0.390,0.894]|
+| Other |0.622<br>[-0.050,1.259]|
+| Catholic |**0.594**<br>[0.197,1.017]|
+| None |0.399<br>[-0.058,0.861]|
+| *Interactions with Age and Religion*| |
+| AgexMainline |-0.002<br>[-0.073,0.068]|
+| AgexOther |-0.093<br>[-0.234,0.017]|
+| AgexCatholic |0.017<br>[-0.038,0.069]|
+| AgexNone |-0.003<br>[-0.070,0.058]|
+| Age^2^xMainline |-0.007<br>[-0.016,0.003]|
+| Age^2^xOther |**-0.016**<br>[-0.033,-0.003]|
+| Age^2^xCatholic |**-0.007**<br>[-0.014,-0.001]|
+| Age^2^xNone |-0.004<br>[-0.011,0.003]|
+| Switched Affiliation |-0.114<br>[-0.432,0.197]|
 
-Where \tilde{$P$} are the simulated values for the propulatin proportion for the religious tradition $j$ in year $y$. $B$ are births (which are simulated) from the fertility model, and converts ($C$), apostates ($A$), and deaths ($D$) are simulated from the multinomial transition model. The initial population distribution ($P_{0j}$) is the weighted age-distribution calculated from the 2010 GSS. ```Note: the equation above comes from Hout 2001```.
+Note: Mean estimates with 95% C.I. Bold indicates different from 0 at p<.05 (two-tailed). To aid convergence, age was mean centered.
+
+The table above shows a number of expected effects. Generally, the fertility rate falls with age and higher eduction, but is higher among the married. With respect to religious affiliation, there are a few effects which meet classical levels of significance. In particular, Catholics have different base rates and quadratic curves from Evangelicals, and the Other religionists have different quadratic effects from Evangelicals. The precise meaning of these differences is difficult to intuit from the numbers alone, and the table itself does not present multiple hypothesis testing for group-level differences or for differences between non-evangelical religious groups (such as None and Other). The simplest presentation is in the form of predicted probabilities, presented below.
+
+![Age-specific Fertility Probabilities](../draft_img~/age-fertilitypub.png)
+
+The age-specific fertility rates converge closest to equality at older ages, with Other and Nones experiencing the lowest fertility levels, and Catholics and Evangelicals experiencing the highest levels; although Catholics maintain the highest fertility levels at the older end of the range, from ages 35 to 45. Two-year fertility probabilities for women of all religious traditions, except Evangelicals, begin with lower age-specific fertility at age 18, and then peak between the mid-twenties and early thirties. Evangelicals start with highest fertility probabilities at age 18, which slowly decline with age. Because of lacking data, most projections rely on total fertility rates, and assumptions [@hout_demographic_2001]. Because the GSS panel design allows us to observe fertility differences by *both* age and religious affiliation, we are better able to parse out differences in denominations from births. This appears to be particularly important for Catholics (who have more births toward later ages) and Evangelicals (who have more births at younger ages).
 
 **Citations**
 
-Hackett, Conrad, Marcin Stonawski, Michaela Potančoková, Brian J. Grim, and Vegard Skirbekk. 2015. “The Future Size of Religiously Affiliated and Unaffiliated Populations.” Demographic Research 32:829–42.
-
-Hout, Michael, Andrew Greeley, and Melissa J. Wilde. 2001. “The Demographic Imperative in Religious Change in the United States.” American Journal of Sociology 107(2):468–500.
-
-McQuillan, Kevin. 2004. “When Does Religion Influence Fertility?” Population and Development Review 30(1):25–56.
-
-
-Skirbekk, Vegard, Eric Kaufmann, and Anne Goujon. 2010. “Secularism, Fundamentalism, or Catholicism? The Religious Composition of the United States to 2043.” Journal for the Scientific Study of Religion 49(2):293–310.
-
-Pew Research. 2015.  “The Future of World Religions: Population Growth Projections, 2010-2050.” Pew Research Center’s Religion & Public Life Project. Retrieved March 7, 2016 (http://www.pewforum.org/2015/04/02/religious-projections-2010-2050/).

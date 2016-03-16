@@ -300,4 +300,7 @@ mp=barplot(plotdat[[r]][1,c(1,4)],ylim=yl,axes=F,col=colors1[r],xlab=nm[r])
   mtext(nm[r],side=1,cex=.75)
 }
   
-  mtext("Predicted Proportions in 2028",outer=TRUE,cex=1)
+  mtext("Simulated Proportions 2028",outer=TRUE,cex=1)
+  
+  
+  
