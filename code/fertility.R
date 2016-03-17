@@ -159,7 +159,8 @@ colsf=terrain.colors(5,alpha=.25)
 cols=terrain.colors(5)
 
 png(paste0(draftimg,'age-fertility.png'),height=9,width=18,units='in',res=300)
-plot(ages,rep(1,length(ages)),ylim=yl,xlim=xl,type='n',main='Age-Specific Fertility Probabilities')
+plot(ages,rep(1,length(ages)),ylim=yl,xlim=xl,type='n',
+     main='Age-Specific Fertility Probabilities', cex.main=3,xlab='',ylab='')
   #ci-polygon
   lapply(1:5,function(x)
               polygon(c(ages,rev(ages)),c(plotdat[[x]][2,],rev(plotdat[[x]][3,])),
@@ -174,7 +175,7 @@ plot(ages,rep(1,length(ages)),ylim=yl,xlim=xl,type='n',main='Age-Specific Fertil
   legend('topright',legend=c('Evangelical','Mainline','Other','Catholic','None'),
          bty='n',
          lty=1:5,
-         col=colors1)
+         col=colors1, cex=1.75)
 
 dev.off()
 

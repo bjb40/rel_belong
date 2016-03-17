@@ -283,24 +283,29 @@ plot(1,ylim=range(props),xlim=c(1,(future+1)),type='n',xaxt='n')
 
 axis(1,labels=seq(2010,2010+(future*6),by=6),at=1:6)
 
+png(paste0(draftimg,'project-bar.png'),height=9,width=18,units='in',res=300)
+
+#table of proprtion changes
+
+
 #barplots (18 years-- index no. 4)
-par(mfrow=c(1,5), mar=c(1,1,1,1), oma=c(1,1,2,1))
+par(mfrow=c(1,5), mar=c(2,1,1,1), oma=c(1,1,4,1))
 yl = c(0,max(unlist(plotdat))+.05)
 mp=barplot(plotdat[[1]][1,c(1,4)],ylim=yl,col=colors1[1],xlab='Evangelical')
   segments(mp[[2]],plotdat[[1]][2,4],mp[[2]],plotdat[[1]][3,4])
-  text(mp[[1]],0,'2010',pos=3,cex=.75)
-  text(mp[[2]],0,'2028',pos=3,cex=.75)
-  mtext('Evangelical',side=1,cex=.75)
+  text(mp[[1]],0,'2010',pos=3,cex=1.75)
+  text(mp[[2]],0,'Stable',pos=3,cex=1.75)
+  mtext('Evangelical',side=1,cex=1.75,padj=.75)
   
 for(r in 2:5){  
 mp=barplot(plotdat[[r]][1,c(1,4)],ylim=yl,axes=F,col=colors1[r],xlab=nm[r])
   segments(mp[[2]],plotdat[[r]][2,4],mp[[2]],plotdat[[r]][3,4])
-  text(mp[[1]],0,'2010',pos=3,cex=.75)
-  text(mp[[2]],0,'2028',pos=3,cex=.75)
-  mtext(nm[r],side=1,cex=.75)
+  text(mp[[1]],0,'2010',pos=3,cex=1.75)
+  text(mp[[2]],0,'Stable',pos=3,cex=1.75)
+  mtext(nm[r],side=1,cex=1.75,padj=.75)
 }
   
-  mtext("Simulated Proportions 2028",outer=TRUE,cex=1)
+  mtext("Simulated Change in Proportions to Stable Distribution",outer=TRUE,cex=3)
   
-  
+dev.off()
   

@@ -79,7 +79,8 @@ png(paste0(draftimg,'mort-probs.png'),height=9,width=18,units='in',res=300)
 #par(mfrow=c(2,1), oma=c(1,1,1,1), mar=c(2,1,1.5,1))
 #mortality
 diers = c(31:35)
-plot(yx,phi.mean$phi6, ylim=c(0,.3), type="n", xlab='',ylab='',main="Probability of Mortality")
+plot(yx,phi.mean$phi6, ylim=c(0,.3), type="n", xlab='',ylab='',
+     main="Probability of Mortality",cex.main=3)
 for(k in 1:length(diers)){
   polygon(c(yx, rev(yx)), c(phi.upper[,paste0('phi',diers[k])],rev(phi.lower[,paste0('phi',diers[k])])), 
           col=paste0(colors1[k],'45'), border=NA)
@@ -92,13 +93,14 @@ legend('topleft',legend=nm[1:5],
        bty='n',
        lty=1:5,
        col=colors1,
-       cex=1.2)
+       cex=1.75)
 dev.off()
 
 png(paste0(draftimg,'stayers.png'),height=9,width=18,units='in',res=300)
 #diagonal of phi - stayers
 stayers = c(1,8,15,22,29)
-plot(yx,phi.mean$phi1, ylim=c(0.25,.9), type="n", xlab='Age', ylab='',main="Probability of Staying in Tradition")
+plot(yx,phi.mean$phi1, ylim=c(0.25,.9), type="n", xlab='', ylab='',
+     main="Probability of Staying in Tradition",cex.main=3)
 for(k in 1:length(stayers)){
   polygon(c(yx, rev(yx)), c(phi.upper[,paste0('phi',stayers[k])],rev(phi.lower[,paste0('phi',stayers[k])])), 
           col=paste0(colors1[k],'45'), border=NA)
@@ -106,6 +108,13 @@ for(k in 1:length(stayers)){
 for(k in 1:length(stayers)){
   lines(yx,phi.mean[,paste0('phi',stayers[k])], lty=k,col=colors1[k])
 }
+
+legend('bottomleft',legend=nm[1:5],
+       bty='n',
+       lty=1:5,
+       col=colors1,
+       cex=1.75)
+
 dev.off()
 
 
