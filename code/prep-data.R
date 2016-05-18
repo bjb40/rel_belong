@@ -7,6 +7,8 @@
 #@@@@@@@@@@@@@@
 #load universals configuration file
 
+rm(list=ls())
+
 st = proc.time()[3]
 
 source("H:/projects/rel_belong/code/config.R",
@@ -17,9 +19,13 @@ source("H:/projects/rel_belong/code/config.R",
 #@@@@@@@@@@@@@@
 
 #see readme for source
-library(foreign)
-rawpanel = read.dta(paste(outdir,'private~/cypanel.dta',sep=''),  convert.factors = FALSE)
+library(haven)
+rawpanel = data.frame(read_stata(paste(outdir,'private~/GSSpanfull.dta',sep='')))
 #rpfactor = read.dta(paste(outdir,'private~/cypanel.dta',sep='')) #helps id coding
+rawpanel[] = lapply(rawpanel,unclass)
+
+#rawpanel=as.data.frame(rawpanel,stringsAsFactors=FALSE)
+
 
 #ids are repeated for each sample with idnum, samptype is the year, but for some reason 2008 is NA
 #idnump is the unique identifier across panels
