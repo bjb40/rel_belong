@@ -35,7 +35,7 @@ for(var in 2:5){
 y=fertpanel$birth
 fertpanel$intercept = 1
 #age^2 has no effect
-x=fertpanel[,c('intercept','c_age','c_age2','married','educ',
+x=fertpanel[,c('intercept','childs','c_age','c_age2','married','educ',
                paste0('reltrad',2:5),paste0('c_agexreltrad',2:5),paste0('c_age2xreltrad',2:5),'rswitch')]
 N=nrow(fertpanel)
 D=ncol(x)
@@ -102,12 +102,32 @@ simdat = matrix(NA,5*length(ages),ncol(x))
 colnames(simdat) = colnames(x)
 simdat=data.frame(simdat)
 
+#simulate across each year with means by age 
+
 simdat$intercept=rep(1,nrow(simdat)); simdat$c_age=rep(c_ages,5); simdat$c_age2=rep(c_ages^2,5)
-simdat$married=rep(1,nrow(simdat)); simdat$educ=12; simdat$rswitch=0
 simdat$reltrad2=c(rep(0,length(ages)),rep(1,length(ages)),rep(0,length(ages)*3))
 simdat$reltrad3=c(rep(0,length(ages)*2),rep(1,length(ages)),rep(0,length(ages)*2))
 simdat$reltrad4=c(rep(0,length(ages)*3),rep(1,length(ages)),rep(0,length(ages)))
 simdat$reltrad5=c(rep(0,length(ages)*4),rep(1,length(ages)))
+
+for(a in 1:length(ages)){
+  if(a%%4==0){
+    cat('coding pooled means in simulated data for ages',ages[a-3]:ages[a],'\n',sep=' ')
+    ags = ages[a-3]:ages[a]
+    mns = apply(fertpanel[fertpanel$age %in% ags,c('childs','married','educ','rswitch')],2,mean)
+    print(mns)
+    
+    simdat[(simdat$c_age+meanages) %in% ags,c('childs','married','educ','rswitch')] = mns
+    
+    } else{next}
+}
+
+aggregate(fertpanel[,c('educ','married','rswitch','childs')],by=list(fertpanel$age),mean)
+aggregate(fertpanel,by=list(fertpanel$age),length)
+
+
+simdat$married=rep(0,nrow(simdat)); simdat$educ=12; simdat$rswitch=0
+simdat$childs=0
 
 for(var in 2:5){
   simdat[,paste0('c_agexreltrad',var)] = simdat$c_age * simdat[,paste0('reltrad',var)]
