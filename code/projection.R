@@ -305,7 +305,9 @@ mp=barplot(plotdat[[r]][1,c(1,4)],ylim=yl,axes=F,col=colors1[r],xlab=nm[r])
   mtext("Simulated Change in Proportions to Stable Distribution",outer=TRUE,cex=3)
   
 dev.off()
-  
+
+#growth of proportions
+print(plotdat)
 
 #(Big) table of proportion changes
 
