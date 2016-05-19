@@ -8,7 +8,7 @@ data {
   int<lower=0> N; //observations
   int<lower=1> D; //dimensions of predictors
   int<lower=0,upper=1> y[N]; 
-  matrix[N,D] x; //inlcudes column of 1s for intercept 
+  matrix[N,D] x; //x should include column of 1s for intercept 
   } 
   
 parameters {

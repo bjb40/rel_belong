@@ -64,6 +64,12 @@ for(var in 2:5){
   
 }
 
+#dummy series for parity
+fertpanel$c0 = fertpanel$c1 = fertpanel$c2 = fertpanel$c3 = 0 
+fertpanel$c1[fertpanel$childs == 1] = 1
+fertpanel$c2[fertpanel$childs == 2] = 1
+fertpanel$c3[fertpanel$childs > 2] = 1
+
 #@@@@@@@
 #set up data for stan
 #@@@@@@@
@@ -72,7 +78,7 @@ for(var in 2:5){
 y=fertpanel$birth
 fertpanel$intercept = 1
 #age^2 has no effect
-x=fertpanel[,c('intercept','childs','c_age','c_age2','married','educ',
+x=fertpanel[,c('intercept',paste0('c',1:3),'c_age','c_age2','married','educ',
                paste0('reltrad',2:5),paste0('c_agexreltrad',2:5),paste0('c_age2xreltrad',2:5),'rswitch')]
 N=nrow(fertpanel)
 D=ncol(x)
@@ -146,6 +152,7 @@ simdat$reltrad2=c(rep(0,length(ages)),rep(1,length(ages)),rep(0,length(ages)*3))
 simdat$reltrad3=c(rep(0,length(ages)*2),rep(1,length(ages)),rep(0,length(ages)*2))
 simdat$reltrad4=c(rep(0,length(ages)*3),rep(1,length(ages)),rep(0,length(ages)))
 simdat$reltrad5=c(rep(0,length(ages)*4),rep(1,length(ages)))
+simdat[,paste0('c',1:3)] = 0
 
 for(a in 1:length(ages)){
   if(a%%4==0){
@@ -153,6 +160,7 @@ for(a in 1:length(ages)){
     ags = ages[a-3]:ages[a]
     mns = aggregate(fertpanel[fertpanel$age %in% ags,c('childs','married','educ','rswitch')],
                     by=list(fertpanel$reltrad[fertpanel$age %in% ags]),mean)
+    mns$childs = round(mns$childs)
     print(mns)
     
     #evangelical means
@@ -161,12 +169,19 @@ for(a in 1:length(ages)){
              simdat$reltrad3==0 &
              simdat$reltrad4==0 &
              simdat$reltrad5==0 
-           ,c('childs','married','educ','rswitch')] = mns[1,2:5]
-    
+           ,c('married','educ','rswitch')] = mns[1,2:4]
+    #mean children
+    if(mns$childs[1]>0){ #0 is ref
+      simdat[(simdat$c_age+meanages) %in% ags,paste0('c',mns[1,'childs'])] = 1
+    }
     #other means
     for(r in 2:nrow(mns)){
       simdat[(simdat$c_age+meanages) %in% ags & 
-               simdat[,paste0('reltrad',r)]==1,c('childs','married','educ','rswitch')] = mns[r,2:5]
+               simdat[,paste0('reltrad',r)]==1,c('married','educ','rswitch')] = mns[r,2:4]
+      if(mns$childs[r]>0){ #0 is ref
+        simdat[(simdat$c_age+meanages) %in% ags & 
+               simdat[,paste0('reltrad',r)]==1,paste0('c',mns[r,'childs'])] = 1
+        }
       }
     } else{next}
 }
@@ -222,7 +237,7 @@ cols=terrain.colors(5)
 
 #png(paste0(draftimg,'age-fertility.png'),height=9,width=18,units='in',res=300)
 plot(ages,rep(1,length(ages)),ylim=yl,xlim=xl,type='n',
-     main='Probability of New Child by Age (Women Only)', cex.main=3,xlab='',ylab='')
+     main='Probability of New Child by Age (Women Only)', cex.main=.75,xlab='',ylab='')
   #ci-polygon
   lapply(1:5,function(x)
               polygon(c(ages,rev(ages)),c(plotdat[[x]][2,],rev(plotdat[[x]][3,])),
@@ -237,7 +252,7 @@ plot(ages,rep(1,length(ages)),ylim=yl,xlim=xl,type='n',
   legend('topright',legend=c('Evangelical','Mainline','Other','Catholic','None'),
          bty='n',
          lty=1:5,lwd=rep(3,5),
-         col=colors1, cex=1.75)
+         col=colors1, cex=.5)
 
 #dev.off()
 
