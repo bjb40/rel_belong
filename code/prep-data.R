@@ -277,7 +277,7 @@ fertpanel$rswitch[fertpanel$reltrad != fertpanel$nstate] = 1
 print(table(fertpanel[,c('birth','rswitch')],useNA='always'))
 print(table(fertpanel[,c('reltrad','rswitch')],useNA='always'))
 
-fertpanel=fertpanel[,c('idnump','childs','birth','educ','married',paste0('reltrad',1:5),'rswitch','age','white','reltrad')]
+fertpanel=fertpanel[,c('idnump','panelwave','childs','nchilds','birth','educ','married',paste0('reltrad',1:5),'rswitch','age','white','reltrad')]
 
 write.csv(fertpanel,paste0(outdir,'private~/fertpanel.csv'))
 

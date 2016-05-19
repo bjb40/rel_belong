@@ -8,6 +8,9 @@
 #Preliminaries and load data
 #@@@@@
 
+#savefert = fertpanel
+fertpanel = savefert
+
 source("H:/projects/rel_belong/code/config.R",
        echo =T, print.eval = T, keep.source=T)
 
@@ -20,6 +23,36 @@ print(c(nrow(fertpanel),length(unique(fertpanel$idnump))))
 fertpanel = na.omit(fertpanel)
 print(c(nrow(fertpanel),length(unique(fertpanel$idnump))))
 
+#######################
+# Because this is a repeated event, and the GSS occurs every 2 years
+# everyone is observed twice (because they are still at risk)
+# so, I duplicate observations
+######################
+
+fert2 = fertpanel
+#clear out already observed births
+fert2$birth[fertpanel$birth==1 & fertpanel$nchilds %in% c(0,1)] = 0
+fert2$childs[fertpanel$birth==1 & fertpanel$nchilds > 0] = 
+  fert2$childs[fertpanel$birth==1 & fertpanel$nchilds > 0] + 1
+fert2$panelwave = fert2$panelwave + .5
+fert2$age = fert2$age+1
+
+fertpanel = rbind(fertpanel,fert2)
+#rm(fert2)
+
+cat(sum(fertpanel$birth),sum(fert2$birth))
+
+#print 6 random individuals
+ids = sample(unique(fertpanel$idnump[fertpanel$birth==1]),2)
+ids = c(ids,sample(unique(fertpanel$idnump[fertpanel$birth==0]),2))
+ids = c(ids,sample(unique(fertpanel$idnump[fertpanel$nchilds>1]),2))
+
+#old
+print(savefert[savefert$idnump %in% ids ,c('idnump','panelwave','childs','nchilds','birth')])
+
+#recoded doubled up
+print(fertpanel[fertpanel$idnump %in% ids ,c('idnump','panelwave','childs','nchilds','birth')])
+
 #mean center age
 fertpanel$c_age = fertpanel$age - mean(fertpanel$age)
 fertpanel$age2 = fertpanel$age^2
@@ -30,6 +63,10 @@ for(var in 2:5){
   fertpanel[,paste0('c_age2xreltrad',var)] = fertpanel$c_age2 * fertpanel[,paste0('reltrad',var)]
   
 }
+
+#@@@@@@@
+#set up data for stan
+#@@@@@@@
 
 #cyrus stata code : 1) evangelical (ref); 2) mainline; 3)other; (4) catholic; (5) none
 y=fertpanel$birth
@@ -204,9 +241,9 @@ plot(ages,rep(1,length(ages)),ylim=yl,xlim=xl,type='n',
 
 #dev.off()
 
-  #tfr by religion / about 8 times too high
+  #tfr by religion
 
-  #1.88 is right...
+  #1.9 is current US average
 for(rel in unique(fertprobs[,'reltrad'])){  
   tfr = apply(fertprobs[fertprobs[,'reltrad']==rel,]/2,2,sum)
   cat(rel,eff(tfr),'\n')

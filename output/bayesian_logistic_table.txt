@@ -2,24 +2,24 @@ Bayesian logistic estimates for log odds of having a child in the next two years
 
 |  |  |
 |:----|----:|
-| intercept |-1.109<br>[-1.933,-0.308]|
-| childs |-0.077<br>[-0.193,0.028]|
-| c_age |-0.078<br>[-0.109,-0.046]|
-| c_age2 |-0.001<br>[-0.006,0.003]|
-| married |0.741<br>[0.471,1.010]|
-| educ |-0.070<br>[-0.120,-0.019]|
-| reltrad2 |0.272<br>[-0.375,0.883]|
-| reltrad3 |0.630<br>[-0.050,1.232]|
-| reltrad4 |0.593<br>[0.146,1.002]|
-| reltrad5 |0.359<br>[-0.120,0.811]|
-| c_agexreltrad2 |0.001<br>[-0.070,0.073]|
-| c_agexreltrad3 |-0.085<br>[-0.212,0.026]|
-| c_agexreltrad4 |0.019<br>[-0.035,0.071]|
-| c_agexreltrad5 |-0.002<br>[-0.066,0.056]|
-| c_age2xreltrad2 |-0.006<br>[-0.017,0.003]|
-| c_age2xreltrad3 |-0.015<br>[-0.031,-0.003]|
-| c_age2xreltrad4 |-0.007<br>[-0.014,-0.000]|
-| c_age2xreltrad5 |-0.003<br>[-0.011,0.004]|
-| rswitch |-0.099<br>[-0.426,0.226]|
+| intercept |-1.705<br>[-2.390,-1.050]|
+| childs |-0.081<br>[-0.178,0.010]|
+| c_age |-0.055<br>[-0.081,-0.028]|
+| c_age2 |-0.000<br>[-0.004,0.003]|
+| married |0.662<br>[0.437,0.902]|
+| educ |-0.069<br>[-0.108,-0.027]|
+| reltrad2 |0.184<br>[-0.404,0.758]|
+| reltrad3 |0.484<br>[-0.098,1.014]|
+| reltrad4 |0.532<br>[0.168,0.923]|
+| reltrad5 |0.249<br>[-0.193,0.673]|
+| c_agexreltrad2 |-0.013<br>[-0.082,0.054]|
+| c_agexreltrad3 |-0.102<br>[-0.216,-0.003]|
+| c_agexreltrad4 |0.011<br>[-0.035,0.055]|
+| c_agexreltrad5 |-0.008<br>[-0.064,0.045]|
+| c_age2xreltrad2 |-0.008<br>[-0.018,0.001]|
+| c_age2xreltrad3 |-0.013<br>[-0.025,-0.002]|
+| c_age2xreltrad4 |-0.007<br>[-0.013,-0.002]|
+| c_age2xreltrad5 |-0.003<br>[-0.010,0.004]|
+| rswitch |-0.086<br>[-0.375,0.200]|
 
 Note: Mean estimates with 95% C.I. Bold indicates different from 0.
