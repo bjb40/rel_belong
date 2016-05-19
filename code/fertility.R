@@ -1,7 +1,7 @@
 #Bryce Bartlett
 #Makes fertility rates
-#Dev R ""
-
+#Dev R 3.3.0 "Supposedly Educational"
+#Stan 2.9
 
 
 #@@@@@
@@ -114,20 +114,25 @@ for(a in 1:length(ages)){
   if(a%%4==0){
     cat('coding pooled means in simulated data for ages',ages[a-3]:ages[a],'\n',sep=' ')
     ags = ages[a-3]:ages[a]
-    mns = apply(fertpanel[fertpanel$age %in% ags,c('childs','married','educ','rswitch')],2,mean)
+    mns = aggregate(fertpanel[fertpanel$age %in% ags,c('childs','married','educ','rswitch')],
+                    by=list(fertpanel$reltrad[fertpanel$age %in% ags]),mean)
     print(mns)
     
-    simdat[(simdat$c_age+meanages) %in% ags,c('childs','married','educ','rswitch')] = mns
+    #evangelical means
+    simdat[(simdat$c_age+meanages) %in% ags &
+             simdat$reltrad2==0 &
+             simdat$reltrad3==0 &
+             simdat$reltrad4==0 &
+             simdat$reltrad5==0 
+           ,c('childs','married','educ','rswitch')] = mns[1,2:5]
     
+    #other means
+    for(r in 2:nrow(mns)){
+      simdat[(simdat$c_age+meanages) %in% ags & 
+               simdat[,paste0('reltrad',r)]==1,c('childs','married','educ','rswitch')] = mns[r,2:5]
+      }
     } else{next}
 }
-
-aggregate(fertpanel[,c('educ','married','rswitch','childs')],by=list(fertpanel$age),mean)
-aggregate(fertpanel,by=list(fertpanel$age),length)
-
-
-simdat$married=rep(0,nrow(simdat)); simdat$educ=12; simdat$rswitch=0
-simdat$childs=0
 
 for(var in 2:5){
   simdat[,paste0('c_agexreltrad',var)] = simdat$c_age * simdat[,paste0('reltrad',var)]
@@ -178,7 +183,7 @@ xl=range(ages)
 colsf=terrain.colors(5,alpha=.25)
 cols=terrain.colors(5)
 
-png(paste0(draftimg,'age-fertility.png'),height=9,width=18,units='in',res=300)
+#png(paste0(draftimg,'age-fertility.png'),height=9,width=18,units='in',res=300)
 plot(ages,rep(1,length(ages)),ylim=yl,xlim=xl,type='n',
      main='Probability of New Child by Age (Women Only)', cex.main=3,xlab='',ylab='')
   #ci-polygon
@@ -197,6 +202,13 @@ plot(ages,rep(1,length(ages)),ylim=yl,xlim=xl,type='n',
          lty=1:5,lwd=rep(3,5),
          col=colors1, cex=1.75)
 
-dev.off()
+#dev.off()
 
+  #tfr by religion / about 8 times too high
+
+  #1.88 is right...
+for(rel in unique(fertprobs[,'reltrad'])){  
+  tfr = apply(fertprobs[fertprobs[,'reltrad']==rel,]/2,2,sum)
+  cat(rel,eff(tfr),'\n')
+}
 
