@@ -3,7 +3,6 @@
 #Dev R 3.3.0 "Supposedly Educational"
 #Stan 2.9
 
-
 #@@@@@
 #Preliminaries and load data
 #@@@@@
@@ -53,16 +52,11 @@ print(savefert[savefert$idnump %in% ids ,c('idnump','panelwave','childs','nchild
 #recoded doubled up
 print(fertpanel[fertpanel$idnump %in% ids ,c('idnump','panelwave','childs','nchilds','birth')])
 
-#mean center age
-fertpanel$c_age = fertpanel$age - mean(fertpanel$age)
-fertpanel$age2 = fertpanel$age^2
-fertpanel$c_age2 = fertpanel$c_age^2
-
-for(var in 2:5){
-  fertpanel[,paste0('c_agexreltrad',var)] = fertpanel$c_age * fertpanel[,paste0('reltrad',var)]
-  fertpanel[,paste0('c_age2xreltrad',var)] = fertpanel$c_age2 * fertpanel[,paste0('reltrad',var)]
-  
-}
+#########################################################################
+#########################################################################
+#EDIT HERE TO PREP AGE DUMMIES AND INTERACTIONS WITH RELIGION/PARITY
+##########################################################################
+##########################################################################
 
 #dummy series for parity
 fertpanel$c0 = fertpanel$c1 = fertpanel$c2 = fertpanel$c3 = 0 
@@ -70,16 +64,18 @@ fertpanel$c1[fertpanel$childs == 1] = 1
 fertpanel$c2[fertpanel$childs == 2] = 1
 fertpanel$c3[fertpanel$childs > 2] = 1
 
+#prepare age dummies
+fertpanel$agef = cut(fertpanel$age,c(17,22,26,34,38,42,46))
+
+fertpanel$reltrad = factor(fertpanel$reltrad,labels=c('evang','mainline','other','catholic','none'))
+
 #@@@@@@@
 #set up data for stan
 #@@@@@@@
 
 #cyrus stata code : 1) evangelical (ref); 2) mainline; 3)other; (4) catholic; (5) none
 y=fertpanel$birth
-fertpanel$intercept = 1
-#age^2 has no effect
-x=fertpanel[,c('intercept',paste0('c',1:3),'c_age','c_age2','married','educ',
-               paste0('reltrad',2:5),paste0('c_agexreltrad',2:5),paste0('c_age2xreltrad',2:5),'rswitch')]
+x = model.matrix(~agef + reltrad + agef:reltrad + c1 + c2 + c3 + married + educ + rswitch,data=fertpanel)
 N=nrow(fertpanel)
 D=ncol(x)
 
@@ -103,7 +99,6 @@ fert <- stan("fertility.stan", data=c("D", "N", "y", "x"),
             #sample_file = paste0(outdir,'diagnostic~/post-samp.txt'),
             #diagnostic_file = paste0(outdir,'diagnostic~/stan-diagnostic.txt'),
             #open_progress=T);
-
 
 #print time taken
 print(Sys.time() - st)
@@ -260,7 +255,7 @@ plot(ages,rep(1,length(ages)),ylim=yl,xlim=xl,type='n',
 
   #1.9 is current US average
 for(rel in unique(fertprobs[,'reltrad'])){  
-  tfr = apply(fertprobs[fertprobs[,'reltrad']==rel,]/2,2,sum)
+  tfr = apply(fertprobs[fertprobs[,'reltrad']==rel,],2,sum)
   cat(rel,eff(tfr),'\n')
 }
 
