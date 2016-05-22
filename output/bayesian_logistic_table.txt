@@ -2,34 +2,29 @@ Bayesian logistic estimates for log odds of having a child in the next two years
 
 |  |  |
 |:----|----:|
-| (Intercept) |-2.196<br>[-2.867,-1.530]|
-| c_age |-0.063<br>[-0.092,-0.035]|
-| c_age2 |0.001<br>[-0.003,0.004]|
-| c1 |0.933<br>[0.544,1.337]|
-| c2 |-0.546<br>[-1.123,-0.013]|
-| reltradmainline |0.048<br>[-0.645,0.730]|
-| reltradother |0.238<br>[-0.611,0.999]|
-| reltradcatholic |0.557<br>[0.026,1.088]|
-| reltradnone |-0.129<br>[-0.674,0.432]|
-| married |0.659<br>[0.416,0.893]|
-| educ |-0.055<br>[-0.096,-0.012]|
-| rswitch |-0.123<br>[-0.430,0.177]|
-| c_age:reltradmainline |-0.041<br>[-0.115,0.030]|
-| c_age:reltradother |-0.137<br>[-0.265,-0.034]|
-| c_age:reltradcatholic |0.003<br>[-0.044,0.050]|
-| c_age:reltradnone |-0.028<br>[-0.083,0.029]|
-| c_age2:reltradmainline |-0.008<br>[-0.017,0.001]|
-| c_age2:reltradother |-0.015<br>[-0.028,-0.003]|
-| c_age2:reltradcatholic |-0.007<br>[-0.013,-0.001]|
-| c_age2:reltradnone |-0.004<br>[-0.011,0.003]|
-| c1:reltradmainline |-0.470<br>[-1.666,0.630]|
-| c2:reltradmainline |1.451<br>[0.222,2.566]|
-| c1:reltradother |0.398<br>[-0.726,1.519]|
-| c2:reltradother |0.680<br>[-0.496,1.857]|
-| c1:reltradcatholic |-0.631<br>[-1.307,0.040]|
-| c2:reltradcatholic |0.591<br>[-0.176,1.393]|
-| c1:reltradnone |0.402<br>[-0.261,1.061]|
-| c2:reltradnone |0.856<br>[-0.020,1.749]|
+| (Intercept) |-2.927<br>[-3.728,-2.168]|
+| c_age |-0.078<br>[-0.107,-0.051]|
+| c_age2 |0.002<br>[-0.002,0.005]|
+| c1 |0.664<br>[0.188,1.187]|
+| reltradmainline |0.563<br>[-0.659,1.628]|
+| reltradother |-0.157<br>[-1.544,1.137]|
+| reltradcatholic |1.191<br>[0.446,1.938]|
+| reltradnone |0.035<br>[-0.770,0.786]|
+| married |0.563<br>[0.310,0.804]|
+| educ |-0.032<br>[-0.073,0.009]|
+| rswitch |-0.135<br>[-0.444,0.167]|
+| c_age:reltradmainline |-0.016<br>[-0.093,0.055]|
+| c_age:reltradother |-0.132<br>[-0.261,-0.028]|
+| c_age:reltradcatholic |0.022<br>[-0.023,0.067]|
+| c_age:reltradnone |-0.010<br>[-0.067,0.044]|
+| c_age2:reltradmainline |-0.009<br>[-0.019,-0.000]|
+| c_age2:reltradother |-0.012<br>[-0.026,0.000]|
+| c_age2:reltradcatholic |-0.009<br>[-0.015,-0.003]|
+| c_age2:reltradnone |-0.003<br>[-0.009,0.004]|
+| c1:reltradmainline |-0.414<br>[-1.553,0.818]|
+| c1:reltradother |0.616<br>[-0.617,1.974]|
+| c1:reltradcatholic |-0.737<br>[-1.472,0.035]|
+| c1:reltradnone |0.281<br>[-0.459,1.024]|
 
 Note: Mean estimates with 95% C.I. Bold indicates different from 0.
 
@@ -38,30 +33,30 @@ Note: Mean estimates with 95% C.I. Bold indicates different from 0.
 Fit Statistics
 WAIC (two versions)
 $waic
-[1] 2378
+[1] 2416
 
 $p_waic
-[1] 29
+[1] 24.6
 
 $lppd
-[1] -1160
+[1] -1183
 
 $p_waic_1
-[1] 28.1
+[1] 23.9
 
      waic       lpd    p_waic elpd_waic     p_loo  elpd_loo 
-     2378     -1160        29     -1189        29     -1189 
+   2415.7   -1183.3      24.6   -1207.9      24.6   -1207.9 
      waic       lpd    p_waic elpd_waic     p_loo  elpd_loo 
-    85.06     41.15      1.84     42.53      1.85     42.53 
+    85.42     41.51      1.70     42.71      1.71     42.71 
 DIC$dic
-[1] 2377
+[1] 2412
 
 $elpd_dic
-[1] -1188
+[1] -1206
 
 $logdev
-[1] 2348
+[1] 2390
 
 $pdic
-[1] 28.3
+[1] 22
 
