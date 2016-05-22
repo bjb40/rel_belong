@@ -211,11 +211,11 @@ for(s in 1:nrow(fertpost$beta)){
 #code for plotting
 #cyrus stata code : 1) evangelical (ref); 2) mainline; 3)other; (4) catholic; (5) none
 plotdat = list()
-plotdat$evangelical = simprob[simdat$reltrad2==0 & simdat$reltrad3==0 & simdat$reltrad4==0 & simdat$reltrad5==0,]
-plotdat$mainline = simprob[simdat$reltrad2==1,]
-plotdat$other = simprob[simdat$reltrad3==1,]
-plotdat$catholic = simprob[simdat$reltrad4==1,]
-plotdat$none = simprob[simdat$reltrad5==1,]
+plotdat$evangelical = simprob[simdat$reltrad=='evang' & simdat$c==1,]
+plotdat$mainline = simprob[simdat$reltrad=='mainline' & simdat$c==1,]
+plotdat$other = simprob[simdat$reltrad=='other' & simdat$c==1,]
+plotdat$catholic = simprob[simdat$reltrad=='catholic' & simdat$c==1,]
+plotdat$none = simprob[simdat$reltrad=='none'& simdat$c==1,]
 
 #generate mean and 95% ci (should actually get median...)
 plotdat = lapply(plotdat,FUN=function(x) apply(x,1,eff,c=.84))
@@ -253,9 +253,13 @@ plot(ages,rep(1,length(ages)),ylim=yl,xlim=xl,type='n',
 
   #tfr by religion
 
+sink(paste(outdir,'tfr.txt'))
+  cat('mean tfr with 84% intervals by religious tradition\n\n')
+  print(rv); cat('\n\n')
   #1.9 is current US average
-for(rel in unique(fertprobs[,'reltrad'])){  
-  tfr = apply(fertprobs[fertprobs[,'reltrad']==rel,],2,sum)
-  cat(rel,eff(tfr),'\n')
-}
+  for(rel in unique(fertprobs[,'reltrad'])){  
+    tfr = apply(fertprobs[fertprobs[,'reltrad']==rel,],2,sum)
+    cat(rel,eff(tfr),'\n')
+  }
 
+sink()
