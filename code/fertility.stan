@@ -20,3 +20,18 @@ model {
     y ~ bernoulli_logit(x*beta);
 }
 
+generated quantities {
+  //for WAIC
+  vector[N] loglik; // log pointwise predictive density
+  //for DIC
+  real dev;
+  vector[N] yhat;
+  
+  yhat <- x*beta;
+  dev <- 0;  
+  for(n in 1:N){
+    loglik[n] <- bernoulli_logit_log(y[n],yhat[n]);
+    dev <- dev-(2*bernoulli_logit_log(y[n],yhat[n]));
+  }
+
+}

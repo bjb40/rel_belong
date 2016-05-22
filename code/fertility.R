@@ -52,12 +52,6 @@ print(savefert[savefert$idnump %in% ids ,c('idnump','panelwave','childs','nchild
 #recoded doubled up
 print(fertpanel[fertpanel$idnump %in% ids ,c('idnump','panelwave','childs','nchilds','birth')])
 
-#########################################################################
-#########################################################################
-#EDIT HERE TO PREP AGE DUMMIES AND INTERACTIONS WITH RELIGION/PARITY
-##########################################################################
-##########################################################################
-
 #dummy series for parity
 fertpanel$c0 = fertpanel$c1 = fertpanel$c2 = fertpanel$c3 = 0 
 fertpanel$c1[fertpanel$childs == 1] = 1
@@ -108,6 +102,7 @@ print(Sys.time() - st)
 #@@@@
 
 effnames = colnames(x)
+fertpost=extract(fert,pars='beta',permuted=TRUE,inc_warmup=FALSE)
 
 sink(paste0(outdir,'bayesian_logistic_table.txt'))
   cat('Bayesian logistic estimates for log odds of having a child in the next two years (women 18-45).\n\n')
@@ -116,33 +111,43 @@ sink(paste0(outdir,'bayesian_logistic_table.txt'))
   for(e in 1:length(effnames)){
     cat('|',effnames[e],'|');printeff(fertpost$beta[,e]); cat('|\n')
   }
+  cat('\nNote: Mean estimates with 95% C.I. Bold indicates different from 0.\n\n')
   
-  cat('\nNote: Mean estimates with 95% C.I. Bold indicates different from 0.')
+  cat('\n\nFit Statistics\n')
+  cat('WAIC (two versions)\n')
+  print(waic(fert))
+  w2=waic2(fert)
+  print(w2$total); print(w2$se); rm(w2)
+  
+  cat('DIC')
+  print(dic(fert))
+  
 sink()
 
 rm(effnames)
 
-fertpost=extract(fert,pars='beta',permuted=TRUE,inc_warmup=FALSE)
-write.csv(fertpost,paste0(outdir,'fertposterior.csv'))
+#write.csv(fertpost,paste0(outdir,'fertposterior.csv'))
 
 makeprob = function(logodds){
   o = exp(logodds)
   return(o/(1+o))
 }
 
-#genrate simulation data for plotting
+#########################################################################
+#########################################################################
+#EDIT HERE TO SIM DATA
+##########################################################################
+##########################################################################
 
-ages=18:45
-meanages = mean(fertpanel$age,na.rm=T)
-c_ages = ages - meanages
+ages = 18:46
 
 simdat = matrix(NA,5*length(ages),ncol(x))
 colnames(simdat) = colnames(x)
 simdat=data.frame(simdat)
 
-#simulate across each year with means by age 
+#simulate across each  
 
-simdat$intercept=rep(1,nrow(simdat)); simdat$c_age=rep(c_ages,5); simdat$c_age2=rep(c_ages^2,5)
+simdat$intercept=rep(1,nrow(simdat)); 
 simdat$reltrad2=c(rep(0,length(ages)),rep(1,length(ages)),rep(0,length(ages)*3))
 simdat$reltrad3=c(rep(0,length(ages)*2),rep(1,length(ages)),rep(0,length(ages)*2))
 simdat$reltrad4=c(rep(0,length(ages)*3),rep(1,length(ages)),rep(0,length(ages)))
