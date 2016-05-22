@@ -1,0 +1,11 @@
+mean tfr with 84% intervals by religious tradition
+
+[1] evang    mainline other    catholic none    
+Levels: evang mainline other catholic none
+
+
+1 5.61 0.0686 22.4 
+2 5.15 0.035 20.9 
+3 6.23 0.0692 21.4 
+4 5.99 0.0707 21.9 
+5 6.13 0.0706 22.2 

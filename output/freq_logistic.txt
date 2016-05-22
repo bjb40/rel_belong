@@ -1,0 +1,50 @@
+
+Call:
+glm(formula = birth ~ c_age + c_age2 + c + c_age:c + c_age2:c + 
+    reltrad + reltrad:c_age + reltrad:c_age2 + married + educ + 
+    rswitch, family = "binomial", data = fertpanel)
+
+Deviance Residuals: 
+   Min      1Q  Median      3Q     Max  
+-1.285  -0.445  -0.351  -0.277   2.784  
+
+Coefficients:
+                       Estimate Std. Error z value   Pr(>|z|)    
+(Intercept)            -1.77012    0.38552   -4.59 0.00000440 ***
+c_age                  -0.02690    0.02480   -1.08    0.27808    
+c_age2                 -0.00537    0.00309   -1.74    0.08213 .  
+c1                      0.27397    0.22135    1.24    0.21580    
+c2                     -0.72796    0.23793   -3.06    0.00222 ** 
+c3                     -0.73125    0.24827   -2.95    0.00323 ** 
+reltradmainline         0.23954    0.31107    0.77    0.44128    
+reltradother            0.50655    0.30922    1.64    0.10139    
+reltradcatholic         0.54208    0.20068    2.70    0.00691 ** 
+reltradnone             0.12250    0.22446    0.55    0.58524    
+married                 0.62309    0.12326    5.05 0.00000043 ***
+educ                   -0.05400    0.02215   -2.44    0.01476 *  
+rswitch                -0.07324    0.15035   -0.49    0.62616    
+c_age:c1               -0.06926    0.02846   -2.43    0.01496 *  
+c_age:c2               -0.07293    0.02898   -2.52    0.01185 *  
+c_age:c3               -0.04024    0.03022   -1.33    0.18301    
+c_age2:c1               0.00670    0.00349    1.92    0.05483 .  
+c_age2:c2               0.01279    0.00373    3.43    0.00061 ***
+c_age2:c3               0.01139    0.00392    2.90    0.00371 ** 
+c_age:reltradmainline  -0.02227    0.03355   -0.66    0.50682    
+c_age:reltradother     -0.10163    0.05289   -1.92    0.05467 .  
+c_age:reltradcatholic   0.01341    0.02240    0.60    0.54929    
+c_age:reltradnone      -0.00422    0.02708   -0.16    0.87627    
+c_age2:reltradmainline -0.00619    0.00485   -1.28    0.20197    
+c_age2:reltradother    -0.01059    0.00621   -1.70    0.08842 .  
+c_age2:reltradcatholic -0.00761    0.00313   -2.43    0.01499 *  
+c_age2:reltradnone     -0.00162    0.00347   -0.47    0.64003    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2506.6  on 4187  degrees of freedom
+Residual deviance: 2299.5  on 4161  degrees of freedom
+AIC: 2353
+
+Number of Fisher Scoring iterations: 6
+

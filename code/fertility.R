@@ -53,10 +53,14 @@ print(savefert[savefert$idnump %in% ids ,c('idnump','panelwave','childs','nchild
 print(fertpanel[fertpanel$idnump %in% ids ,c('idnump','panelwave','childs','nchilds','birth')])
 
 #dummy series for parity
-fertpanel$c0 = fertpanel$c1 = fertpanel$c2 = fertpanel$c3 = 0 
-fertpanel$c1[fertpanel$childs == 1] = 1
-fertpanel$c2[fertpanel$childs == 2] = 1
-fertpanel$c3[fertpanel$childs > 2] = 1
+fertpanel$c = 0
+fertpanel$c[fertpanel$childs==1] = 1
+fertpanel$c[fertpanel$childs==2] = 2
+fertpanel$c[fertpanel$childs>2] = 3
+
+table(fertpanel[,c('childs','c')])
+
+fertpanel$c = as.factor(fertpanel$c)
 
 #prepare age dummies
 fertpanel$agef = cut(fertpanel$age,c(17,22,26,34,38,42,46))
@@ -64,12 +68,30 @@ fertpanel$agef = cut(fertpanel$age,c(17,22,26,34,38,42,46))
 fertpanel$reltrad = factor(fertpanel$reltrad,labels=c('evang','mainline','other','catholic','none'))
 
 #@@@@@@@
+#frequentist test
+#@@@@@@@
+
+#mean(fertpanel$age)
+fertpanel$c_age = fertpanel$age - mean(fertpanel$age) 
+fertpanel$c_age2=fertpanel$c_age*fertpanel$c_age
+
+fert_freq = glm(birth ~ c_age + c_age2 + c + c_age:c + c_age2:c + reltrad + reltrad:c_age +reltrad:c_age2 + married + educ + rswitch,
+    data=fertpanel,family='binomial')
+
+sink(paste0(outdir,'freq_logistic.txt'))
+  summary(fert_freq)
+sink()
+
+rm(fert_freq)
+
+#@@@@@@@
 #set up data for stan
 #@@@@@@@
 
 #cyrus stata code : 1) evangelical (ref); 2) mainline; 3)other; (4) catholic; (5) none
 y=fertpanel$birth
-x = model.matrix(~agef + reltrad + agef:reltrad + c1 + c2 + c3 + married + educ + rswitch,data=fertpanel)
+x = model.matrix(~c_age + c_age2 + c + c_age:c + c_age2:c + reltrad + reltrad:c_age +reltrad:c_age2 + married + educ + rswitch,
+                 data=fertpanel)
 N=nrow(fertpanel)
 D=ncol(x)
 
@@ -126,92 +148,65 @@ sink()
 
 rm(effnames)
 
-#write.csv(fertpost,paste0(outdir,'fertposterior.csv'))
+write.csv(fertpost,paste0(outdir,'fertposterior.csv'))
 
 makeprob = function(logodds){
   o = exp(logodds)
   return(o/(1+o))
 }
 
-#########################################################################
-#########################################################################
-#EDIT HERE TO SIM DATA
-##########################################################################
-##########################################################################
+ages=18:46
+meanages = mean(fertpanel$age,na.rm=T)
+c_ages = ages - meanages
+c_ages2 = ages*ages
 
-ages = 18:46
+#calculate length for unique across c values and religion values
+cv = unique(fertpanel$c); rv = unique(fertpanel$reltrad); cv=cv[order(cv)]; rv=rv[order(rv)]
+nr = length(c_ages)*length(cv)*length(rv)
 
-simdat = matrix(NA,5*length(ages),ncol(x))
-colnames(simdat) = colnames(x)
+#create block of empty data for each of the 3 parity values across all values
+simdat = matrix(NA,nr,7)
+colnames(simdat) = c('c_age','c_age2','reltrad','c','married','educ','rswitch')
 simdat=data.frame(simdat)
 
-#simulate across each  
+#fill in basic data
+simdat$age=ages
+simdat$c_age = c_ages; simdat$c_age2=c_ages2
+simdat$reltrad[order(simdat$c_age)] = rep(rv,nrow(simdat)/length(rv))
+simdat$c[order(simdat$c_age)] = rep(as.character(cv),nrow(simdat)/length(cv))
 
-simdat$intercept=rep(1,nrow(simdat)); 
-simdat$reltrad2=c(rep(0,length(ages)),rep(1,length(ages)),rep(0,length(ages)*3))
-simdat$reltrad3=c(rep(0,length(ages)*2),rep(1,length(ages)),rep(0,length(ages)*2))
-simdat$reltrad4=c(rep(0,length(ages)*3),rep(1,length(ages)),rep(0,length(ages)))
-simdat$reltrad5=c(rep(0,length(ages)*4),rep(1,length(ages)))
-simdat[,paste0('c',1:3)] = 0
+#input covariates at observed means
+simdat$married = mean(fertpanel$married)
+simdat$educ = mean(fertpanel$educ)
+simdat$rswitch = mean(fertpanel$rswitch)
 
-for(a in 1:length(ages)){
-  if(a%%4==0){
-    cat('coding pooled means in simulated data for ages',ages[a-3]:ages[a],'\n',sep=' ')
-    ags = ages[a-3]:ages[a]
-    mns = aggregate(fertpanel[fertpanel$age %in% ags,c('childs','married','educ','rswitch')],
-                    by=list(fertpanel$reltrad[fertpanel$age %in% ags]),mean)
-    mns$childs = round(mns$childs)
-    print(mns)
-    
-    #evangelical means
-    simdat[(simdat$c_age+meanages) %in% ags &
-             simdat$reltrad2==0 &
-             simdat$reltrad3==0 &
-             simdat$reltrad4==0 &
-             simdat$reltrad5==0 
-           ,c('married','educ','rswitch')] = mns[1,2:4]
-    #mean children
-    if(mns$childs[1]>0){ #0 is ref
-      simdat[(simdat$c_age+meanages) %in% ags,paste0('c',mns[1,'childs'])] = 1
-    }
-    #other means
-    for(r in 2:nrow(mns)){
-      simdat[(simdat$c_age+meanages) %in% ags & 
-               simdat[,paste0('reltrad',r)]==1,c('married','educ','rswitch')] = mns[r,2:4]
-      if(mns$childs[r]>0){ #0 is ref
-        simdat[(simdat$c_age+meanages) %in% ags & 
-               simdat[,paste0('reltrad',r)]==1,paste0('c',mns[r,'childs'])] = 1
-        }
-      }
-    } else{next}
-}
+#check coding
+View(simdat[order(simdat$reltrad,simdat$c),])
 
-for(var in 2:5){
-  simdat[,paste0('c_agexreltrad',var)] = simdat$c_age * simdat[,paste0('reltrad',var)]
-  simdat[,paste0('c_age2xreltrad',var)] = simdat$c_age2 * simdat[,paste0('reltrad',var)]
-}
+simdat$reltrad = factor(simdat$reltrad, labels = as.character(rv))
 
+simx = model.matrix(~c_age + c_age2 + c + c_age:c + c_age2:c + reltrad + reltrad:c_age +reltrad:c_age2 + married + educ + rswitch,
+                        data=simdat)
+
+#rearrange column order to reproduce order of estimated design
+#simx = simx[,colnames(x)]
+
+#confirm same columns are in the right spot
+colnames(simx) == colnames(x)
 
 #holder for predicted probs
 simprob=matrix(NA,nrow(simdat),nrow(fertpost$beta))
 
 #calculate predicted probs
 for(s in 1:nrow(fertpost$beta)){
-  simprob[,s] = makeprob(as.matrix(simdat)%*%fertpost$beta[s,])
+  simprob[,s] = makeprob(simx%*%fertpost$beta[s,])
 }
 
-#write simprob to csv with ages for projection
-reltrads = rep(0,nrow(simprob))
-  reltrads[simdat$reltrad2==1] =2
-  reltrads[simdat$reltrad3==1] =3 
-  reltrads[simdat$reltrad4==1] =4 
-  reltrads[simdat$reltrad5==1] =5 
-  reltrads[reltrads==0] = 1
-
-fertprobs = cbind(simdat$c_age+meanages,reltrads,simprob)
-colnames(fertprobs) = c('age','reltrad',paste0('iter',1:1800))
-
-write.csv(fertprobs,paste0(outdir,'fertprobs.csv'))
+#########################################################################
+#########################################################################
+#EDIT HERE 
+##########################################################################
+##########################################################################
 
 #code for plotting
 #cyrus stata code : 1) evangelical (ref); 2) mainline; 3)other; (4) catholic; (5) none
