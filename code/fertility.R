@@ -259,11 +259,17 @@ colsf=terrain.colors(5,alpha=.25)
 cols=terrain.colors(5)
 
 #png(paste0(draftimg,'age-fertility.png'),height=9,width=18,units='in',res=300)
-par(mfrow=c(length(cs),1))
+par(mfrow=c(length(cs),1),mar=c(2,3,1,1))
 
 for(c in 1:length(cs)){
+  ti='Age-specific Fertility Rate for Women with'
+  if(cs[c]=='0'){
+    ti=paste(ti,cs[c],'children')
+  } else if(cs[c]=='1'){
+    ti=paste(ti,cs[c],'child')
+  } else(ti=paste(ti,cs[c],'or more children'))
   plot(ages,rep(1,length(ages)),ylim=yl,xlim=xl,type='n',
-       main='Probability of New Child by Age (Women Only)', cex.main=.75,xlab='',ylab='')
+       main=ti, cex.main=.75,xlab='',ylab='',xaxt='n')
     #ci-polygon
     lapply(1:5,function(x)
                 polygon(c(ages,rev(ages)),c(plotdat[[x]][[c]][2,],rev(plotdat[[x]][[c]][3,])),
@@ -284,10 +290,11 @@ for(c in 1:length(cs)){
   }
 
 } #end plotting
+axis(1,at=ages)
 
 #dev.off()
 
-  #tfr by religion
+#tfr by religion (multistate table)
 
 #this is wrong -- need dxj per pp. 10 and 11 of van hook et al.
 #need a multiple decrement life table set up (pooled means...)
