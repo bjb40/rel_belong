@@ -221,26 +221,37 @@ plotdat$other = simprob[simdat$reltrad=='other',]
 plotdat$catholic = simprob[simdat$reltrad=='catholic',]
 plotdat$none = simprob[simdat$reltrad=='none',]"
 
+fx.evangelical=list()
+fx.mainline=list()
+fx.other=list()
+fx.catholic=list()
+fx.none=list()
 
-plotdat$evangelical = simprob[simdat$reltrad=='evang' & simdat$c == 1,]
-plotdat$mainline = simprob[simdat$reltrad=='mainline'& simdat$c == 1,]
-plotdat$other = simprob[simdat$reltrad=='other'& simdat$c == 1,]
-plotdat$catholic = simprob[simdat$reltrad=='catholic'& simdat$c == 1,]
-plotdat$none = simprob[simdat$reltrad=='none'& simdat$c == 1,]
+cs = unique(simdat$c)
 
-#########################################################################
-#########################################################################
-#EDIT HERE FOR PARTIY
-##########################################################################
-##########################################################################
+for(c in cs){
+  fx.evangelical[[c]] = simprob[simdat$reltrad=='evang' & simdat$c == c,]
+  fx.mainline[[c]] = simprob[simdat$reltrad=='mainline'& simdat$c == c,]
+  fx.other[[c]] = simprob[simdat$reltrad=='other'& simdat$c == c,]
+  fx.catholic[[c]] = simprob[simdat$reltrad=='catholic'& simdat$c == c,]
+  fx.none[[c]] = simprob[simdat$reltrad=='none'& simdat$c == c,]
 
-#generate mean and ci by parity
-plotdat = lapply(plotdat,FUN=function(x) apply(x,1,eff,c=.84))
+}
 
-yl=range(plotdat)
+fx = list(fx.evangelical,fx.mainline,fx.other,fx.catholic,fx.none)
+names(fx) = c('evangelical','mainline','other','catholic','none')
+
+#helper function to generate mean and ci by parity
+genplot=function(l){
+  #input list; output summary of 
+  return(lapply(l,FUN=function(x) apply(x,1,eff,c=.84)))
+}
+
+#gen summaries
+plotdat = lapply(fx,genplot)
+
+yl=range(unlist(plotdat))
 xl=range(ages)
-#create plot of fertility rates with 84% ci
-#this is wierd that it calculates the probabilty over the next two years -- can i divide by 2? 
 
 #colsf = rainbow(s=1,v=.75,5,alpha=.1)
 #cols = rainbow(s=1,v=1,5)
@@ -248,23 +259,31 @@ colsf=terrain.colors(5,alpha=.25)
 cols=terrain.colors(5)
 
 #png(paste0(draftimg,'age-fertility.png'),height=9,width=18,units='in',res=300)
-plot(ages,rep(1,length(ages)),ylim=yl,xlim=xl,type='n',
-     main='Probability of New Child by Age (Women Only)', cex.main=.75,xlab='',ylab='')
-  #ci-polygon
-  lapply(1:5,function(x)
-              polygon(c(ages,rev(ages)),c(plotdat[[x]][2,],rev(plotdat[[x]][3,])),
-                                         border=NA,col=paste0(colors1[x],'45'))
-  )
-  #mean probability-line
-  lapply(1:5,function(x) 
-    lines(ages,plotdat[[x]][1,],col=colors1[x],lty=x,lwd=3)
-  )
-  
-  #add legend
-  legend('topright',legend=c('Evangelical','Mainline','Other','Catholic','None'),
-         bty='n',
-         lty=1:5,lwd=rep(3,5),
-         col=colors1, cex=.5)
+par(mfrow=c(length(cs),1))
+
+for(c in 1:length(cs)){
+  plot(ages,rep(1,length(ages)),ylim=yl,xlim=xl,type='n',
+       main='Probability of New Child by Age (Women Only)', cex.main=.75,xlab='',ylab='')
+    #ci-polygon
+    lapply(1:5,function(x)
+                polygon(c(ages,rev(ages)),c(plotdat[[x]][[c]][2,],rev(plotdat[[x]][[c]][3,])),
+                                           border=NA,col=paste0(colors1[x],'45'))
+    )
+    #mean probability-line
+    lapply(1:5,function(x) 
+      lines(ages,plotdat[[x]][[c]][1,],col=colors1[x],lty=x,lwd=3)
+    )
+
+
+  if(c == 1){
+    #add legend
+    legend('topright',legend=c('Evangelical','Mainline','Other','Catholic','None'),
+           bty='n',
+           lty=1:5,lwd=rep(3,5),
+           col=colors1, cex=.5)
+  }
+
+} #end plotting
 
 #dev.off()
 
