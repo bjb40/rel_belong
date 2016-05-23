@@ -2,37 +2,40 @@ Bayesian logistic estimates for log odds of having a child in the next two years
 
 |  |  |
 |:----|----:|
-| (Intercept) |-2.278<br>[-3.230,-1.422]|
-| agef(22,26] |0.293<br>[-0.420,1.057]|
-| agef(26,34] |0.720<br>[0.082,1.383]|
-| agef(34,38] |0.514<br>[-0.423,1.401]|
-| agef(38,46] |-0.530<br>[-1.657,0.384]|
-| reltradmainline |0.119<br>[-0.809,0.894]|
-| reltradother |-0.030<br>[-1.125,0.941]|
-| reltradcatholic |0.516<br>[-0.054,1.050]|
-| reltradnone |-0.037<br>[-0.676,0.589]|
-| white |-0.364<br>[-0.609,-0.122]|
-| married |0.724<br>[0.470,0.974]|
-| educ |-0.051<br>[-0.095,-0.005]|
-| rswitch |-0.106<br>[-0.401,0.182]|
-| reltradevang:c1 |2.276<br>[1.372,3.188]|
-| reltradmainline:c1 |1.544<br>[0.100,3.008]|
-| reltradother:c1 |2.506<br>[1.077,4.016]|
-| reltradcatholic:c1 |1.320<br>[0.363,2.279]|
-| reltradnone:c1 |2.446<br>[1.504,3.449]|
-| reltradevang:c2 |1.359<br>[0.318,2.381]|
-| reltradmainline:c2 |1.463<br>[0.074,2.751]|
-| reltradother:c2 |1.839<br>[0.498,3.286]|
-| reltradcatholic:c2 |1.223<br>[0.163,2.264]|
-| reltradnone:c2 |1.455<br>[0.326,2.586]|
-| agef(22,26]:c1 |-0.596<br>[-1.662,0.413]|
-| agef(26,34]:c1 |-1.524<br>[-2.459,-0.616]|
-| agef(34,38]:c1 |-1.879<br>[-3.024,-0.666]|
-| agef(38,46]:c1 |-1.759<br>[-3.058,-0.436]|
-| agef(22,26]:c2 |-0.285<br>[-1.462,0.863]|
-| agef(26,34]:c2 |-2.027<br>[-3.089,-0.943]|
-| agef(34,38]:c2 |-2.151<br>[-3.411,-0.860]|
-| agef(38,46]:c2 |-1.393<br>[-2.584,-0.059]|
+| (Intercept) |-2.289<br>[-3.186,-1.415]|
+| agef(22,26] |0.296<br>[-0.425,1.131]|
+| agef(26,30] |0.151<br>[-0.582,1.036]|
+| agef(30,34] |1.311<br>[0.609,2.115]|
+| agef(34,38] |0.552<br>[-0.402,1.452]|
+| agef(38,46] |-0.547<br>[-1.687,0.524]|
+| reltradmainline |0.146<br>[-0.754,0.921]|
+| reltradother |-0.100<br>[-1.211,0.827]|
+| reltradcatholic |0.561<br>[-0.011,1.142]|
+| reltradnone |-0.078<br>[-0.705,0.545]|
+| c1 |2.324<br>[1.395,3.214]|
+| c2 |1.383<br>[0.315,2.429]|
+| white |-0.379<br>[-0.624,-0.137]|
+| married |0.718<br>[0.458,0.962]|
+| educ |-0.050<br>[-0.093,-0.003]|
+| rswitch |-0.090<br>[-0.397,0.183]|
+| reltradmainline:c1 |-0.774<br>[-2.185,0.498]|
+| reltradother:c1 |0.275<br>[-0.999,1.783]|
+| reltradcatholic:c1 |-1.017<br>[-1.796,-0.236]|
+| reltradnone:c1 |0.197<br>[-0.620,1.031]|
+| reltradmainline:c2 |0.043<br>[-0.917,1.095]|
+| reltradother:c2 |0.540<br>[-0.541,1.803]|
+| reltradcatholic:c2 |-0.178<br>[-0.899,0.546]|
+| reltradnone:c2 |0.122<br>[-0.714,0.883]|
+| agef(22,26]:c1 |-0.612<br>[-1.751,0.417]|
+| agef(26,30]:c1 |-0.778<br>[-1.852,0.266]|
+| agef(30,34]:c1 |-2.387<br>[-3.410,-1.326]|
+| agef(34,38]:c1 |-1.891<br>[-3.090,-0.657]|
+| agef(38,46]:c1 |-1.788<br>[-3.055,-0.485]|
+| agef(22,26]:c2 |-0.309<br>[-1.483,0.946]|
+| agef(26,30]:c2 |-1.266<br>[-2.370,-0.046]|
+| agef(30,34]:c2 |-2.846<br>[-3.993,-1.647]|
+| agef(34,38]:c2 |-2.188<br>[-3.401,-0.847]|
+| agef(38,46]:c2 |-1.393<br>[-2.722,0.091]|
 
 Note: Mean estimates with 95% C.I. Bold indicates different from 0.
 
@@ -41,30 +44,30 @@ Note: Mean estimates with 95% C.I. Bold indicates different from 0.
 Fit Statistics
 WAIC (two versions)
 $waic
-[1] 2353
+[1] 2344
 
 $p_waic
-[1] 32.3
+[1] 35
 
 $lppd
-[1] -1144
+[1] -1137
 
 $p_waic_1
-[1] 31.4
+[1] 34
 
      waic       lpd    p_waic elpd_waic     p_loo  elpd_loo 
-   2353.4   -1144.4      32.3   -1176.7      32.4   -1176.7 
+     2344     -1137        35     -1172        35     -1172 
      waic       lpd    p_waic elpd_waic     p_loo  elpd_loo 
-    84.89     41.02      1.67     42.45      1.68     42.45 
+    84.81     40.89      1.76     42.41      1.76     42.41 
 DIC$dic
-[1] 2351
+[1] 2341
 
 $elpd_dic
-[1] -1176
+[1] -1170
 
 $logdev
-[1] 2320
+[1] 2308
 
 $pdic
-[1] 30.9
+[1] 33.3
 
