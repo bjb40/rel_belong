@@ -57,8 +57,8 @@ print(fertpanel[fertpanel$idnump %in% ids ,c('idnump','panelwave','childs','nchi
 
 #dummy series for parity
 fertpanel$c = 0
-fertpanel$c[fertpanel$childs>=1] = 1
-#fertpanel$c[fertpanel$childs>2] = 2
+fertpanel$c[fertpanel$childs==1] = 1
+fertpanel$c[fertpanel$childs>=2] = 2
 #fertpanel$c[fertpanel$childs>2] = 3
 
 table(fertpanel[,c('childs','c')])
