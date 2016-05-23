@@ -57,8 +57,8 @@ print(fertpanel[fertpanel$idnump %in% ids ,c('idnump','panelwave','childs','nchi
 
 #dummy series for parity
 fertpanel$c = 0
-fertpanel$c[fertpanel$childs==1] = 1
-fertpanel$c[fertpanel$childs>=2] = 2
+#fertpanel$c[fertpanel$childs==1] = 1
+#fertpanel$c[fertpanel$childs>=2] = 2
 #fertpanel$c[fertpanel$childs>2] = 3
 
 table(fertpanel[,c('childs','c')])
@@ -78,7 +78,7 @@ fertpanel$reltrad = factor(fertpanel$reltrad,labels=c('evang','mainline','other'
 fertpanel$c_age = fertpanel$age - mean(fertpanel$age) 
 fertpanel$c_age2=fertpanel$c_age*fertpanel$c_age
 
-fert_freq = glm(birth ~ c_age + c_age2 + c + c:c_age + c:c_age2 + reltrad + reltrad:c_age +reltrad:c_age2 + married + educ + rswitch,
+fert_freq = glm(birth ~ c_age + c_age2 + reltrad + reltrad:c_age +reltrad:c_age2 + married + educ + rswitch,
     data=fertpanel,family='binomial')
 
 sink(paste0(outdir,'freq_logistic.txt'))
@@ -93,7 +93,7 @@ rm(fert_freq)
 
 #cyrus stata code : 1) evangelical (ref); 2) mainline; 3)other; (4) catholic; (5) none
 y=fertpanel$birth
-x = model.matrix(~ c_age + c_age2 + c + c:c_age + c:c_age2 + reltrad + reltrad:c_age +reltrad:c_age2 + married + educ + rswitch,
+x = model.matrix(~ c_age + c_age2 + reltrad + reltrad:c_age +reltrad:c_age2 + married + educ + rswitch,
                  data=fertpanel)
 N=nrow(fertpanel)
 D=ncol(x)
@@ -188,14 +188,16 @@ View(simdat[order(simdat$reltrad,simdat$c),])
 
 simdat$reltrad = factor(simdat$reltrad, labels = as.character(rv))
 
-simx = model.matrix(~ c_age + c_age2 + c + c:c_age + c:c_age2 + reltrad + reltrad:c_age +reltrad:c_age2 + married + educ + rswitch,
+simx = model.matrix(~ c_age + c_age2 + reltrad + reltrad:c_age +reltrad:c_age2 + married + educ + rswitch,
                         data=simdat)
 
 #rearrange column order to reproduce order of estimated design
 #simx = simx[,colnames(x)]
 
 #confirm same columns are in the right spot
-colnames(simx) == colnames(x)
+if(all(colnames(simx) == colnames(x)) == FALSE){
+  stop('Error in simx structure. Double check!!')
+}
 
 #holder for predicted probs
 simprob=matrix(NA,nrow(simdat),nrow(fertpost$beta))
@@ -210,11 +212,18 @@ for(s in 1:nrow(fertpost$beta)){
 #cyrus stata code : 1) evangelical (ref); 2) mainline; 3)other; (4) catholic; (5) none
 
 plotdat = list()
-plotdat$evangelical = simprob[simdat$reltrad=='evang' & simdat$c == 1,]
-plotdat$mainline = simprob[simdat$reltrad=='mainline'& simdat$c == 1,]
-plotdat$other = simprob[simdat$reltrad=='other'& simdat$c == 1,]
-plotdat$catholic = simprob[simdat$reltrad=='catholic'& simdat$c == 1,]
-plotdat$none = simprob[simdat$reltrad=='none'& simdat$c == 1,]
+plotdat$evangelical = simprob[simdat$reltrad=='evang',]
+plotdat$mainline = simprob[simdat$reltrad=='mainline',]
+plotdat$other = simprob[simdat$reltrad=='other',]
+plotdat$catholic = simprob[simdat$reltrad=='catholic',]
+plotdat$none = simprob[simdat$reltrad=='none',]
+
+
+"plotdat$evangelical = simprob[simdat$reltrad=='evang' & simdat$c == 0,]
+plotdat$mainline = simprob[simdat$reltrad=='mainline'& simdat$c == 0,]
+plotdat$other = simprob[simdat$reltrad=='other'& simdat$c == 0,]
+plotdat$catholic = simprob[simdat$reltrad=='catholic'& simdat$c == 0,]
+plotdat$none = simprob[simdat$reltrad=='none'& simdat$c == 0,]"
 
 #########################################################################
 #########################################################################
@@ -264,7 +273,10 @@ sink(paste(outdir,'tfr.txt'))
   #1.9 is current US average
   for(r in unique(simdat$reltrad)){  
     tfr = apply(simprob[simdat$reltrad==r,],2,sum)
+    cat('median + 84% intervals \n')
     cat(r,eff(tfr,c=.84),'\n')
+    cat('mean + 95% intervals\n')
+    cat(r,eff(tfr,c=.95,usemean=TRUE), '\n\n')
   }
 
 sink()

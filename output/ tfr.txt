@@ -4,8 +4,8 @@ median tfr with 84% intervals by religious tradition
 Levels: evang mainline other catholic none
 
 
-evang 37.3 25.4 53.9 
-mainline 4.08 0.231 34.1 
-other 1.72 0.122 26.6 
-catholic 2.56 0.403 22.4 
-none 29.3 5.08 52.3 
+evang 4.51 0.923 19.4 
+mainline 0.113 0.0112 1.1 
+other 0.0638 0.00649 0.603 
+catholic 0.153 0.0457 0.615 
+none 1.1 0.241 13.6 
