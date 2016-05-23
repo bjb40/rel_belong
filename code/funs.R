@@ -43,18 +43,29 @@ sig = function(pv){
 #@@@@@@@@@@@@@@@@@@@
 
 #helper function for tables
-eff = function(s,c){
+eff = function(s,c,usemean){
   # calculates mean effect from posterior sample and 95%CI
   #
   # Args:
   #   s: a series of posterior samples
   #   c: a number betwen 0 and 1 for confidence; .95 is default
+  #   usemean: TRUE or FALSE statement to use mean; default is median
   #
   # Returns:
   #   a named vector including mean, lower ci, upper ci
   
-  e = mean(s)
-  names(e)='mean'
+  if(missing(usemean)){usemean=FALSE}
+  
+  if(usemean == TRUE){
+    e = mean(s)
+    names(e)='mean'
+  }
+  else{
+    e = median(s)
+    names(e) = 'median'
+  }
+  
+  
   #calculate probs
   if(missing(c)){c=.95}
   l=(1-c)/2

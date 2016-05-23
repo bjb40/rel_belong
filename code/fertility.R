@@ -78,7 +78,7 @@ fertpanel$reltrad = factor(fertpanel$reltrad,labels=c('evang','mainline','other'
 fertpanel$c_age = fertpanel$age - mean(fertpanel$age) 
 fertpanel$c_age2=fertpanel$c_age*fertpanel$c_age
 
-fert_freq = glm(birth ~ c_age + c_age2 + c + c:c_age + c:c_age2 + reltrad + reltrad:c_age +reltrad:c_age2 + reltrad:c + married + educ + rswitch,
+fert_freq = glm(birth ~ c_age + c_age2 + c + c:c_age + c:c_age2 + reltrad + reltrad:c_age +reltrad:c_age2 + married + educ + rswitch,
     data=fertpanel,family='binomial')
 
 sink(paste0(outdir,'freq_logistic.txt'))
@@ -93,7 +93,7 @@ rm(fert_freq)
 
 #cyrus stata code : 1) evangelical (ref); 2) mainline; 3)other; (4) catholic; (5) none
 y=fertpanel$birth
-x = model.matrix(~ c_age + c_age2 + c + c:c_age + c:c_age2 + reltrad + reltrad:c_age +reltrad:c_age2 + reltrad:c + married + educ + rswitch,
+x = model.matrix(~ c_age + c_age2 + c + c:c_age + c:c_age2 + reltrad + reltrad:c_age +reltrad:c_age2 + married + educ + rswitch,
                  data=fertpanel)
 N=nrow(fertpanel)
 D=ncol(x)
@@ -188,7 +188,7 @@ View(simdat[order(simdat$reltrad,simdat$c),])
 
 simdat$reltrad = factor(simdat$reltrad, labels = as.character(rv))
 
-simx = model.matrix(~ c_age + c_age2 + c + c:c_age + c:c_age2 + reltrad + reltrad:c_age +reltrad:c_age2 + reltrad:c + married + educ + rswitch,
+simx = model.matrix(~ c_age + c_age2 + c + c:c_age + c:c_age2 + reltrad + reltrad:c_age +reltrad:c_age2 + married + educ + rswitch,
                         data=simdat)
 
 #rearrange column order to reproduce order of estimated design
@@ -210,11 +210,11 @@ for(s in 1:nrow(fertpost$beta)){
 #cyrus stata code : 1) evangelical (ref); 2) mainline; 3)other; (4) catholic; (5) none
 
 plotdat = list()
-plotdat$evangelical = simprob[simdat$reltrad=='evang' & simdat$c == 0,]
-plotdat$mainline = simprob[simdat$reltrad=='mainline'& simdat$c == 0,]
-plotdat$other = simprob[simdat$reltrad=='other'& simdat$c == 0,]
-plotdat$catholic = simprob[simdat$reltrad=='catholic'& simdat$c == 0,]
-plotdat$none = simprob[simdat$reltrad=='none'& simdat$c == 0,]
+plotdat$evangelical = simprob[simdat$reltrad=='evang' & simdat$c == 1,]
+plotdat$mainline = simprob[simdat$reltrad=='mainline'& simdat$c == 1,]
+plotdat$other = simprob[simdat$reltrad=='other'& simdat$c == 1,]
+plotdat$catholic = simprob[simdat$reltrad=='catholic'& simdat$c == 1,]
+plotdat$none = simprob[simdat$reltrad=='none'& simdat$c == 1,]
 
 #########################################################################
 #########################################################################
@@ -258,13 +258,13 @@ plot(ages,rep(1,length(ages)),ylim=yl,xlim=xl,type='n',
 
   #tfr by religion
 
-#sink(paste(outdir,'tfr.txt'))
-  cat('mean tfr with 84% intervals by religious tradition\n\n')
+sink(paste(outdir,'tfr.txt'))
+  cat('median tfr with 84% intervals by religious tradition\n\n')
   print(rv); cat('\n\n')
   #1.9 is current US average
   for(r in unique(simdat$reltrad)){  
     tfr = apply(simprob[simdat$reltrad==r,],2,sum)
-    cat(r,eff(tfr),'\n')
+    cat(r,eff(tfr,c=.84),'\n')
   }
 
-#sink()
+sink()
