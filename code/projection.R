@@ -12,7 +12,7 @@
 #preliminaries
 #@@@@@@@@@@@@@
 
-#rm(list=ls())
+rm(list=ls())
 
 source("H:/projects/rel_belong/code/config.R",
        echo =T, print.eval = T, keep.source=T)
@@ -172,6 +172,19 @@ births = function(n,probs){
 }
 
 
+#rows ages 18-46 conditional fertility rates (qx) from model; 
+# columns: rel.parity.iter
+#this csv takes a lot of work to load!
+fxj = read.csv(paste0(outdir,'fx-parity.csv'))
+
+#mean six year estimates 
+#create index
+fxj$X = as.numeric(cut(1:29,c(seq(0,29,by=6),29)))
+#collapse by means
+fxj=aggregate(fxj,by=list(fxj$X),FUN=function(x) sum(x)/length(x))
+
+
+
 
 
 ###########################################
@@ -179,36 +192,27 @@ births = function(n,probs){
 ##HERE
 ###########################################
 
-#rows ages 18-46 conditional fertility rates (qx) from model; 
-# columns: rel.parity.iter
-fxj = read.csv(paste0(outdir,'fx-parity.csv'))
-
-#mean six year estimates 
-#create index
-fxj$X = as.numeric(cut(1:29,c(seq(0,29,by=6),29)))
-#collapse by means
-fxj=aggregate(fxj,by=list(fxj$X),FUN=function(x) sum(x)/6)
-fxj = as.data.frame(fxj)
-
 #getting fertility rates from fxj
-testl = grep('other',colnames(fxj))
-fxj.main = fxj[,c(testl)]
-View(t(fxj.main))
+#testl = grep('other',colnames(fxj))
+#fxj.main = fxj[,c(testl)]
+#View(t(fxj.main))
 
-testl2 = grep('\\.0\\.',colnames(fxj))
-fxj.0 = fxj[,c(testl2)]
-View(t(fxj.0))
+#testl2 = grep('\\.0\\.',colnames(fxj))
+#fxj.0 = fxj[,c(testl2)]
+#View(t(fxj.0))
   
 #@@@@@@@@@@@@@@@@@
 #Simulate future proportions
 #@@@@@@@@@@@@@@@@@@
 
 #function to simulate population change
-sim=function(p0){
+sim=function(p0,f){
   #helper function for simulating population proportions
   #p0 is an array of iters (1800), integers 15 age groups, 2 gender, and
   #5 religious belonging
+  #f is boolean for female (includes birth simulations)
   #returns 1800 simulated population distributions 6 years later
+  
     p1=array(0,c(dim(p0)))
     dimnames(p1)=dimnames(p0) 
     
@@ -223,7 +227,7 @@ sim=function(p0){
       if(i%%100==0){cat(i,'of',iters,'\n')}
       
       #check cohort component method -- may need to mean over interval ((x1+x2)/2)
-      #sumulate minor survival (assuming no changes)
+      #sumulate *minor* survival (assuming religion changes)
       p1[i,2,,] = mapply(p0[i,1,,],FUN=function(x) survive(x,sum(px.minors[1:3])))
       p1[i,3,,] = mapply(p0[i,2,,],FUN=function(x) survive(x,sum(px.minors[4:6])))
       p1[i,4,,] = mapply(p0[i,3,,],FUN=function(x) survive(x,sum(px.minors[7:9])))
