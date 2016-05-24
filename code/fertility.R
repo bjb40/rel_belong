@@ -258,7 +258,7 @@ xl=range(ages)
 colsf=terrain.colors(5,alpha=.25)
 cols=terrain.colors(5)
 
-#png(paste0(draftimg,'age-fertility.png'),height=9,width=18,units='in',res=300)
+png(paste0(draftimg,'age-fertility-parity.png'),height=9,width=18,units='in',res=300)
 par(mfrow=c(length(cs),1),mar=c(2,3,1,1))
 
 for(c in 1:length(cs)){
@@ -269,7 +269,7 @@ for(c in 1:length(cs)){
     ti=paste(ti,cs[c],'child')
   } else(ti=paste(ti,cs[c],'or more children'))
   plot(ages,rep(1,length(ages)),ylim=yl,xlim=xl,type='n',
-       main=ti, cex.main=.75,xlab='',ylab='',xaxt='n')
+       main=ti, cex.main=1,xlab='',ylab='',xaxt='n')
     #ci-polygon
     lapply(1:5,function(x)
                 polygon(c(ages,rev(ages)),c(plotdat[[x]][[c]][2,],rev(plotdat[[x]][[c]][3,])),
@@ -285,14 +285,14 @@ for(c in 1:length(cs)){
     #add legend
     legend('topright',legend=c('Evangelical','Mainline','Other','Catholic','None'),
            bty='n',
-           lty=1:5,lwd=rep(3,5),
-           col=colors1, cex=.5)
+           lty=1:5,lwd=rep(1.5,5),
+           col=colors1, cex=.8)
   }
 
 } #end plotting
 axis(1,at=ages)
 
-#dev.off()
+dev.off()
 
 make_tfr = function(qxj){
 
@@ -341,7 +341,7 @@ for(a in 1:(nrow(l)-2)){
 
 tfr=list()
 for(rel in 1:5){
-  print('coding tfr for', rel, 'of 5')
+  cat('coding tfr for', rel, 'of 5....\n\n')
   tfr[[rel]] = numeric(length=1800)
     for(iter in 1:1800){
        tfr[[rel]][iter] = make_tfr(as.data.frame(lapply(fx[[rel]],FUN=function(x) return(x[,iter]))))
@@ -354,8 +354,8 @@ sink(paste(outdir,'tfr.txt'))
   #1.9 is current US average
   for(rel in 1:5){  
     cat('median + 84% intervals \n')
-    cat(r,eff(tfr,c=.84),'\n')
+    cat(r,eff(tfr[[rel]],c=.84),'\n')
     cat('mean + 95% intervals\n')
-    cat(r,eff(tfr,c=.95,usemean=TRUE), '\n\n')
+    cat(r,eff(tfr[[rel]],c=.95,usemean=TRUE), '\n\n')
   }
 sink()
