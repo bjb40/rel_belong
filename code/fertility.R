@@ -294,11 +294,44 @@ axis(1,at=ages)
 
 #dev.off()
 
-#tfr by religion (multistate table)
-
-#this is wrong -- need dxj per pp. 10 and 11 of van hook et al.
+#tfr by religion (multistate table per pp. 10 and 11 of van hook et al.
 #need a multiple decrement life table set up (pooled means...)
   
+#create lifetable with decrements for 1 religion (pull into a function)
+#can edit to reduce by mortality later
+
+radix=c(1000,0,0)
+decs = length(cs) #have to add a probability for staying childless (1-the decrements..?)
+l=d=matrix(0,length(ages),decs); l[1,] = radix
+
+#prep transition matrix
+#note because each decrement is an absorbing state, the matrix is funky:
+#    0      1      2+ 
+#0   1-fx0  fx0     0
+#1   0     1-fx2    fx1  
+#2+  0     0       fx2 -- (technically stays in decrement, but divided to show an additional birth...)
+#because of the structure, and no need for L, I can collapse this to 2d
+
+f = as.data.frame(lapply(fx[[1]],FUN=function(x) return(x[,1])))
+
+for(a in 1:(nrow(l)-1)){
+  fm = matrix(0,3,3)
+  fm[1,2] = f[a,1]; fm[1,1] = 1-f[a,1]
+  fm[2,3] = f[a,2]; fm[2,2] = 1-f[a,2]
+  fm[3,3] = 1
+  #fm[3,3]=f[a,3]
+  
+  l[a,] = c(1000,0,0)
+  lt = diag(l[a,]); print(lt)
+  
+  lt = diag(colSums(lt %*% fm)); print(lt)
+  
+  l[a+1,] = rowSums(diag(l[a,]) %*% fm)
+  d[a+1,] = l[a,] - d[a,]
+}
+
+#summing across dxj provides TFR
+
 sink(paste(outdir,'tfr.txt'))
   cat('median tfr with 84% intervals by religious tradition\n\n')
   print(rv); cat('\n\n')

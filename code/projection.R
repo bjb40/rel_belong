@@ -6,7 +6,7 @@
 #p0 + births + conversions - apostates - deaths
 #births - fertility model; the rest mnomial
 #p0 - proportion distribution in 2010 - because that
-#year is teh center of the 2006 to 2014 panel sample used
+#year is the center of the 2006 to 2014 panel sample used
 
 #@@@@@@@@@@@@@
 #preliminaries
