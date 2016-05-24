@@ -179,16 +179,19 @@ births = function(n,probs){
 ##HERE
 ###########################################
 
-
 #rows ages 18-46 conditional fertility rates (qx) from model; 
 # columns: rel.parity.iter
 fxj = read.csv(paste0(outdir,'fx-parity.csv'))
 
-#mean six year 
-
+#mean six year estimates 
+#create index
+fxj$X = as.numeric(cut(1:29,c(seq(0,29,by=6),29)))
+#collapse by means
+fxj=aggregate(fxj,by=list(fxj$X),FUN=function(x) sum(x)/6)
+fxj = as.data.frame(fxj)
 
 #getting fertility rates from fxj
-testl = grep('mainline',colnames(fxj))
+testl = grep('other',colnames(fxj))
 fxj.main = fxj[,c(testl)]
 View(t(fxj.main))
 
