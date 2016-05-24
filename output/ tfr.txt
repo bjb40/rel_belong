@@ -5,27 +5,27 @@ Levels: evang mainline other catholic none
 
 
 median + 84% intervals 
-evang 9.97 8.71 11.3 
+none 2.134057 1.815009 2.424676 
 mean + 95% intervals
-evang 9.98 8.22 11.8 
+none 2.127674 1.708766 2.520076 
 
 median + 84% intervals 
-mainline 8.71 6.46 11.5 
+none 2.053748 1.467491 2.647276 
 mean + 95% intervals
-mainline 8.84 5.79 12.8 
+none 2.054294 1.243571 2.907966 
 
 median + 84% intervals 
-other 11.8 9.05 15.2 
+none 2.334087 1.505058 3.140577 
 mean + 95% intervals
-other 12 7.93 16.7 
+none 2.324567 1.254004 3.494047 
 
 median + 84% intervals 
-catholic 10.6 9.2 12.3 
+none 2.640874 2.279733 3.061823 
 mean + 95% intervals
-catholic 10.7 8.66 13.1 
+none 2.656046 2.14831 3.253579 
 
 median + 84% intervals 
-none 10.5 8.98 12.1 
+none 2.13705 1.73561 2.517405 
 mean + 95% intervals
-none 10.5 8.31 12.7 
+none 2.131497 1.58842 2.654414 
 
