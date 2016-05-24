@@ -359,3 +359,6 @@ sink(paste(outdir,'tfr.txt'))
     cat(r,eff(tfr[[rel]],c=.95,usemean=TRUE), '\n\n')
   }
 sink()
+
+#output estimated fertility rates for parity for use in projection
+write.csv(fx,file=paste0(outdir,'fx-parity.csv'))

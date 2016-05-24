@@ -12,60 +12,77 @@
 #preliminaries
 #@@@@@@@@@@@@@
 
-library(ggplot2)
+#rm(list=ls())
+
+source("H:/projects/rel_belong/code/config.R",
+       echo =T, print.eval = T, keep.source=T)
 
 #read data previously cleaned using ./prep-data.r
 dat = read.csv(paste(outdir,'private~/subpanel.csv',sep=''))
 
+#@@@@@@@@@@@@@
+#Calculate p0--initial distribution
+#@@@@@@@@@@@@@
 
-#@@@@@@@@@@@@@
-#Calculate p0
-#@@@@@@@@@@@@@
+#initialize p0 -- 6 year age intervals to 90 by religion,male,female
+#female needs additional dim for nchildren decrement
+ages=1:90
+fages = unique(cut(ages,seq(0,90,by=6)))
+table(cut(ages,seq(0,90,by=6)),ages)
+
+p0.male = array(0,c(length(fages),5)); 
+  dimnames(p0.male)=list(ages=fages,
+                         rel=c('evangelical','mainline','other','catholic','none'))
+p0.female = array(0,c(length(fages),5,3))
+dimnames(p0.female)=list(ages=fages,
+                         rel=c('evangelical','mainline','other','catholic','none'),
+                         parity=c('0','1','2+'))
 
 #limit to initial observation for everyone
 base=dat[dat$panelwave==1,]
 
 #cut ages - has to be 6; otherwise not enough pooling
 #and cells will be off -- probably need to stratify by weight...
-base$abin = cut_width(base$age,6,boundary=18)
+base$abin = cut(base$age,seq(18,90,by=6))
+base$c = cut(base$childs,c(-1,0,1.5,8))
+levels(base$c) = c('0','1','2+')
+table(base[,c('c','childs')])
 
 #calculate initial distributions
-adults=table(base[,c('abin','female','reltrad')])
+males=table(base[base$female==0,c('abin','reltrad')])
+females=table(base[base$female==0,c('abin','reltrad','c')])
 
-#add babies, preteens, and teens, with missing gender
+#add to p0
+p0.male[(dim(p0.male)[1]-dim(males)[1]+1):dim(p0.male)[1],] = males
+p0.female[(dim(p0.female)[1]-dim(females)[1]+1):dim(p0.female)[1],,]=females
+
+#add babies, preteens, and teens, and impute gender
 sexratio=1.06
 feprop = 1-(sexratio/(sexratio+1))
 
-#women only! otherwise proportion will be off, also aligned with assumptions
+#women only! -- not accurate probably
+#otherwise proportion will be off, also aligned with assumptions
 bs = aggregate(base$babies[base$female==1],by=list(base$reltrad[base$female==1]), sum,na.rm=T)
 pt = aggregate(base$preteen[base$female==1],by=list(base$reltrad[base$female==1]),sum,na.rm=T)
 t = aggregate(base$teens[base$female==1],by=list(base$reltrad[base$female==1]),sum,na.rm=T)
 
-#apply sex ratio to assign babies -- add in MCMC step
-minors=array(integer(0),c(3,dim(p0[1,,])))
-nm = dimnames(adults); nm[[1]] = c("[0,6]","(6,13]","(13,17]")
-dimnames(minors) = nm
+p0.male[1,] = round(bs[,2]*(1-feprop))
+p0.male[2,] = round(pt[,2]*(1-feprop))
+p0.male[3,] = round(t[,2]*(1-feprop))
 
-#babies
-minors[1,2,] = unlist(lapply(bs$x,FUN=function(x) sum(rbinom(x,1,sexprop))))
-minors[1,1,] = bs$x - minors[1,2,]
+#all females begin at parity = 0
+p0.female[1,,1] = round(bs[,2]*feprop)
+p0.female[2,,1] = round(pt[,2]*feprop)
+p0.female[3,,1] = round(t[,2]*feprop)
 
-#preteen
-minors[2,2,] = unlist(lapply(pt$x,FUN=function(x) sum(rbinom(x,1,sexprop))))
-minors[2,1,] = pt$x - minors[2,2,]
+print(p0.male)
+print(p0.female)
 
-#teens
-minors[3,2,] = unlist(lapply(t$x,FUN=function(x) sum(rbinom(x,1,sexprop))))
-minors[3,1,] = t$x - minors[3,2,]
-
-#create p0
-p0=array(integer(0),c(dim(adults)[1]+dim(minors)[1],dim(adults[1,,])))
-nm[[1]] = c(nm[[1]],dimnames(adults)[[1]])
-dimnames(p0)=nm
-p0[1:3,,] = minors;p0[4:15,,] = adults
+totp = sum(p0.male)+sum(p0.female)
 
 #translate to a radix of 100000
-p0 = round(prop.table(p0)*100000)
+p0.female = round((p0.female/totp)*100000)
+p0.male = round((p0.male/totp)*100000)
 
 #@@@@@@@@@@@@@
 #Load fertility and transition estimates for
@@ -154,23 +171,31 @@ births = function(n,probs){
   rbinom(n,size=1,probs)
 }
 
-fx = read.csv(paste0(outdir,'fertprobs.csv'))
-fx=fx[,2:ncol(fx)]
-fx$age=fx$age-17 
 
-f = array(0,c(1800,5,5)) #five age groups 18-48, 5 trads
 
-for(i in 1:1800){
-  for(a in 1:5){
-    r = ((a*6)-5):(a*6)
-    #print(r)
-    c = paste0('iter',i) #column name for fx
-    #mean fertility rate
-    mfr = aggregate(fx[fx$age %in% r,paste0('iter',i)],by=list(fx$reltrad[fx$age %in% r]),mean)
-    f[i,a,]=mfr[,2]
-  }
-}
 
+###########################################
+##EDIT
+##HERE
+###########################################
+
+
+#rows ages 18-46 conditional fertility rates (qx) from model; 
+# columns: rel.parity.iter
+fxj = read.csv(paste0(outdir,'fx-parity.csv'))
+
+#mean six year 
+
+
+#getting fertility rates from fxj
+testl = grep('mainline',colnames(fxj))
+fxj.main = fxj[,c(testl)]
+View(t(fxj.main))
+
+testl2 = grep('\\.0\\.',colnames(fxj))
+fxj.0 = fxj[,c(testl2)]
+View(t(fxj.0))
+  
 #@@@@@@@@@@@@@@@@@
 #Simulate future proportions
 #@@@@@@@@@@@@@@@@@@
