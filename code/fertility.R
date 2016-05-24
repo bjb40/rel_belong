@@ -300,37 +300,43 @@ axis(1,at=ages)
 #create lifetable with decrements for 1 religion (pull into a function)
 #can edit to reduce by mortality later
 
-radix=c(1000,0,0)
-decs = length(cs) #have to add a probability for staying childless (1-the decrements..?)
-l=d=matrix(0,length(ages),decs); l[1,] = radix
-
-#prep transition matrix
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#NOTE ON TRANSITION MATRIX
 #note because each decrement is an absorbing state, the matrix is funky:
 #    0      1      2+ 
 #0   1-fx0  fx0     0
 #1   0     1-fx2    fx1  
 #2+  0     0       fx2 -- (technically stays in decrement, but divided to show an additional birth...)
 #because of the structure, and no need for L, I can collapse this to 2d
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+radix=c(1,0,0)
+decs = length(cs) #have to add a probability for staying childless (1-the decrements..?)
+l=d=matrix(0,length(ages),decs); l[1,] = radix
+births=numeric(length(ages))
+
+#predicted age-specific fertility rate  
 f = as.data.frame(lapply(fx[[1]],FUN=function(x) return(x[,1])))
 
-for(a in 1:(nrow(l)-1)){
+#need to fix the formulas for piecwise linear births / TFR does not include mortality?
+for(a in 1:(nrow(l)-2)){
   fm = matrix(0,3,3)
   fm[1,2] = f[a,1]; fm[1,1] = 1-f[a,1]
   fm[2,3] = f[a,2]; fm[2,2] = 1-f[a,2]
+  #fm[3,3] = 1
+  fm[3,3]=f[a,3] #--decrement vs. new births!! Confusing!
+  
+  tr = diag(l[a,]) %*% fm
+  births[a] = tr[1,2]+tr[2,3]+tr[3,3]
+  
   fm[3,3] = 1
-  #fm[3,3]=f[a,3]
-  
-  l[a,] = c(1000,0,0)
-  lt = diag(l[a,]); print(lt)
-  
-  lt = diag(colSums(lt %*% fm)); print(lt)
-  
-  l[a+1,] = rowSums(diag(l[a,]) %*% fm)
-  d[a+1,] = l[a,] - d[a,]
+  l[a+1,] = colSums(diag(l[a,]) %*% fm); 
 }
 
 #summing across dxj provides TFR
+tfr=sum(births); print(tfr)
+
+
 
 sink(paste(outdir,'tfr.txt'))
   cat('median tfr with 84% intervals by religious tradition\n\n')
