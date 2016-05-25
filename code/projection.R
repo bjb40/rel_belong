@@ -205,16 +205,28 @@ fxj=aggregate(fxj,by=list(fxj$X),FUN=function(x) sum(x)/length(x))
 #Simulate future proportions
 #@@@@@@@@@@@@@@@@@@
 
+#include base data for repititions
+p0.m=replicate(1800,p0.male,simplify='array') #replicate for 1800 
+p0.m=aperm(p0.m,c(3,1,2)) #rearrange array
+
+p0.f=replicate(1800,p0.female,simplify='array')
+p0.f=aperm(p0.f,c(4,1,2,3))
+
+#for testing
+p.m = p0.m
+p.f = p0.f
+
 #function to simulate population change
-sim=function(p0,f){
+sim=function(p.m,p.f){
   #helper function for simulating population proportions
-  #p0 is an array of iters (1800), integers 15 age groups, 2 gender, and
-  #5 religious belonging
+  #p.m is an array of iters (1800), integers 15 age groups, 2 gender, and
+  #5 religious belonging for males
+  #p.f is the same, but includes an extra dimension for parity of births (0,1,2+)
   #f is boolean for female (includes birth simulations)
   #returns 1800 simulated population distributions 6 years later
   
-    p1=array(0,c(dim(p0)))
-    dimnames(p1)=dimnames(p0) 
+    p1.m=array(0,c(dim(p.m)));dimnames(p1.m)=dimnames(p.m)
+    p1.f=array(0,c(dim(p.f)));dimnames(p1.f)=dimnames(p.f)
     
     #@@
     #draw posterior predictives for 
@@ -228,20 +240,37 @@ sim=function(p0,f){
       
       #check cohort component method -- may need to mean over interval ((x1+x2)/2)
       #sumulate *minor* survival (assuming religion changes)
-      p1[i,2,,] = mapply(p0[i,1,,],FUN=function(x) survive(x,sum(px.minors[1:3])))
-      p1[i,3,,] = mapply(p0[i,2,,],FUN=function(x) survive(x,sum(px.minors[4:6])))
-      p1[i,4,,] = mapply(p0[i,3,,],FUN=function(x) survive(x,sum(px.minors[7:9])))
+      p1.m[i,2,] = mapply(p.m[i,1,],FUN=function(x) survive(x,sum(px.minors[1:3])))
+      p1.m[i,3,] = mapply(p.m[i,2,],FUN=function(x) survive(x,sum(px.minors[4:6])))
+      p1.m[i,4,] = mapply(p.m[i,3,],FUN=function(x) survive(x,sum(px.minors[7:9])))
     
-      #simulate transitions for adult men and women
+      #children all have parity of 0 (i.e. 0 children)
+      p1.f[i,2,,1] = mapply(p.f[i,1,,1],FUN=function(x) survive(x,sum(px.minors[1:3])))
+      p1.f[i,3,,1] = mapply(p.f[i,2,,1],FUN=function(x) survive(x,sum(px.minors[4:6])))
+      p1.f[i,4,,1] = mapply(p.f[i,3,,1],FUN=function(x) survive(x,sum(px.minors[7:9])))
+
+      #births and parity transition (without mortality)
+      for(a in 4:8){
+        p.f[i,]
+      }
+      
+      
+      #simulate transitions for adults
       for(a in 5:14){
-       p1[i,a,1,] = trns(p0[i,a-1,1,],prob=phi[i,a-4,,])
-       p1[i,a,2,] = trns(p0[i,a-1,1,],prob=phi[i,a-4,,])
+       p1.m[i,a,] = trns(p.m[i,a-1,],prob=phi[i,a-4,,])
+       for(c in 1:3){
+         p1.f[i,a,,c] = trns(p.f[i,a-1,,c],prob=phi[i,a-4,,])
+       }
       }
     
       #calculate final transition
-      p1[i,15,1,]=trns(p0[i,14,1,],prob=phi[i,11,,])+trns(p0[i,15,1,],prob=phi[i,12,,])
-      p1[i,15,2,]=trns(p0[i,14,1,],prob=phi[i,11,,])+trns(p0[i,15,1,],prob=phi[i,12,,])
-    
+      p1[i,15,]=trns(p0[i,14,],prob=phi[i,11,,])+trns(p0[i,15,],prob=phi[i,12,,])
+
+      
+################      
+#EDIT HERE
+################
+      
       #simulate births
       atrisk=p0[i,4:8,2,]
       #pull values from iteration
