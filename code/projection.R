@@ -20,6 +20,15 @@ source("H:/projects/rel_belong/code/config.R",
 #read data previously cleaned using ./prep-data.r
 dat = read.csv(paste(outdir,'private~/subpanel.csv',sep=''))
 
+#transition/mortality rates calculated by mnl logistic
+phi = read.csv(paste0(outdir,'phi.csv'))
+
+#fertility rates calculated by logistic
+load(paste0(outdir,'fx.RData'))
+
+#size of sampel is 1800; I'm going to randomly draw from that based on the number below, however
+iters=500
+
 #@@@@@@@@@@@@@
 #Calculate p0--initial distribution
 #@@@@@@@@@@@@@
@@ -92,13 +101,12 @@ p0.male = round((p0.male/totp)*100000)
 
 #calculate 6 year probabilities (dividing lx / lx+6)
 #see prob set 3 in demography i exercizes for examples
-phi = read.csv(paste0(outdir,'phi.csv'))
 
 ageints=max(phi$ageint)
-iters=max(phi$iter)
+itrs=max(phi$iter)
 #tst = array(unlist(l[,3:ncol(l)]),c(iters,ageints,6,6))
-phix=array(0,c(iters,ageints,6,6))
-for(i in 1:iters){
+phix=array(0,c(itrs,ageints,6,6))
+for(i in 1:itrs){
   phix[i,,,] = array(unlist(phi[phi$iter==i,3:ncol(phi)]),c(ageints,6,6))
 }
 
@@ -171,72 +179,67 @@ births = function(n,probs){
   rbinom(n,size=1,probs)
 }
 
-
-#rows ages 18-46 conditional fertility rates (qx) from model; 
-# columns: rel.parity.iter
-#this csv takes a lot of work to load!
-fxj = read.csv(paste0(outdir,'fx-parity.csv'))
-
-#mean six year estimates 
-#create index
-fxj$X = as.numeric(cut(1:29,c(seq(0,29,by=6),29)))
-#collapse by means
-fxj=aggregate(fxj,by=list(fxj$X),FUN=function(x) sum(x)/length(x))
-
-
-
-
-
-###########################################
-##EDIT
-##HERE
-###########################################
-
-#getting fertility rates from fxj
-#testl = grep('other',colnames(fxj))
-#fxj.main = fxj[,c(testl)]
-#View(t(fxj.main))
-
-#testl2 = grep('\\.0\\.',colnames(fxj))
-#fxj.0 = fxj[,c(testl2)]
-#View(t(fxj.0))
-  
-#@@@@@@@@@@@@@@@@@
-#Simulate future proportions
-#@@@@@@@@@@@@@@@@@@
-
 #include base data for repititions
-p0.m=replicate(1800,p0.male,simplify='array') #replicate for 1800 
+p0.m=replicate(iters,p0.male,simplify='array') #replicate for 1800 
 p0.m=aperm(p0.m,c(3,1,2)) #rearrange array
 
-p0.f=replicate(1800,p0.female,simplify='array')
+p0.f=replicate(iters,p0.female,simplify='array')
 p0.f=aperm(p0.f,c(4,1,2,3))
 
 #for testing
-p.m = p0.m
-p.f = p0.f
+#p.m = p0.m
+#p.f = p0.f
+#i=1
+
+#create temporary mortality and fertility samples; names will be replaced in function below
+fullphi = phi; rm(phi)
+fullfx = fx; rm(fx)
+
 
 #function to simulate population change
-sim=function(p.m,p.f){
+sim=function(plist){
   #helper function for simulating population proportions
+  #send it a list of two arrays as follows
+  
   #p.m is an array of iters (1800), integers 15 age groups, 2 gender, and
   #5 religious belonging for males
   #p.f is the same, but includes an extra dimension for parity of births (0,1,2+)
   #f is boolean for female (includes birth simulations)
   #returns 1800 simulated population distributions 6 years later
-  
+    
+    p.m = plist[[1]]
+    p.f = plist[[2]]
+    
     p1.m=array(0,c(dim(p.m)));dimnames(p1.m)=dimnames(p.m)
     p1.f=array(0,c(dim(p.f)));dimnames(p1.f)=dimnames(p.f)
     
     #@@
-    #draw posterior predictives for 
+    #draw random posterior predictives for fertility and transition 
     #@@
     
-    #cat('Beginning Simulation...\n')
-    #st = Sys.time()
+    #create a vector of random values for iter sample
+    samp = sample((1:1800),iters)
     
+    cat('Sampling',iters,'estimates from fertility and mortality posteriors.\n\n')
+    
+    #create samples
+    phi = fullphi[samp,,,]
+    fx = lapply(fullfx,FUN=function(x) simplify2array(x,higher=TRUE)[,samp,])
+    
+    #@@
+    #iterate through sample
+    #@@
+
     for(i in 1:iters){
-      if(i%%100==0){cat(i,'of',iters,'\n')}
+      #print whenever 10% more complete
+      if(i==1 | i%%50==0){
+        cat(i,'of',iters,'\n')
+        if(i>1){print(Sys.time()-st_time)} else{
+          print(paste('Starting simulation at',Sys.time()))
+        }
+        
+        st_time=Sys.time()
+        }
       
       #check cohort component method -- may need to mean over interval ((x1+x2)/2)
       #sumulate *minor* survival (assuming religion changes)
@@ -250,10 +253,39 @@ sim=function(p.m,p.f){
       p1.f[i,4,,1] = mapply(p.f[i,3,,1],FUN=function(x) survive(x,sum(px.minors[7:9])))
 
       #births and parity transition (without mortality)
-      for(a in 4:8){
-        p.f[i,]
-      }
+      #an array that will collapse by means
+      fa = as.numeric(cut(1:29,c(seq(0,29,by=6),29))) + 3
+      births = numeric(5) #holder for births by religion
       
+      for(a in 4:8){
+        #loop over religion (top list)
+       for (rel in 1:5){
+         qxj = fx[[rel]][,i,]
+         #construct transition matrix (see note in fertility.R for more info)
+         
+         fm = matrix(0,3,3)
+         fm[1,2] = mean(qxj[a == fa,1]); fm[1,1] = 1-mean(qxj[a==fa,1])
+         fm[2,3] = mean(qxj[a==fa,2]); fm[2,2] = mean(1-qxj[a==fa,2])
+         #fm[3,3] = 1
+         fm[3,3]=mean(qxj[a==fa,3]) #--decrement vs. new births as repeated event !! Confusing!
+         
+         #births and parity transition across current states (need to multiply by 6 for each year!)
+         #need to center on mean age for half/half
+         tr = diag(p.f[1,a,rel,]) %*% fm
+         births[rel] = births[rel] + round((tr[1,2]+tr[2,3]+tr[3,3])*6)
+         
+         fm[3,3] = 1 #births counted, now save as absorbing decrement!!
+         #calculate next years' decrement--BUT KEEP IN THIS TEMP FILE FOR MORTALITY TR
+         p.f[i,a,rel,] = colSums(diag(p.f[1,a,rel,]) %*% fm); 
+         
+       }#end religion loop
+      }#end age loop
+      
+      #add births by religion
+      f.births = mapply(births,FUN=function(x) rbinom(1,x,feprop))
+      m.births = births-f.births
+      p1.m[i,1,] = m.births
+      p1.f[i,1,,1] = f.births
       
       #simulate transitions for adults
       for(a in 5:14){
@@ -264,85 +296,65 @@ sim=function(p.m,p.f){
       }
     
       #calculate final transition
-      p1[i,15,]=trns(p0[i,14,],prob=phi[i,11,,])+trns(p0[i,15,],prob=phi[i,12,,])
-
-      
-################      
-#EDIT HERE
-################
-      
-      #simulate births
-      atrisk=p0[i,4:8,2,]
-      #pull values from iteration
-      fr=f[i,,]
-    
-      births=matrix(sapply(atrisk,FUN = function(x) sum(rbinom(x,size=1,prob=fr[(which(atrisk==x,arr.ind=TRUE))])),simplify='array'),5,5)
-      p1[i,1,1,] = apply(births,2,FUN=function(x) sum(rbinom(sum(x),size=1,prob=sexprop)))
-      p1[i,1,2,] = colSums(births)-p1[i,1,1,]
+      p1.m[i,15,]=trns(p.m[i,14,],prob=phi[i,11,,])+trns(p.m[i,15,],prob=phi[i,12,,])
+      p1.f[i,15,,]=trns(p.f[i,14,,],prob=phi[i,11,,])+trns(p.f[i,15,,],prob=phi[i,12,,])
     }
     
-    return(p1)
+    return(list(male=p1.m,female=p1.f))
 }
+
+#helper function for getting populatin proporitions
+s_prop = function(poplist){
+  #input is list of male/female list form above
+  #output is list including
+  # 1 sample of age-distribution by religion 
+  # 2 samplle with sum of religion only
+  
+  agestruct = poplist[[1]] + apply(poplist[[2]],c(1,2,3),sum)
+  religion = apply(agestruct,c(1,3),sum)
+  
+  return(list(agestructure=agestruct/rowSums(agestruct),relonly=religion/rowSums(religion)))
+  
+} 
 
 #Prepare Holder variables, and simulate population change
+p0 = list(male=p0.m,female=p0.f)
 
-future = 5 #how many iterations
-p=list()
-pfirst = array(0,c(iters,dim(p0)))
-nm=list(1:iters);names(nm)='iter'; nm=c(nm,dimnames(p0))
-dimnames(pfirst)=nm  
-
-for(i in 1:iters){pfirst[i,,,]=p0}
-p[[1]] = sim(p0=pfirst)
-
-for(y in 2:future){
-  p[[y]]=sim(p0=p[[(y-1)]])
+future = 5 #how many iterations--30 years
+p=list(p0)
+for(y in 1:future){
+  p[[y+1]] = sim(p[[y]])
 }
 
-#cat('One simulation took',Sys.time()-st)-- 
-#alittle over 30 seconds
+#project population proportions by religion only
+props=lapply(p,FUN=function(x) apply(s_prop(x)[[2]],2,eff,c=.95))
+
 
 #@@@@@
 #output and figures
 #@@@@@
 
-#calculate proportions
-props=list()
-for(y in 1:future){
-  props[[y]] = array(0,c(1800,5))
-  for(i in 1:iters){
-    props[[y]][i,] = apply(p[[y]][i,,,],3,FUN=function(x) sum(x)/sum(p[[y]][i,,,]))
-  }
-}
+props=simplify2array(props,higher=TRUE)
+aperm(props,c(3,2,1))
 
-bprop=apply(p0,3,FUN=function(x) sum(x)/sum(p0))
-base=rbind(bprop,bprop,bprop)
-plt=lapply(props,FUN=function(x) apply(x,2,eff))
-for(l in 1:5){plt[[(l+1)]]=plt[[l]]}
-plt[[1]]=base
 names(plt)=seq(2010,2010+(future*6),by=6)
 nm=c('Evangelical','Mainline','Other','Catholic','None')
-for(l in 1:6){colnames(plt[[l]])=nm}
-plotdat = list()
-for(l in 1:5){
-  plotdat[[l]] = sapply(1:6,FUN=function(x) plt[[x]][,l]) 
-}
-names(plotdat)=nm
 
 #line plot
 par(mfrow=c(1,1))
 plot(1,ylim=range(props),xlim=c(1,(future+1)),type='n',xaxt='n')
   for(l in 1:5){
-    polygon(c(1:6,rev(1:6)),c(plotdat[[l]][2,],rev(plotdat[[l]][3,])),
+    polygon(c(1:6,rev(1:6)),c(props[2,l,],rev(props[3,l,])),
             border=NA,col=paste0(colors1[l],'45'))
     
   }
 
-  for(l in 1:5){
-     lines(1:6,plotdat[[l]][1,],col=colors1[l],lty=l)
+  for(rel in 1:5){
+     lines(props[1,rel,],col=colors1[rel],lty=rel)
   }
 
 axis(1,labels=seq(2010,2010+(future*6),by=6),at=1:6)
+legend('topleft',nm,lty=1:6,bty='n')
 
 png(paste0(draftimg,'project-bar.png'),height=9,width=18,units='in',res=300)
 

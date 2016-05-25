@@ -1,0 +1,31 @@
+median tfr with 84% intervals by religious tradition
+
+[1] evang    mainline other    catholic none    
+Levels: evang mainline other catholic none
+
+
+median + 84% intervals 
+1 2.13 1.84 2.42 
+mean + 95% intervals
+1 2.13 1.73 2.56 
+
+median + 84% intervals 
+2 2.04 1.47 2.66 
+mean + 95% intervals
+2 2.06 1.24 2.92 
+
+median + 84% intervals 
+3 2.28 1.45 3.17 
+mean + 95% intervals
+3 2.3 1.13 3.48 
+
+median + 84% intervals 
+4 2.64 2.27 3.07 
+mean + 95% intervals
+4 2.66 2.13 3.23 
+
+median + 84% intervals 
+5 2.12 1.72 2.48 
+mean + 95% intervals
+5 2.11 1.58 2.65 
+

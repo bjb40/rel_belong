@@ -348,7 +348,7 @@ for(rel in 1:5){
     }
 }
 
-sink(paste(outdir,'tfr.txt'))
+sink(paste0(outdir,'tfr.txt'))
   cat('median tfr with 84% intervals by religious tradition\n\n')
   print(rv); cat('\n\n')
   #1.9 is current US average
@@ -362,3 +362,5 @@ sink()
 
 #output estimated fertility rates for parity for use in projection
 write.csv(fx,file=paste0(outdir,'fx-parity.csv'))
+save(fx,file=paste0(outdir,'fx.RData'))
+
