@@ -341,6 +341,8 @@ nm=c('Evangelical','Mainline','Other','Catholic','None')
 
 ys=dim(props)[3]
 
+png(paste0(draftimg,'line-project.png'),height=6.5,width=9,units='in',res=300)
+
 #line plot
 par(mfrow=c(1,1))
 plot(1,ylim=c(0,max(props)),xlim=c(1,ys),type='n',xaxt='n',xlab='',ylab='Proportion of Population')
@@ -356,77 +358,5 @@ plot(1,ylim=c(0,max(props)),xlim=c(1,ys),type='n',xaxt='n',xlab='',ylab='Proport
 
 axis(1,labels=seq(2010,2010+(future*6),by=6),at=1:ys)
 legend('bottom',nm,lty=1:5,bty='n',col=colors1,cex=.7,horiz=TRUE)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-############below is old and doesn't work
-
-
-
-png(paste0(draftimg,'project-bar.png'),height=9,width=18,units='in',res=300)
-
-#barplots (18 years-- index no. 4)
-par(mfrow=c(1,5), mar=c(2,1,1,1), oma=c(1,1,4,1))
-yl = c(0,max(unlist(plotdat))+.05)
-mp=barplot(plotdat[[1]][1,c(1,4)],ylim=yl,col=colors1[1],xlab='Evangelical')
-  segments(mp[[2]],plotdat[[1]][2,4],mp[[2]],plotdat[[1]][3,4])
-  text(mp[[1]],0,'2010',pos=3,cex=1.75)
-  text(mp[[2]],0,'Stable',pos=3,cex=1.75)
-  mtext('Evangelical',side=1,cex=1.75,padj=.75)
-  
-for(r in 2:5){  
-mp=barplot(plotdat[[r]][1,c(1,4)],ylim=yl,axes=F,col=colors1[r],xlab=nm[r])
-  segments(mp[[2]],plotdat[[r]][2,4],mp[[2]],plotdat[[r]][3,4])
-  text(mp[[1]],0,'2010',pos=3,cex=1.75)
-  text(mp[[2]],0,'Stable',pos=3,cex=1.75)
-  mtext(nm[r],side=1,cex=1.75,padj=.75)
-}
-  
-  mtext("Simulated Change in Proportions to Stable Distribution",outer=TRUE,cex=3)
-  
 dev.off()
 
-#growth of proportions
-print(plotdat)
-
-#(Big) table of proportion changes
-
-#calculate totls of age group
-tots = apply(p[[5]],c(1,2),sum)
-d = apply(tots,2,eff)
-
-#age distributions 12 years later -- fertility is too low
-plot(d[1,],ylim=range(d))
-segments(1:15,d[2,],1:15,d[3,])
-agep=apply(p0,1,sum)
-lines(agep,type='p',pch=3)
-
-#create proportion of age groups by tradition
-stable = apply(p[[5]],c('iter','abin','reltrad'),sum)
-for(i in 1:1800){
-  stable[i,,] = stable[i,,]/tots[i,]
-}
-
-ageprop = apply(stable,c('abin','reltrad'),eff)
-
-png(paste0(draftimg,'2040_prop.png'))
-mp=barplot(t(ageprop[1,,]),col=colors1,horiz=TRUE,yaxt='n',
-           main='Proportion of age-group by Tradition, 2040',
-           cex.main=1)
-#segments(ageprop[2,,1],mp,ageprop[3,,1],mp)
-#segments(1-ageprop[2,,5],mp,1-ageprop[3,,5],mp)
-axis(2,labels=seq(0,14*6,by=6),at=mp)
-legend('bottom',names(plotdat),fill=colors1,bty='n',cex=.75,
-       xpd=TRUE,horiz=TRUE,inset=-.2)
-dev.off()
