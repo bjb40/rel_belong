@@ -5,27 +5,44 @@ Levels: evang mainline other catholic none
 
 
 median + 84% intervals 
-1 2.13 1.84 2.42 
+evang 2.13 1.82 2.43 
 mean + 95% intervals
-1 2.13 1.73 2.56 
+evang 2.13 1.71 2.54 
 
 median + 84% intervals 
-2 2.04 1.47 2.66 
+mainline 2.05 1.47 2.7 
 mean + 95% intervals
-2 2.06 1.24 2.92 
+mainline 2.06 1.24 2.93 
 
 median + 84% intervals 
-3 2.28 1.45 3.17 
+other 2.32 1.48 3.15 
 mean + 95% intervals
-3 2.3 1.13 3.48 
+other 2.33 1.19 3.46 
 
 median + 84% intervals 
-4 2.64 2.27 3.07 
+catholic 2.64 2.26 3.06 
 mean + 95% intervals
-4 2.66 2.13 3.23 
+catholic 2.64 2.09 3.24 
 
 median + 84% intervals 
-5 2.12 1.72 2.48 
+none 2.1 1.73 2.5 
 mean + 95% intervals
-5 2.11 1.58 2.65 
+none 2.11 1.58 2.68 
 
+testing tfr of evangelicals against all others
+
+
+difference in tfr by religious tradition mainline 0.0869 -0.894 0.954 
+p-value for evangelicals greater than: 0.583
+
+
+difference in tfr by religious tradition other -0.204 -1.4 0.999 
+p-value for evangelicals greater than: 0.368
+
+
+difference in tfr by religious tradition catholic -0.508 -1.21 0.13 
+p-value for evangelicals greater than: 0.0511
+
+
+difference in tfr by religious tradition none 0.0179 -0.614 0.658 
+p-value for evangelicals greater than: 0.522

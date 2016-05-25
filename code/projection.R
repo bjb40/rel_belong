@@ -320,7 +320,7 @@ s_prop = function(poplist){
 #Prepare Holder variables, and simulate population change
 p0 = list(male=p0.m,female=p0.f)
 
-future = 10 #how many iterations--60 years
+future = 10 #how many iterations x6 years each
 p=list(p0)
 for(y in 1:future){
   p[[y+1]] = sim(p[[y]])

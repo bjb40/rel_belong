@@ -1,0 +1,56 @@
+
+Call:
+glm(formula = birth ~ agef + reltrad + c + c:reltrad + c:agef + 
+    white + married + educ + rswitch, family = "binomial", data = fertpanel)
+
+Deviance Residuals: 
+   Min      1Q  Median      3Q     Max  
+-1.296  -0.427  -0.337  -0.270   2.790  
+
+Coefficients:
+                   Estimate Std. Error z value    Pr(>|z|)    
+(Intercept)         -2.2603     0.4566   -4.95 0.000000740 ***
+agef(22,26]          0.3145     0.3908    0.80     0.42106    
+agef(26,30]          0.1785     0.4149    0.43     0.66709    
+agef(30,34]          1.3217     0.3902    3.39     0.00071 ***
+agef(34,38]          0.5692     0.4748    1.20     0.23066    
+agef(38,46]         -0.4800     0.5284   -0.91     0.36370    
+reltradmainline      0.1683     0.4249    0.40     0.69203    
+reltradother        -0.0559     0.5129   -0.11     0.91322    
+reltradcatholic      0.5648     0.2944    1.92     0.05505 .  
+reltradnone         -0.0702     0.3167   -0.22     0.82456    
+c1                   2.2832     0.4863    4.70 0.000002666 ***
+c2                   1.4160     0.5522    2.56     0.01034 *  
+white               -0.3736     0.1242   -3.01     0.00263 ** 
+married              0.7036     0.1271    5.54 0.000000031 ***
+educ                -0.0490     0.0226   -2.17     0.03002 *  
+rswitch             -0.0914     0.1519   -0.60     0.54723    
+reltradmainline:c1  -0.7172     0.6574   -1.09     0.27531    
+reltradother:c1      0.2782     0.6842    0.41     0.68430    
+reltradcatholic:c1  -1.0045     0.4055   -2.48     0.01324 *  
+reltradnone:c1       0.2067     0.4063    0.51     0.61086    
+reltradmainline:c2   0.0464     0.5218    0.09     0.92915    
+reltradother:c2      0.5233     0.5999    0.87     0.38300    
+reltradcatholic:c2  -0.1703     0.3626   -0.47     0.63851    
+reltradnone:c2       0.1211     0.4077    0.30     0.76647    
+agef(22,26]:c1      -0.6255     0.5421   -1.15     0.24859    
+agef(26,30]:c1      -0.7931     0.5492   -1.44     0.14866    
+agef(30,34]:c1      -2.3387     0.5410   -4.32 0.000015413 ***
+agef(34,38]:c1      -1.8827     0.6258   -3.01     0.00263 ** 
+agef(38,46]:c1      -1.7996     0.6727   -2.68     0.00747 ** 
+agef(22,26]:c2      -0.3673     0.6016   -0.61     0.54145    
+agef(26,30]:c2      -1.2989     0.6136   -2.12     0.03426 *  
+agef(30,34]:c2      -2.8795     0.6006   -4.79 0.000001633 ***
+agef(34,38]:c2      -2.2253     0.6566   -3.39     0.00070 ***
+agef(38,46]:c2      -1.4890     0.6916   -2.15     0.03132 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2506.6  on 4187  degrees of freedom
+Residual deviance: 2273.8  on 4154  degrees of freedom
+AIC: 2342
+
+Number of Fisher Scoring iterations: 6
+

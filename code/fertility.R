@@ -114,7 +114,7 @@ options(mc.cores = 3) #leave one core free for work
 
 fert <- stan("fertility.stan", data=c("D", "N", "y", "x"),
             #algorithm='HMC',
-            chains=3,iter=1200,verbose=T)
+            chains=3,iter=1200,verbose=T,seed=8675309)
             #sample_file = paste0(outdir,'diagnostic~/post-samp.txt'),
             #diagnostic_file = paste0(outdir,'diagnostic~/stan-diagnostic.txt'),
             #open_progress=T);
@@ -354,9 +354,17 @@ sink(paste0(outdir,'tfr.txt'))
   #1.9 is current US average
   for(rel in 1:5){  
     cat('median + 84% intervals \n')
-    cat(rel,eff(tfr[[rel]],c=.84),'\n')
+    cat(as.character(rv[rel]),eff(tfr[[rel]],c=.84),'\n')
     cat('mean + 95% intervals\n')
-    cat(rel,eff(tfr[[rel]],c=.95,usemean=TRUE), '\n\n')
+    cat(as.character(rv[rel]),eff(tfr[[rel]],c=.95,usemean=TRUE), '\n\n')
+  }
+  
+  cat('testing tfr of evangelicals against all others')
+  for(rel in 2:5){
+    cat('\n\n\ndifference in tfr by religious tradition ')
+    cat(as.character(rv[rel]),eff(tfr[[1]]-tfr[[rel]]),'\n')
+    cat('p-value for evangelicals greater than:',sum(tfr[[1]]>tfr[[rel]])/length(tfr[[1]]))
+    
   }
 sink()
 
