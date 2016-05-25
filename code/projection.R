@@ -320,7 +320,7 @@ s_prop = function(poplist){
 #Prepare Holder variables, and simulate population change
 p0 = list(male=p0.m,female=p0.f)
 
-future = 5 #how many iterations--30 years
+future = 10 #how many iterations--60 years
 p=list(p0)
 for(y in 1:future){
   p[[y+1]] = sim(p[[y]])
@@ -337,14 +337,15 @@ props=lapply(p,FUN=function(x) apply(s_prop(x)[[2]],2,eff,c=.95))
 props=simplify2array(props,higher=TRUE)
 aperm(props,c(3,2,1))
 
-names(plt)=seq(2010,2010+(future*6),by=6)
 nm=c('Evangelical','Mainline','Other','Catholic','None')
+
+ys=dim(props)[3]
 
 #line plot
 par(mfrow=c(1,1))
-plot(1,ylim=range(props),xlim=c(1,(future+1)),type='n',xaxt='n')
+plot(1,ylim=c(0,max(props)),xlim=c(1,ys),type='n',xaxt='n',xlab='',ylab='Proportion of Population')
   for(l in 1:5){
-    polygon(c(1:6,rev(1:6)),c(props[2,l,],rev(props[3,l,])),
+    polygon(c(1:ys,rev(1:ys)),c(props[2,l,],rev(props[3,l,])),
             border=NA,col=paste0(colors1[l],'45'))
     
   }
@@ -353,8 +354,25 @@ plot(1,ylim=range(props),xlim=c(1,(future+1)),type='n',xaxt='n')
      lines(props[1,rel,],col=colors1[rel],lty=rel)
   }
 
-axis(1,labels=seq(2010,2010+(future*6),by=6),at=1:6)
-legend('topleft',nm,lty=1:6,bty='n')
+axis(1,labels=seq(2010,2010+(future*6),by=6),at=1:ys)
+legend('bottom',nm,lty=1:5,bty='n',col=colors1,cex=.7,horiz=TRUE)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+############below is old and doesn't work
+
+
 
 png(paste0(draftimg,'project-bar.png'),height=9,width=18,units='in',res=300)
 
