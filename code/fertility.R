@@ -354,9 +354,9 @@ sink(paste(outdir,'tfr.txt'))
   #1.9 is current US average
   for(rel in 1:5){  
     cat('median + 84% intervals \n')
-    cat(r,eff(tfr[[rel]],c=.84),'\n')
+    cat(rel,eff(tfr[[rel]],c=.84),'\n')
     cat('mean + 95% intervals\n')
-    cat(r,eff(tfr[[rel]],c=.95,usemean=TRUE), '\n\n')
+    cat(rel,eff(tfr[[rel]],c=.95,usemean=TRUE), '\n\n')
   }
 sink()
 
