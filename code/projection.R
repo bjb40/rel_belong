@@ -1,6 +1,6 @@
-#
+#Dev 3.3.0 "Supposedly Educational"
 #Bryce Bartlett
-#
+#Projects into the future
 
 #Equation
 #p0 + births + conversions - apostates - deaths

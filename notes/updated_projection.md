@@ -1,6 +1,6 @@
 ---
 author: Bryce Bartlett
-date: 5/25/2016
+date: 6/1/2016
 title: Updated Projections with Parity Fertility Model
 tags: fertility, gss, child measures
 bibliography: citations/rel_belong.bib
@@ -9,33 +9,31 @@ csl: citations/asa-mod.csl
 
 #Introduction
 
-Our study provides demographic projections of future proportions of religious belonging in the United States. Unlike a forecast--which is intended to predict a future state of the world--projections are not necessarily related to a real population. Rather, they are well-suited to addressing counterfactuals, and playing out the implications of population processes [@preston_demography:_2001, p. 118]. We use the the cohort component method of demographic projection. The fundamental process for this method is to begin with an age-specific population distribution; age the population across some discrete interval using age-specific mortality rates; and add new population members (through birth) using age-specific fertility rates [@preston_demography:_2001, p. 120].
+Our study provides demographic projections of future proportions of religious belonging in the United States. Unlike a forecast--which is intended to predict a future state of the world--projections are not necessarily related to a real population. Instead, they explore population change based upon certain assumptions of vital rates. Projections are well-suited to addressing counterfactuals and to playing out the implications of population processes [@preston_demography:_2001, p. 118]. In this study, we estimate rates of fertility and mortality by religious tradition. We also estimate rates of apostasy and conversion. Using these rates together, we use Bayesian methods to estimate probabilistic population projections for religious traditions through 2070--assuming that the estimated rates remain constant over this time interval. While this assumption is not likely to hold true, it is a useful way of assessing current empirical facts. For example, this is the assumption used by the National Vital Statistics System to calculate and report life expectancy. While we anticipate further work will loosen this assumption, this study is the first to our knowledge which (1) directly estimates age-specific fertility rates by religious tradition, (2) estimates rates of conversion, apostasy, and fertility from panel data (showing individual changes), and (3) uses Bayesian probabilistic population projections.
 
-Because of data limitations, demographic studies of religious belonging in the past have been unable to analyze differential mortality rates or fertility rates by religious denomination together [@hout_demographic_2001]. Among when studies do include these differential rates, they rely on pooled cross-sectional data from censuses and other sources [@hackett_future_2015]. In this case, we use the GSS panel to estimate age-specific mortality, religious switching rates, and fertility rates; all of which we allow to vary by self-identified religious affiliation. In addition, the panel data allows us to estimate observed *within-person* change over repeated two-year observations instead of relying on assumptions about observed changes in population proportions. Finally, by employing Bayesian methods, we are able to identify uncertainty around the projections, which are otherwise generated deterministically with a single point estimate [@lynch_new_2005].
+Because of data limitations, past studies of religious belonging have been unable to analyze differential mortality rates or fertility rates by religious denomination [@hout_demographic_2001]. When studies do include these differential rates, they rely on pooled cross-sectional data from censuses and other sources [@hackett_future_2015]. In this case, we use General Social Survey rotating panels (implemented in 2006) to estimate age-specific mortality, religious switching rates, and fertility rates; all of which we allow to vary by self-identified religious affiliation. In addition, the panel data allows us to estimate observed *within-person* change over repeated two-year observations instead of relying on assumptions about observed changes in population proportions. Finally, by employing Bayesian methods, we are able to identify uncertainty around the projections, which are otherwise generated deterministically with a single point estimate [@lynch_new_2005].
 
-In this context, we are able to answer a number of questions. Assuming the observed demographic rates between 2008 and 2014 hold constant, what is the stable distribution of religious affiliation? How long would it take for affiliation to stabilize(if ever) if observed demographic rates were to continue unchanged? And, finally, we can address a number of questions regarding differences by religious affiliation, such as, are there different life-expectancies among different religious affiliations, and are there different age-specific rates of mortality and/or fertility among different self-identified religious affiliation
+In this context, we are able to address a number of open questions. Assuming the observed demographic rates between 2008 and 2014 hold constant, what is the stable distribution of religious affiliation? How long would it take for affiliation to stabilize(if ever) if observed demographic rates were to continue unchanged? And, finally, we can address a number of questions regarding differences by religious affiliation, such as, are there different life-expectancies among different religious affiliations, and are there different age-specific rates of mortality and/or fertility among different self-identified religious affiliation.
 
 #Data
 
-As outlined more fully below, our strategy relies on basic--and fairly obvioius observation that populations in the future depend on current populaiton values, and vital rates. While the concept is simple, estimating the rates underlying these changes is more complicated. For the past several decades, however, demographers have linked the estimation of statistical models that produce probabilities (like the logit and the probit) to the hazard rates used in demographic calculation. Moreover, for the past ten years, Bayesian methods, and bootstrapping have provided the ability to better capture uncertainty around demographic rates and estimates. These advances have made possible more sophisticated estimates, including probabilistic projections adopted by the UN this decade ```citation```. To estimate transition probabilities, mortality, and fertility rates, we estimate two types of models: one for simultaneous estimation of transition across religitons and mortality, and one for fertility by religious affiliation.
+As outlined more fully below, our strategy relies on the basic demographic balancing equation: the fact that populations in the future depend on current population values together with vital rates. While the concept is simple, estimating the rates underlying these changes is more complicated. For the past several decades, however, demographers have linked the estimation of statistical models that produce probabilities (like the logit and the probit) to the hazard rates used in demographic calculation. Moreover, for the past ten years, Bayesian methods have provided the ability to better capture uncertainty around demographic rates and estimates. These advances have made possible more sophisticated estimates, including probabilistic projections recently adopted by the United Nations  ```citation```. To estimate transition probabilities, mortality, and fertility rates, we estimate two types of models: one for simultaneous estimation of transition across religions and mortality, and one for fertility by religious affiliation.
 
-For both models, we use three GSS panels from the recently intorduced rotating paneldesign 2006-2014.
+For both models, we use discrete time event history models estimated from from three GSS panels from the recently introduced rotating panel design (2006-2014). These event history models ```cite scott and van hook```.
 
 ##Transition and Mortality Model
 
-As described more fully below, the key Dependant variable is a vector *transition probabilities*, (*i.e.* the probability of moving from catholic to evangelical or from other to none). This requires (1) identification of an individual's *current state*, a dummy variable series including evangelical, mainline, other, catholic, and none, and (2) *next state*, which a dummy variable series with the same religious traditions, but also adds a dummy indicator for attrition by mortality.  Other covariates are measured at the same wave as *current state*, and include $age$ (years) *female* (dummy), *white* (dummy), and *married* (dummy).
+As described more fully below, the key Dependant variable is a dummy variable series, *next state* identifying a respondent's future religious status and mortality: indicating whether he or she is evangelical, mainline, other, catholic, none, or dead. The GSS panel keeps detailed information on attrition, include reasons for attrition (such as death), making estimation of these probabilities possible. The key control to produce the transition probabilities is the respondent's *current state*, a dummy variable series including evangelical, mainline, other, catholic, and none.  Other covariates are measured at the same wave as *current state*, and include $age$ (years) *female* (dummy), *white* (dummy), and *married* (dummy). Because the GSS interviews span two years, these esitmates provide two-year rates.
 
 ##Data for Fertility Model
 
-##Data Structure for Fertility
+Following well-accepted demographic models and methods employed in prior projections, we limit the fertility models to women, and presume all children follow the religion of their mother until adulthood at age 18 [@hout_demographic_2001]. Accordingly, the data is limited to women in the GSS between the ages of 18 and 46. The key Dependant variable is whether the respondent experienced a birth between waves. While such births are not directly reported in the data, the GSS asks in each wave "[h]ow many children have you ever had," and directs the respondent to "count all that were born alive at any time" ```codebook citation```. To determine whether a woman experienced a birth between waves, we take the within-person difference of responses on these variables. A little over 1% of the sample report decreases in the number of children (-1 or -2), we exclude these women from the analysis.  
 
-The panel GSS has sufficient information to create age-specific fertility rates (or at least get some relevant differences), or loosen the assumption of simple transfer. There are a number of child variables, including the following (names are GSS conventions from codebook):
-
-* childs: "How many children have you ever had?  Please count all that were born alive at any time (including any you had from a previous marriage)." (top coded by GSS at 8).
-
-The simplest strategy is to use the "childs" variable to get age-specific fertility. Limit the panel to women, and take the difference between childs at wave $t$ and $t+1$. The number should always be positive and increasing, and should count fertility rate across two years. This seems to work OK, *but* there are seriously confusing tabulations. Absent multiple births, 2 should be the maximum and 0 should be the minimum, but the tabulation for the 2006, 2008, and 2010 female panels for this difference is as follows:
+Because the two-year period can include multiple births (approximatley 2% of the sample includes multiple births), we treat the individuals as observed twice (once each year) and distribute single births evenly across the beginning and end of the period. Key dependant variables inlcude a dummy variable series for number of children, including *zero*, *one*, and *two or more*, dummy variables spanning four years each for *age*, a dummy variable series for *religious tradition* consistent with the scheme outlined above, race (*white*), *married or cohabiting*, and *education* (years). As described by Van Hook and Altman [-@van_hook_using_2013], a multiple decrement process can be constructed based on expected probabilities from a discrete time hazard including the age dummy and birth number (partity).
 
 #Method
+
+We use the the cohort component method of demographic projection. The fundamental process for this method is to begin with an age-specific population distribution; age the population across some discrete interval using age-specific mortality and transition rates; and add new population members (through birth) using age-specific fertility rates [@preston_demography:_2001, p. 120].
 
 For our projection, we use a modified version of the demographic balancing equation [@hout_demographic_2001], as follows:
 
@@ -45,13 +43,14 @@ $$
 
 Where a tilde ($\tilde{ }$) identifies draws from a (Bayesian) posterior predictive distribution. The posterior predictive is not a deterministic predicted value, but rather, integrates over the uncertainty in *both* the estimated parameters and the observed data [@lynch_bayesian_2004; @gelman_bayesian_2014, p.145-152]. We report 95% C.I. for our projections, which, unlike frequentist estimates, has a probabilistic interpretation: conditional on the model and assumptions, there is a 95% probability of the population proportions falling within this band.  In the equation above, $P$ stands for the population proportion for the religious tradition $j$ in year $y$ for age-group $x$. We use six-year age intervals (0-6, 7-12 ...). The model provides that the population six years later is based upon the prior population with adjustments, including births ($B$), constituting the posterior predictive distribution from the fertility model. Converts ($C$), apostates ($A$), and deaths ($D$) are posterior predictive densities from the multinomial transition model. For our initial population distribution ($P_{0j}$), we use the proportional age-distribution calculated from the observed distribution at the initial wave of the 2006, 2008, and 2010 GSS panels. This is the only $_xP_{yj}$ for which we employ a deterministic assumption, instead of a posterior predictive distribution.
 
-##Religious Transitions and Mortality
+```better reference to markov transition process```
 
-Our analytic approach is based on Bayesian life table methods developed by Lynch and Brown [-@lynch_new_2005], further detail is also outlined in the *Introduction to Applied Bayesian Statistics and Estimation for Social Scientists* [@lynch_introduction_2007]. The method employs a four step approach: (1) build a model to predict transition probabilities; (2) use Bayesian Markov Chain Monte Carlo (MCMC) methods to estimate the model, and draw $M$ samples from the posterior; (3) use the posterior samples to estimate $M$ life tables based upon predicted transition rates; and (4) compare and contrast life table calculations  [@lynch_new_2005]. Each step is discussed in detail below.
+##Transition Probabilities and Multistate Stochastic Processes
 
-##Model for Transition Probabilities
+```Modified steps, now:
+Our analytic approach is based on Bayesian life table methods developed by Lynch and Brown [-@lynch_new_2005], further detail is also outlined in the *Introduction to Applied Bayesian Statistics and Estimation for Social Scientists* [@lynch_introduction_2007]. The method employs a four step approach: (1) build a model to predict transition probabilities; (2) use Bayesian Markov Chain Monte Carlo (MCMC) methods to estimate the model, and draw $M$ samples from the posterior; (3) use the posterior samples to estimate $M$ life tables based upon predicted transition rates; and (4) compare and contrast life table calculations  [@lynch_new_2005]. Each step is discussed in detail below.```
 
-The key for life table construction is the accurate estimates of transition probabilities ($\phi$). More particularly the increment-decrement life lifetable calculations require a matrix of transition probabilities, $\Phi$. The matrix is a $K \times K$ matrix covering for all possible states describing the individual's self-described religious tradition, or death (each a unique $k$ state). The columns of $\Phi$ represent the state at time $t$, and the rows of $\Phi$ represent the probability of transition to another state at time $t+1$. More formally, the properties of $\Phi$ are as follows:
+The key for producing our projections is the accurate estimates of transition probabilities ($\phi$). More particularly, for processes envisioning multiple states (an increment-decrement or multiple decrement process) are efficiently represented using a matrix of transition probabilities, $\Phi$. The matrix is a $K \times K$ matrix covering for all possible states (such as an individual's religious tradition, death, or number of children). The rows of $\Phi$ represent the state at time $t$, and the columns of $\Phi$ represent the probability of transition to another state at time $t+1$. More formally, the properties of $\Phi$ are as follows:
 
 $$
 \Phi =
@@ -65,7 +64,9 @@ $$
 
 $\Phi$ is limited in two respects: (1) the probabilities ($\phi$) in each row, $r$  must sum to 1  ($\sum_{k=1}^K \phi_{r,k} = 1; \, where \, r \in \{1,2...K\}$). This means that that each individual must begin in some one state at time $t$, and end in some state at $t+1$. (2) For absorbing states, like death, the probability of remaining in this state is 1, with all other transition probabilities equal to 0. This indicates no possibility of transitioning out of absorbing states (*e.g.*, from dead to alive).
 
-Estimating $\Phi$ requires the estimation of probabilities across numerous mutually exclusive categories. Common multinomial models, such as the probit and logit, are well-suited to estimating probabilities conditional on some model. Applying such a model in panel data allows for direct estimation of transition probabilities (like a hazard model), and smooths transition probabilities with smaller cells than other methods [@land_estimating_1994]. 
+##Apostasy, Conversion, and Mortality Transition
+
+Estimating $\Phi$ for religious transition requires the estimation of probabilities across numerous mutually exclusive categories. Common multinomial models, such as the probit and logit, are well-suited to estimating probabilities conditional on some model. Applying such a model in panel data allows for direct estimation of transition probabilities (like a hazard model), and smooths transition probabilities with smaller cells than other methods [@land_estimating_1994]. 
 
 We use a multinomial logistic model to estimate $\Phi$. One interpretation of the multinomial model envisions a set of latent propensities ($\eta$) across each dimension ($k$). These propensities are linearly related to some matrix of explanatory variables ($x$) and vector of estimates ($\beta$), for a set of $K$ linear equations of the following form: 
 
@@ -91,18 +92,68 @@ $$
 
 After estimating the $\gamma$ and $\beta$ effects, we can construct a complete transition matrix ($\Phi$) using predicted probabilities conditional on the covariate profile $x$ and estimates, iterating through each value in the dummy variable series. We can disaggregate into profiles by any of the modeled values (*e.g.* males vs. females; married vs. single) of $s$ to calculate the probabilities as follows. We construct a set of 33 age-specific transition matrix for each age from 18 to 84 across two year intervals, as follows.
 
+
 $$
 \hat{\Phi} =
 \begin{bmatrix}
-	\hat{\phi}_1 , \,where \, s_1^t = 1 & \hat{\phi}_2 , \,where \, s_1^t = 1 & \hat{\phi}_3 , \,where \, s_1^t = 1 & \hat{\phi}_4 , \,where \, s_1^t = 1 & \hat{\phi}_5 , \,where \, s_1^t = 1 & \hat{\phi}_6 , \,where \, s_1^t = 1 \\
-	\hat{\phi}_1 , \,where \, s_2^t = 1 & \hat{\phi}_2 , \,where \, s_2^t = 1 & \hat{\phi}_3 , \,where \, s_2^t = 1 & \hat{\phi}_4 , \,where \, s_2^t = 1 & \hat{\phi}_5 , \,where \, s_2^t = 1 & \hat{\phi}_6 , \,where \, s_2^t = 1 \\
+	\hat{\phi}_1|s_1^t = 1 & \hat{\phi}_2|s_1^t = 1 & \hat{\phi}_3|s_1^t = 1 & \hat{\phi}_4| s_1^t = 1 & \hat{\phi}_5 |s_1^t = 1 & \hat{\phi}_6 |s_1^t = 1 \\
+	\hat{\phi}_1 |s_2^t = 1 & \hat{\phi}_2 |s_2^t = 1 & \hat{\phi}_3 |s_2^t = 1 & \hat{\phi}_4 |s_2^t = 1 & \hat{\phi}_5 |s_2^t = 1 & \hat{\phi}_6 |s_2^t = 1 \\
 	\vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
-	\hat{\phi}_1 , \,where \, s_5^t = 1 & \hat{\phi}_2 , \,where \, s_5^t = 1 & \hat{\phi}_3 , \,where \, s_5^t = 1 & \hat{\phi}_4 , \,where \, s_5^t = 1 & \hat{\phi}_5 , \,where \, s_5^t = 1 & \hat{\phi}_6 , \,where \, s_5^t = 1 \\
+	\hat{\phi}_1 |s_5^t = 1 & \hat{\phi}_2 |s_5^t = 1 & \hat{\phi}_3 |s_5^t = 1 & \hat{\phi}_4 |s_5^t = 1 & \hat{\phi}_5 |s_5^t = 1 & \hat{\phi}_6 |s_5^t = 1 \\
 	0 & 0 & 0 & 0 & 0 & 1
 \end{bmatrix}
 $$
 
-We report the mean and standard deviations of the posterior in table 1.
+
+Because the GSS does not include children under the age of 18 as respondents, we employ a few simplifying assumptions about these age-groups. First, we follow convention by assuming that children inherit the religious affiliation of their mothers [@hackett_future_2015]. In addition, we apply the 2010 mortality rates published by the U.S. National Vital Statistics System ```[need citation]``` equally to all children regardless of religious affiliation.  
+
+##Fertility Method
+
+We also model fertility as a multiple decrement process. In particular, we follow Van Hook and Anderson's method [@van_hook_using_2013] to model fertility probabilites based upon a woman's parity (number of children). Modeling as a multiple decrement process showed much better fit than models which exlcude birth parity. Unlike the increment-decrement transition matrix for conversion, apostasy and mortality, women may progress *through* decrements, but may not return to a lower birth parity. As such, and as more fully explained by Van Hook and Anderson, we can model the discrete time hazard with a simple logistic regression, including interactions of the dummy variable series for age, and the dummy variable series for religious traditions (to capture the possibility of differential fertility across religious traditions). This reduces to the following latent propensity of having a birth, conditional on prior births ($p$) as follows:
+
+```this is crap -- need to fix```
+
+$$
+\eta|p,x = \alpha p + \beta_x A_x + \gamma_{px} (A_x) + \rho_j R_j + \lambda_j R_j p
+$$
+
+Where there is a base level of fertility for each age dummy ($A_x$) and each of the each of the five religious traditioons ($R_j$), but each level of partiy ($p$) has a different baseline level, and an adjusted age-specific effect ($\gamma$) and effect by religious tracditon ($\lambda$).
+
+These latent propensities can be translated into probabilities ($\phi$) using the logit function:
+
+$$
+\phi_p = \frac{exp(\eta_p)}{1+exp(\eta_p)}
+$$
+
+Once again, we generate a matrix of transition probabilities across decrements of births including *no births*, *1 birth*, and *2 or more births*. The rows and cells of the transition matrix are the conditional expectations based on parity over the above equation. To allow for differential fertility across, we generate a transition matrix for each of the religious traditions, and across age groups 18-46 (we treat births before 18 as negligible). Because women cannot return to lower parities, a number of cells in the transition matrix are structurally zero:
+
+
+$$
+\hat{\Phi} =
+\begin{bmatrix}
+	1-\hat{\phi}_1|p = 0 &  \hat{\phi}_1|p = 0  & 0 \\
+	0 & 1-\hat{\phi}_2|p = 1 &  \hat{\phi}_2|p = 1 \\
+	0 & 0 & \hat{\phi}_3|p = 2  \\
+\end{bmatrix}
+$$
+
+As before, we estimate the models in Stan and draw 1,800 samples (600 from 3 chains using the Hamiltonian Monte Carlo algorithm) from the posterior distribution after discarding an equivalent sized warm-up sample.
+
+##Projection
+
+Finally, we use estimates from the fertility and transition model to project changes in religious belonging. First, we produce a sample of 500 mean age-specific transition matricies from the Bayesian models estimated above for the probability of transitioning or dying over the next six years. Similarly, we produce mean age-specific fertility matricies for women between the ages of 18 and 46 by parity and religion. ```discuss what you hold at means???```
+
+Second, we generate a baseline population proportion from the pooled, observed proportions of religious traditions in the initial wave of each GSS panel (2006, 2008, and 2010) sliced by religion, gender, birth parity for women (0, 1, or 2+ births) and six-year age groups. For consistency with the fertility model, the three youngest age groups (comprising of individuals 17 and under) are imputed from the number of children reported by women respondents. We divide men and women by imputing given a sex ratio of 1.06. We rescale this population proportion to represent a radix of 100,000 individuals.
+
+Third, using a linear assumption for matrix life-table calculations, we make 500 random draws of religious apostasy/conversion or mortality from the baseline population, given the sample of age-specific transition matricies. ```cite scott and schoen```. Fourth, using a linear assumption for matrix life-table calculations, for women between ages 18 and 46, we make 500 random draws from the age and parity specific to estimate births and parity transitions for a six-year interval.
+
+Fourth, from the results of the life-table calculations, we keep the sample of 500 posterior-predicted populations, aged one year, and include the sum of new births as the first age interval. As before, we randomly assign gender to the new births using a sex ratio of 1.06. Finally, we reiterate the process 10 times to produce a sample of 500 projections of religious change across 60 years.
+
+##Results 
+
+**Transition and Mortality Model**
+
+We report the mean and standard deviations of the posterior for the multinomial transition model in table 1.
 
 [Table 1]
 
@@ -116,73 +167,27 @@ While there are a significant number of individuals staying, even small transiti
 
 Mainline is more likely to transition to Evangelical at most ages, but that they are increasingly likely to transition to None at older ages, with the probabilities becoming statistically indistinguishable around 60 years old. Other traditions are much more likely to transition to None than any other tradition across the entire life course.
 
-##Sample Life Tables
+**Fertility Model**
 
-For each of the 1,800 draws from the sample posterior, we calculate the predicted transition matrix ($\hat{\Phi}$). After constructing an arbitrary radix of 100,000 individuals (assigned to religious tradition categories into proportions observed in the GSS sample). For this step, we follow the procedures and equations outlined in Lynch and Brown [-@lynch_new_2005] with one exception, using a piecewise linear survival algorithm. We close out the table (individuals 84+) by assuming no religious tradition transitions until the end of life, and calculate person years lived in the oldest period $L_{84+}$ using the reported mortality rates in the 2006 U.S. standard life tables ($M_{85+}$) with the following equation $l_{84+} (I_6 M_{84+})^{-1}$. There was insufficient mortality at the oldest ages of the GSS to provide a stable observed rate, and this is an acceptable approach which has limited impact on the overall estimates across the other 66 years of life lived [*see* @land_mathematical_2005, p. 675; @lynch_obtaining_2010, p. 1068].
-
-Life expectancies at ages 18, 30, 50, and 70 resulting from these calculations are reported in Table 2.
+We report the mean and standard deviations of the posterior for the logistic fertility model in table 2.
 
 [Table 2]
 
-The life table follows standard assumptions of a stable, synthetic cohort with constant age-specific transition rates. The life expectancies reported are relative to the age reported. Thus, life expectancies at age 18 are expected years of life in a particular tradition, given the tradition at age 18. Similarly, life expectancies at age 30 are expected years of life in a particular tradition, given the tradition at age 30, but irrespective of any past tradition. 
+The estimates in Tble 2 report the log odds of birth conditional on the covariates. 
 
-Notably, total life expectancies are in the mid to upper 80s, which are higher than expected. These higher expectancies have two probable causes. First, the GSS excludes the institutionalized population from its sample, including nursing homes and other critical care. By design, this sample will have a higher average life expectancy than population level counts. Second, the panel design follows individuals for only 3 years and despite a fairly large sample including 8,000 person-period observations, rates of death are small and more volatile among these samples, particularly at younger ages, where relativley small and expected random sampling disturbances can propogate to larger . Finally, it is impractical under this Bayesian framework to include weighted nonresponse adjustments. Based on GSS reports, responders are likely to have a better health profile (and lower mortality rate). Similar biases in transition rates among traditions  mean that the transition rates and years in particular traditions may be slightyly underestimated.
-
-##Fertility
-
-For our projections, we assume that the observed rates of fertility and mortality remain constant and unchanged. Because the GSS does not include children under the age of 18 as respondents, we employ a few assumptions about these age-groups. First, we follow convention by assuming that children inherit the religious affiliation of their mothers [@hackett_future_2015]. In addition, we apply the 2010 mortality rates published by the U.S. National Vital Statistics System ```[need citation]``` equally to all children regardless of religious affiliation.  
-
-
-
-##Fertility Method
-
-Following standard projection procedure, we model female fertility from the GSS. Following the multinomial logistic, we use a univariate logit to produce smoothed age-conditional estimates for female fertility taking advantage of the panel design of the GSS. We limit the sample to women at risk of childbirth (between the ages of 18 and 45; although there are fertility events before and after these events, we treat them as negligible). At each wave of the GSS, the a woman is asked how many children she's given birth to. The change over two years of the panel wave indicates a birth event (1), and no change indicates no birth (0). We exclude women who report having birthed fewer children in subsequent waves (as they likely result from misreports/misunderstanding), and do not adjust for multiple birth events. There are a few women who report two or more births over the period, but the numbers are relatively small. This means that our estimated fertility probabilities are likely to generate slight underestimates. We adjust using *age* and *age-squared* (unlike mortality, fertility rates are not increasing functions of age) and mean center age to aid convergence, *education*, *marital status* (married=1), *religious tradition* in current wave, and a dummy to indicate whether respondent *switched religious affiliation* (switching=1). As before, we estimate the models in Stan and draw 1,800 samples (600 from 3 chains) from the posterior distribution after discarding an equivalent sized warm-up sample.
-
-##Results and Discussion 
-
-**Transition and Mortality Model**
-
-The population proportions move quickly toward stability from current population proportions. In general, all of the affiliations lose adherents except for nones, as described in figure 1 below.
-
-![Predicted proportion of adherents.](../draft_img~/project-bar.png)
-
-The age-specific distributions provide some interesting contrasts. For example, as described in the transition probabilities, Nones remain the youngest religious tradition, declining in old age as the probability of staying "None" decreases with age. Second, evangelicals maintain a fairly robust proportion throughout, as identified below. Notably, there is still some shifting to occur, because the oldest in the graph below were not subject to the same demographic rates.
-
-![Age-specific distribution of adherents.](../draft_img~/2040_prop.png)
-
-**Fertility Model**
-
-Descriptive statistics show a few irregulatities ...
-
-The negatives are completely erroneous (*i.e.* impossible answers), and amount to 2% of the sample. The positive fertility amounts to 5.92% of the sample, 0 amounts to 57.3% of the sample, and missing amounts to 34.7% of the sample.
-
-Limiting solely to women at risk of childbirth (45 or younger), the negative increase is 1.14% of the sample; 0 is 42.8% of the sample, new births amounts to 7.91% of the sample, and the NA amounts to 48.1% of the sample. Here is the distribution:
-
-|$childs_t$ - $childs_{t-1}$ | freq |
-|:----|---:|
-| -8 | 0 |
-| -7 | 1 |
-| -6 | 0 |
-| -5 | 0 |
-| -4 | 1 |
-| -3 | 1 |
-| -2 | 9 |
-| -1 | 36 |
-| 0 | 1803 |
-| 1 | 288 |
-| 2 | 38 |
-| 3 | 5 |
-| 4 | 1 |
-| 5 | 0 |
-| 6 | 0 |
-| 7 | 1 |
-| 8 | 0 |
-|NA | 2028 |
-
-Given the foregoing, I will recode negative values to missing, and calculate age-specific fertility rates using a Bayesian hierarchical survival model, under listwise deletion. This is consistent with the multinomial strategy, and is different from prior projections which use pooled cross-sectional data. We can highlight the errors in a footnote, and suggest the need for further research. To the extent necessary, we can build this into a missing data model.
+[Figure 3]
 
 **Projection**
 
+[Table 3]
+
+The population proportions move quickly toward stability from current population proportions. In general, all of the affiliations lose adherents except for nones, as described in figure 1 below.
+
+```need fixed```
+
+The age-specific distributions provide some interesting contrasts. For example, as described in the transition probabilities, Nones remain the youngest religious tradition, declining in old age as the probability of staying "None" decreases with age. Second, evangelicals maintain a fairly robust proportion throughout, as identified below. Notably, there is still some shifting to occur, because the oldest in the graph below were not subject to the same demographic rates.
+
+[Figure 4]
 
 **Works Cited**
 
