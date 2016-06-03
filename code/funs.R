@@ -86,10 +86,52 @@ printeff = function(s,c){
   return(cat(e[1],'<br>[',paste(e[2],e[3],sep=','),']',sep=''))
 }
 
+#function for mean and sd 
 
+classic_eff =  function(s,type,pub){
+  # calculates mean effect and s.d. from posterior sample
+  # and reports bayesian p-value for inclusion of 0
+  #
+  # Args:
+  #   s: a series of posterior samples
+  #   type: 'lower', 'upper', 'both' / whether greater or lesser than 0
+  #         defalt = 'both'
+  #   pub: TRUE = return printable vector; FALSE (default)
+  #
+  # Returns:
+  #   a named vector including mean, bayesian p-value
+  
+  if(missing(type)){type='both'}
+  if(missing(pub)){pub=FALSE}
+  
+  e = mean(s); names(e) = "mean"
+  sdev = sd(s); names(sdev) = "s.d."
+  
+  up = sum(s>0)/length(s)
+  low = sum(s<0)/length(s)
+  
+  if(type == 'lower'){
+    pval=low
+  } else if(type == 'upper'){
+    pval=up
+  } else if(type=='both'){
+    pval=min(c(low,up))*2
+  }
+  names(pval)='pval'
+  
+  if(pub==FALSE){
+    return(c(e,sdev,pval))
+  }
+  
+  if(pub==TRUE){
+    vals = rnd(c(e,sdev))
+    return(cat(vals[1],' (',vals[2],') ',sig(pval),sep=''))
+  }
+  
+}
 
 #@@@@@@@@@@@@@@@@@@@
-#Bayesian Analysis fucntions for use with STan
+#Bayesian Analysis fucntions for use with Stan
 #@@@@@@@@@@@@@@@@@@@
 
 

@@ -81,6 +81,7 @@ fertpanel$c_age2=fertpanel$c_age*fertpanel$c_age
 fert_freq = glm(birth ~ agef + reltrad + c + c:reltrad + c:agef + white + married + educ + rswitch,
     data=fertpanel,family='binomial')
 
+options(width=100)
 sink(paste0(outdir,'freq_logistic.txt'))
   summary(fert_freq)
 sink()
@@ -129,12 +130,15 @@ print(Sys.time() - st)
 effnames = colnames(x)
 fertpost=extract(fert,pars='beta',permuted=TRUE,inc_warmup=FALSE)
 
+options(width=100)
 sink(paste0(outdir,'bayesian_logistic_table.txt'))
   cat('Bayesian logistic estimates for log odds of having a child in the next two years (women 18-45).\n\n')
   cat('|  |  |\n')
   cat('|:----|----:|\n')
   for(e in 1:length(effnames)){
-    cat('|',effnames[e],'|');printeff(fertpost$beta[,e]); cat('|\n')
+    cat('|',effnames[e],'|')
+    classic_eff(fertpost$beta[,e],pub=TRUE)
+    cat('|\n')
   }
   cat('\nNote: Mean estimates with 95% C.I. Bold indicates different from 0.\n\n')
   
@@ -147,11 +151,44 @@ sink(paste0(outdir,'bayesian_logistic_table.txt'))
   cat('DIC')
   print(dic(fert))
   
+  cat('\n\n@@@@@@@@@@@@@@@@@\nModel Info\n@@@@@@@@@@@@@@@\n\n')
+  
+  print(summary(fert,pars='beta')$summary)
+  
+  
 sink()
 
-rm(effnames)
-
 write.csv(fertpost,paste0(outdir,'fertposterior.csv'))
+
+#print out effects for c1 and c2 religions
+
+#indexes of effects (needs changed if model changes)
+rel.idex = c(7:10)
+c1.idex = 11
+c2.idex = 12
+c1rel.idex = c(17:20)
+c2rel.idex = c(21:24)
+
+betas = fertpost$beta
+
+c1rel = betas[,rel.idex] + betas[,c1.idex] + betas[,c1rel.idex] + betas[,1]
+c2rel = betas[,rel.idex] + betas[,c2.idex] + betas[,c2rel.idex] + betas[,1]
+
+colnames(c1rel) = colnames(c2rel) = effnames[rel.idex]
+
+c1rel.est = apply(c1rel,2,eff)
+c2rel.est = apply(c2rel,2,eff)
+
+#evangelical
+print(eff(betas[,1]+betas[,c1.idex]))
+#other
+print(t(c1rel.est))
+#evanelical
+print(eff(betas[,1]+betas[,c2.idex]))
+#other
+print(t(c2rel.est))
+
+rm(effnames,betas)
 
 makeprob = function(logodds){
   o = exp(logodds)

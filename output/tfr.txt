@@ -1,7 +1,7 @@
 median tfr with 84% intervals by religious tradition
 
 [1] evang    mainline other    catholic none    
-Levels: evang mainline other catholic none
+5 Levels: evang mainline other ... none
 
 
 median + 84% intervals 

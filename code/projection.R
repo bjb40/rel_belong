@@ -313,7 +313,10 @@ s_prop = function(poplist){
   agestruct = poplist[[1]] + apply(poplist[[2]],c(1,2,3),sum)
   religion = apply(agestruct,c(1,3),sum)
   
-  return(list(agestructure=agestruct/rowSums(agestruct),relonly=religion/rowSums(religion)))
+  return(list(age_prop=agestruct/rowSums(agestruct),
+              rel_prop=religion/rowSums(religion),
+              age=agestruct,
+              rel=religion))
   
 } 
 
@@ -326,13 +329,52 @@ for(y in 1:future){
   p[[y+1]] = sim(p[[y]])
 }
 
-#project population proportions by religion only
-props=lapply(p,FUN=function(x) apply(s_prop(x)[[2]],2,eff,c=.95))
-
-
 #@@@@@
 #output and figures
 #@@@@@
+
+##
+#Create table to show population growth
+##
+
+gt = lapply(p,FUN=function(x) s_prop(x)$rel)
+#gt = simplify2array(gt,higher=TRUE)
+
+#rescale numbers to radix of 100,000
+#this centers on 2010
+rescale = function(y){return(y/100000)}
+gt = lapply(gt,FUN=function(x)
+          apply(x,1,rescale))
+
+gt=simplify2array(gt,higher=TRUE)
+poolgt = apply(gt,c(2,3),sum) #population sum
+deltagt = (gt[,,11]-gt[,,1])/gt[,,1] #percent change
+
+sink(paste0(outdir,'projection_table.txt'))
+  cat('Table __. Projected population change scaled to 2010.\n\n')
+  cat('| ', dimnames(gt)$rel,sep='|'); cat('|Total|\n')
+  cat('|:---|---:|---:|---:|---:|---:|---:|\n')
+  yrs = seq(2010,2070,by=6)
+  
+  for(y in seq_len(11)){
+    cat('|',yrs[y], '|')
+    apply(gt[,,y],1,printeff) ; cat('|')
+    printeff(poolgt[,y]); cat('|\n')
+  }
+  
+  #confirm formula (last-first)/first
+  cat('| Percent Change | ')
+  apply(deltagt*100,1,printeff); cat('|')
+  printeff((poolgt[,11]-1)*100);cat('|\n')
+
+cat('\n\nNote: Median estimates with 95% C.I.')
+  
+sink()
+
+
+#project population proportions by religion only
+props=lapply(p,FUN=function(x) apply(s_prop(x)[[2]],2,eff,c=.95))
+
 
 props=simplify2array(props,higher=TRUE)
 aperm(props,c(3,2,1))
